@@ -32,6 +32,9 @@ class Finding:
     spec_requirement_id: str | None = None
     # Extra context (never part of the fingerprint).
     details: dict[str, Any] = field(default_factory=dict, compare=False, hash=False)
+    # Copy-paste shell command that reproduces this finding, and the check that produced it.
+    reproduce: str | None = field(default=None, compare=False, hash=False)
+    check_id: str | None = field(default=None, compare=False, hash=False)
 
     def __post_init__(self) -> None:
         if self.severity not in _SEV_RANK:
@@ -124,3 +127,84 @@ def sort_findings(findings: list[Finding]) -> list[Finding]:
         seen.add(f.fingerprint)
         out.append(f)
     return out
+
+
+OUTCOMES = ("fail", "warn", "info", "pass", "skipped", "error")
+
+
+@dataclass
+class Check:
+    """One check that ran (or was skipped), pass or fail, with the command to reproduce it.
+
+    Tool invocations are parent checks; the individual tests they report (or that a native
+    probe makes) are children with `parent` set.
+    """
+
+    catalog_id: str
+    tool: str
+    name: str
+    outcome: str  # pass | fail | warn | info | skipped | error
+    command: str | None = None
+    tool_version: str | None = None
+    target: str | None = None  # URL the check looked at
+    collection: str | None = None
+    item: str | None = None
+    asset_href: str | None = None
+    format: str | None = None
+    evidence: str | None = None  # what was observed (header value, exit code, ...)
+    parent: str | None = None
+    findings: list[str] = field(default_factory=list)  # fingerprints
+
+    def __post_init__(self) -> None:
+        if self.outcome not in OUTCOMES:
+            raise ValueError(f"bad outcome {self.outcome!r}")
+
+    @property
+    def id(self) -> str:
+        key = "\x1f".join(
+            str(x or "")
+            for x in (
+                self.catalog_id,
+                self.tool,
+                self.name,
+                self.target,
+                self.collection,
+                self.item,
+                self.asset_href,
+                self.parent,
+            )
+        )
+        return "c" + hashlib.sha1(key.encode()).hexdigest()[:12]
+
+    def sort_key(self) -> tuple:
+        return (
+            self.catalog_id,
+            self.collection or "",
+            self.item or "",
+            self.asset_href or "",
+            self.tool,
+            self.parent or "",
+            self.name,
+            self.target or "",
+        )
+
+    def to_dict(self) -> dict[str, Any]:
+        d = asdict(self)
+        d["id"] = self.id
+        return d
+
+
+def outcome_of(findings: list[Finding]) -> str:
+    rules = {f.rule_id for f in findings}
+    if rules & {"tool-error"}:
+        return "error"
+    if rules & {"tool-missing", "skipped-size", "skipped-mode"}:
+        return "skipped"
+    sev = {f.severity for f in findings if not f.is_coverage}
+    if "error" in sev:
+        return "fail"
+    if "warning" in sev:
+        return "warn"
+    if sev or rules & {"coverage-limit"}:
+        return "info"
+    return "pass"

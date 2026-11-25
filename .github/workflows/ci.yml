@@ -10,20 +10,30 @@ permissions:
 
 jobs:
   lint-test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.4.0
         with:
-          python-version: "3.12"
+          python-version: "3.14"
       - name: GDAL for the COG fixtures
         run: sudo apt-get update -qq && sudo apt-get install -y -qq gdal-bin
       - name: Install
         run: |
           uv venv .venv
-          uv pip install --python .venv -e ".[parquet,dev]"
+          uv pip install --python .venv -e ".[dev]"
       - name: Ruff
         run: .venv/bin/ruff check . && .venv/bin/ruff format --check .
       - name: Unit tests (no external validators needed)
         run: .venv/bin/pytest -m "not tools" -q
+      - name: Install stac-validator (required by the conformance workflow)
+        env:
+          REQUIRED_TOOLS: stac-validator
+        run: |
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          uv tool install --upgrade --python 3.14 stac-valid  # stac-validator was renamed; the command keeps its name
+          export PATH="$HOME/.local/bin:$PATH"
+          stac-validator validate tests/fixtures/smoke/collection.json  # 4.x CLI: `validate` subcommand
+      - name: stac-validator adapter against the real tool
+        run: PATH="$HOME/.local/bin:$PATH" .venv/bin/pytest -m tools -k stac_validator -v

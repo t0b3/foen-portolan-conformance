@@ -8,6 +8,7 @@ import re
 from conformance.cli import main
 from conformance.regression import decide
 from conformance.report import build_report, write_outputs
+from conformance.report.markdown import render_markdown
 from conformance.runner import execute
 
 from conftest import RECORDED
@@ -151,3 +152,206 @@ def test_mini_catalog_native_checks(mini_config, spec):
     assert pm == {("bad.pmtiles", "PMT-003"), ("bad.pmtiles", "PMT-010")}
     good = next(a for a in rep["assets"] if a["href"].endswith("good.pmtiles"))
     assert good["status"] == "pass" and "pmtiles" in good["verified_by"]
+
+
+def _numbers(summary: dict):
+    """Yield (drill_path, value) for every count shown in the summary."""
+    for k in (
+        "scored_assets",
+        "ancillary_assets",
+        "fully_conformant_assets",
+        "must_conformant_assets",
+        "unverified_assets",
+        "must_failures",
+        "should_warnings",
+        "infos",
+        "coverage_notes",
+    ):
+        yield k, summary[k]
+    for k, v in summary["checks"].items():
+        yield f"checks.{k}", v
+    for g, v in summary["by_format"].items():
+        for k in ("assets", "fully_conformant", "unverified", "errors", "warnings"):
+            yield f"by_format.{g}.{k}", v[k]
+    for c in summary["collections"]:
+        for k in (
+            "assets",
+            "scored_assets",
+            "fully_conformant",
+            "unverified",
+            "errors",
+            "warnings",
+            "infos",
+            "checks",
+            "checks_failed",
+            "object_checks",
+        ):
+            yield f"{c['drill']}.{k}", c[k]
+    gs = summary["grades"]
+    yield "grades.graded", gs["graded"]
+    yield "grades.ungraded", gs["ungraded"]
+    for g, v in gs["overall"].items():
+        yield f"grades.overall.{g}", v
+    for fmt, row in gs["by_format"].items():
+        for g, v in row.items():
+            yield f"grades.{fmt}.{g}", v
+    for ap in summary["anti_patterns"]:
+        yield f"{ap['drill']}.findings", len(ap["findings"])
+        yield f"{ap['drill']}.assets", len(ap["assets"])
+        yield f"{ap['drill']}.must", ap["must"]
+        yield f"{ap['drill']}.should", ap["should"]
+        for r in ap["rules"]:
+            yield r["drill"], r["count"]
+    sc = summary["spec_conformance"]
+    yield "spec_conformance.latest.must_failures", sc["latest"]["must_failures"]
+    if sc["declared"]["must_failures"] is not None:
+        yield "spec_conformance.declared.must_failures", sc["declared"]["must_failures"]
+
+
+def test_every_number_drills_down_to_exactly_its_children(
+    config, recorded_fetcher, spec, mini_config
+):
+    from conformance.http import Fetcher
+
+    for cfg, fetcher in ((config, recorded_fetcher), (mini_config, Fetcher(retries=0))):
+        rep = build_report(_run(cfg, fetcher, spec))
+        s, d = rep["summary"], rep["summary"]["drill"]
+        known = {
+            "assets": {a["id"] for a in rep["assets"]},
+            "findings": {f["fingerprint"] for f in rep["findings"]},
+            "checks": {c["id"] for c in rep["checks"]},
+            "requirements": set(rep["requirements"]),
+        }
+        n = 0
+        for path, value in _numbers(s):
+            assert path in d, path
+            assert value == len(d[path]["ids"]), path
+            assert set(d[path]["ids"]) <= known[d[path]["kind"]], path
+            n += 1
+        assert n > 30
+        for sev in ("MUST", "SHOULD", "MAY"):
+            assert (
+                len(d[f"spec.requirement_counts.{sev}"]["ids"])
+                == rep["spec"]["requirement_counts"][sev]
+            )
+        # Children of assets and checks resolve too.
+        for a in rep["assets"]:
+            assert (
+                set(a["finding_ids"]) <= known["findings"]
+                and set(a["check_ids"]) <= known["checks"]
+            )
+        for c in rep["checks"]:
+            assert c["parent"] is None or c["parent"] in known["checks"], c
+            assert set(c["findings"]) <= known["findings"]
+
+
+def test_every_finding_is_reproducible_and_traced_to_a_check(
+    config, recorded_fetcher, spec, mini_config
+):
+    from conformance.http import Fetcher
+
+    for cfg, fetcher in ((config, recorded_fetcher), (mini_config, Fetcher(retries=0))):
+        rep = build_report(_run(cfg, fetcher, spec))
+        checks = {c["id"]: c for c in rep["checks"]}
+        for f in rep["findings"]:
+            assert f["reproduce"], f
+            assert f["check_id"] in checks, f
+            assert f["fingerprint"] in checks[f["check_id"]]["findings"]
+        for c in rep["checks"]:
+            assert c["command"], c
+        for a in rep["assets"]:
+            assert a["commands"] and all(x["command"] for x in a["commands"])
+            if a["scored"]:
+                assert a["check_ids"], a  # every scored dataset has at least one logged check
+        assert rep["run"]["reproduce"].count("conformance run") == 1
+
+
+def test_passing_checks_are_logged(mini_config, spec):
+    from conformance.http import Fetcher
+
+    rep = build_report(_run(mini_config, Fetcher(retries=0), spec))
+    good = next(a for a in rep["assets"] if a["href"].endswith("good.pmtiles"))
+    header = next(
+        c for c in rep["checks"] if c["id"] in good["check_ids"] and c["name"] == "PMTiles header"
+    )
+    kids = [c for c in rep["checks"] if c["parent"] == header["id"]]
+    assert {c["name"] for c in kids} >= {
+        "magic bytes 'PMTiles'",
+        "clustered (Hilbert order)",
+        "bounds match STAC bbox",
+    }
+    assert all(c["outcome"] == "pass" for c in kids) and header["outcome"] == "pass"
+    assert all("xxd" in c["command"] for c in kids)
+    clustered = next(c for c in kids if c["name"].startswith("clustered"))
+    assert clustered["evidence"] == "clustered=true"
+
+
+def test_cli_require_missing_tool_exits_4(tmp_path):
+    rc = main(
+        [
+            "run",
+            "--require",
+            "definitely-not-a-real-binary",
+            "--offline",
+            str(RECORDED),
+            "--out",
+            str(tmp_path),
+            "--quiet",
+        ]
+    )
+    assert rc == 4 and not any(tmp_path.iterdir())
+
+
+def _parquet_file(path, version: int):
+    import struct
+
+    footer = bytes([0x15, version * 2]) + b"\x00" * 30
+    path.write_bytes(b"PAR1" + b"\x00" * 64 + footer + struct.pack("<I", len(footer)) + b"PAR1")
+
+
+def test_grades_and_anti_patterns_end_to_end(mini_dir, mini_config, spec, tmp_path):
+    """good.parquet: v2 + every gpio check passes -> A. bad.parquet: v1 + 2 gpio warnings -> D."""
+    import shutil
+
+    from conformance.adapters.gpio import Gpio
+    from conformance.config import CatalogConfig
+    from conformance.http import Fetcher
+
+    # Private copy: the shared fixture keeps its real GeoParquet files for the tool tests.
+    path = tmp_path / "mini"
+    shutil.copytree(mini_dir[0], path)
+    mini_config.catalogs = [CatalogConfig(id="mini", url=str(path / "catalog.json"))]
+    _parquet_file(path / "vector" / "good.parquet", 2)
+    _parquet_file(path / "vector" / "bad.parquet", 1)
+    run = _run(mini_config, Fetcher(retries=0), spec)  # parquet-footer runs as part of the run
+    ctx = run.contexts[0]
+    g = Gpio()
+    for name, text in (
+        ("good.parquet", "✓ valid\n✓ bbox covering\n✓ ZSTD\n"),
+        ("bad.parquet", "✓ valid\n⚠ not spatially sorted\n⚠ compression SNAPPY\n"),
+    ):
+        a = next(x for x in ctx.crawl.assets if x.href.endswith(name))
+        run.findings += g.parse(ctx, a, "all", text, 0, use_json=False)
+        ctx.verified.setdefault(a.href, set()).add("gpio")
+    from conformance.normalize import sort_findings
+
+    run.findings = sort_findings(run.findings)
+    rep = build_report(run)
+    by = {a["href"].rsplit("/", 1)[-1]: a for a in rep["assets"]}
+    assert by["good.parquet"]["grade"]["grade"] == "A"
+    bad = by["bad.parquet"]["grade"]
+    assert (bad["grade"], bad["levels_dropped"]) == ("D", 3)  # Parquet v1 + 2 gpio warnings
+    rules = {f["rule_id"] for f in rep["findings"] if f["fingerprint"] in bad["unmet"]}
+    assert "CNC-PQ-001" in rules
+    assert by["legacy.gpkg"]["grade"]["grade"] == "F"
+    d = rep["summary"]["drill"]
+    assert d[bad["drill"]]["ids"] == bad["unmet"]
+    aps = rep["summary"]["anti_patterns"]
+    keys = [x["key"] for x in aps]
+    assert keys[0] == "not_cloud_native"  # critical first
+    assert "no_spatial_index" in keys and "inefficient_layout" in keys
+    sev = [x["severity"] for x in aps]
+    order = ["critical", "high", "medium", "low"]
+    assert sev == sorted(sev, key=order.index)
+    md = render_markdown(rep)
+    assert "## Where to start: anti-patterns by severity" in md and "| **D** | bad.parquet |" in md

@@ -6,7 +6,8 @@ from __future__ import annotations
 
 from urllib.parse import urljoin
 
-from .base import Adapter, Context
+from .. import repro
+from .base import Adapter, Context, worst
 
 REL_FOR = {"README.md": "describedby", "AGENTS.md": "agents", "llms.txt": "llms"}
 OPEN_LICENSES_NEEDING_LINK = {"other", "proprietary", "various"}
@@ -29,7 +30,28 @@ class Docs(Adapter):
         is_root = obj.url == ctx.crawl.root_url
         wanted = cfg.get("root" if is_root else "collection", [])
         col = obj.collection if obj.kind == "Collection" else None
+        parent = self.make_check(
+            ctx,
+            f"docs and metadata of {obj.kind.lower()}",
+            command=None,
+            target=obj.url,
+            collection=col,
+        ).id
         out = []
+
+        def sub(name, findings, cmd, evidence, outcome=None):
+            return self.record(
+                ctx,
+                name,
+                findings,
+                command=cmd,
+                target=obj.url,
+                collection=col,
+                parent=parent,
+                evidence=evidence,
+                outcome=outcome,
+            )
+
         links = obj.data.get("links") or []
         for name in wanted:
             link = next(
@@ -42,29 +64,40 @@ class Docs(Adapter):
                 None,
             )
             url = urljoin(obj.url, link["href"]) if link else urljoin(obj.url, name)
+            cmd = repro.lines(
+                repro.json_query(obj.url, f'.links[] | select(.rel == "{REL_FOR.get(name, "")}")'),
+                repro.head(url),
+            )
             r = ctx.fetcher.head(url)
             if not r.ok:
                 r = ctx.fetcher.get_range(url, 0, 0)
-            ok = r.status in (200, 206)
+            ev = f"link: {link['href'] if link else '(none)'}; HTTP {r.status or r.error}"
             if r.status == 0:
-                out.append(
-                    self.finding(
-                        ctx,
-                        "coverage-limit",
-                        "info",
-                        f"{name} could not be checked ({r.error})",
-                        collection=col,
-                        asset_href=url,
-                    )
+                out += sub(
+                    f"{name} present",
+                    [
+                        self.finding(
+                            ctx,
+                            "coverage-limit",
+                            "info",
+                            f"{name} could not be checked ({r.error})",
+                            collection=col,
+                            asset_href=url,
+                        )
+                    ],
+                    cmd,
+                    ev,
+                    "skipped",
                 )
                 continue
-            if not ok:
+            fs = []
+            if r.status not in (200, 206):
                 msg = (
                     f"{name} is linked but not reachable (HTTP {r.status})"
                     if link
                     else f"{name} missing beside {obj.kind.lower()}"
                 )
-                out.append(
+                fs.append(
                     self.finding(
                         ctx,
                         "CNC-DOC-001" if not link else "CNC-DOC-002",
@@ -75,7 +108,7 @@ class Docs(Adapter):
                     )
                 )
             elif not link and name != "llms.txt":
-                out.append(
+                fs.append(
                     self.finding(
                         ctx,
                         "CNC-DOC-003",
@@ -85,10 +118,15 @@ class Docs(Adapter):
                         asset_href=url,
                     )
                 )
+            out += sub(f"{name} present", fs, cmd, ev)
         if obj.kind == "Collection":
             lic = obj.data.get("license")
+            cmd = repro.json_query(
+                obj.url, '{license, license_links: [.links[] | select(.rel == "license")]}'
+            )
+            fs = []
             if not lic:
-                out.append(
+                fs.append(
                     self.finding(
                         ctx, "CNC-LIC-001", "error", "Collection has no license", collection=col
                     )
@@ -96,7 +134,7 @@ class Docs(Adapter):
             elif lic.lower() in OPEN_LICENSES_NEEDING_LINK and not any(
                 lk.get("rel") == "license" for lk in links
             ):
-                out.append(
+                fs.append(
                     self.finding(
                         ctx,
                         "CNC-LIC-002",
@@ -105,9 +143,14 @@ class Docs(Adapter):
                         collection=col,
                     )
                 )
+            out += sub("license declared", fs, cmd, f"license: {lic or '(absent)'}")
         exts = obj.data.get("stac_extensions") or []
-        if not any("schemas.portolan-sdi.org/portolan/" in str(e) for e in exts):
-            out.append(
+        has = [e for e in exts if "schemas.portolan-sdi.org/portolan/" in str(e)]
+        out += sub(
+            "Portolan extension declared",
+            []
+            if has
+            else [
                 self.finding(
                     ctx,
                     "CNC-META-001",
@@ -115,5 +158,17 @@ class Docs(Adapter):
                     f"{obj.kind} does not declare the Portolan extension schema in stac_extensions",
                     collection=col,
                 )
-            )
+            ],
+            repro.json_query(obj.url, ".stac_extensions"),
+            f"stac_extensions: {', '.join(exts) or '(none)'}",
+        )
+        self.record(
+            ctx,
+            f"docs and metadata of {obj.kind.lower()}",
+            [],
+            command=repro.json_query(obj.url, "."),
+            target=obj.url,
+            collection=col,
+            outcome=worst([c.outcome for c in ctx.checks if c.parent == parent]),
+        )
         return out

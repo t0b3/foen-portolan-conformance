@@ -18,6 +18,12 @@ class RioCogeo(Adapter):
     key = "rio_cogeo"
     binary = "rio"
     layer = "COG"
+    scope = "asset"
+    formats = ("cog", "geotiff")
+    install = "uv tool install rasterio --with rio-cogeo"
+
+    def example_cmd(self, url):
+        return ["rio", "cogeo", "validate", url, "--strict"]
 
     def version(self):
         from ..toolchain import version
@@ -39,10 +45,30 @@ class RioCogeo(Adapter):
         r = run(cmd, timeout=float(ctx.config.limits["tool_timeout_s"]))
         text = r.stdout + "\n" + r.stderr
         if r.returncode not in (0, 1) and "cloud optimized" not in text.lower():
-            return [self.tool_error(ctx, r, asset.href, asset=asset)]
-        return self.parse(ctx, asset, text, r.returncode)
+            return self.record(
+                ctx,
+                "rio cogeo validate",
+                [self.tool_error(ctx, r, asset.href, asset=asset)],
+                command=self.tool_cmd(cmd),
+                asset=asset,
+                evidence=f"exit code {r.returncode}",
+            )
+        return self.parse(ctx, asset, text, r.returncode, cmd)
 
-    def parse(self, ctx: Context, asset, text: str, rc: int):
+    def parse(self, ctx: Context, asset, text: str, rc: int, cmd: list[str] | None = None):
+        cmd = cmd or [self.binary, "cogeo", "validate", asset.href, "--strict"]
+        out = self._parse(ctx, asset, text, rc)
+        valid = not any(f.severity == "error" for f in out if f.rule_id.startswith("rio-cogeo"))
+        return self.record(
+            ctx,
+            "rio cogeo validate",
+            out,
+            command=self.tool_cmd(cmd),
+            asset=asset,
+            evidence=f"exit code {rc}; {'valid' if valid else 'NOT a valid'} COG",
+        )
+
+    def _parse(self, ctx: Context, asset, text: str, rc: int):
         out = []
         declared = ctx.fmt(asset)
         valid = rc == 0 and re.search(r"is a valid cloud optimized geotiff", text, re.I) is not None

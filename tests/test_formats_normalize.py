@@ -76,3 +76,17 @@ def test_severity_and_spec_ids():
     assert extract_spec_id(None, "violates PORTO-FMT-012 (bbox)") == "PORTO-FMT-012"
     assert extract_spec_id("PORTO-ZARR-003") == "PORTO-ZARR-003"
     assert extract_spec_id("nothing") is None
+
+
+def test_stac_validator_repro_uses_renamed_package():
+    from conformance import repro
+
+    assert (
+        repro.tool(["stac-validator", "x.json"], "4.6.3")
+        == "uvx --from stac-valid==4.6.3 stac-validator x.json"
+    )
+    # stac-valid starts at 4.2.0; older pins keep the old package name.
+    assert repro.tool(["stac-validator", "x.json"], "3.10.1").startswith(
+        "uvx --from stac-validator==3.10.1 "
+    )
+    assert repro.tool(["stac-validator", "x.json"], None) == "stac-validator x.json"

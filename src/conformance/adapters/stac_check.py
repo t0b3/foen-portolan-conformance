@@ -16,15 +16,21 @@ class StacCheck(Adapter):
     binary = "stac-check"
     layer = "STAC"
     light = True
+    scope = "object"
+    install = "uv tool install stac-check"
 
     def jobs(self, ctx: Context):
-        return [(lambda o=o: self.check(ctx, o)) for o in ctx.crawl.objects]
+        return [
+            (lambda o=o: self.record_object(ctx, o, self.check(ctx, o), self.cmd(o)))
+            for o in ctx.crawl.objects
+        ]
+
+    def cmd(self, obj) -> list[str]:
+        return [self.binary, obj.url] + (["--json"] if supports(self.binary, "--json") else [])
 
     def check(self, ctx: Context, obj):
-        cmd = [self.binary, obj.url]
-        use_json = supports(self.binary, "--json")
-        if use_json:
-            cmd.append("--json")
+        cmd = self.cmd(obj)
+        use_json = "--json" in cmd
         r = run(cmd, timeout=float(ctx.config.limits["tool_timeout_s"]))
         if r.returncode not in (0, 1) and not r.stdout:
             return [self.tool_error(ctx, r, obj.url, collection=obj.collection)]

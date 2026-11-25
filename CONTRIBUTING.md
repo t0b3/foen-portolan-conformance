@@ -5,7 +5,7 @@ Thanks for helping. Issues and pull requests are welcome in English, German, Fre
 ## Set up
 
 ```bash
-uv venv && uv pip install -e ".[parquet,dev]"
+uv venv && uv pip install -e ".[dev]"
 .venv/bin/pre-commit install
 scripts/install-tools.sh          # optional: the real validators, for `pytest -m tools`
 ```

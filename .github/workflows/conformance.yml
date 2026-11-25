@@ -29,12 +29,12 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
-  PYTHON_VERSION: "3.12"
+  PYTHON_VERSION: "3.14"
   GH_TOKEN: ${{ github.token }}
 
 jobs:
   run:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 180
     permissions:
       contents: write        # push the dated snapshot to the `reports` branch
@@ -45,7 +45,7 @@ jobs:
     outputs:
       publish: ${{ steps.mode.outputs.publish }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Decide mode
         id: mode
@@ -64,12 +64,12 @@ jobs:
           if [ -n "$size" ]; then args+=(--max-asset-size-gb "$size"); fi
           echo "args=${args[*]}" >> "$GITHUB_OUTPUT"
 
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v10.4.0
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Cache validators (refreshed weekly)
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             ~/.local/share/uv/tools
@@ -77,6 +77,9 @@ jobs:
           key: tools-${{ runner.os }}-${{ steps.mode.outputs.week }}-${{ hashFiles('constraints.txt') }}
 
       - name: Install latest validators
+        # stac-validator is required: the script exits 1 if it does not install or fails its smoke test.
+        env:
+          REQUIRED_TOOLS: stac-validator
         run: |
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           INSTALL_SYSTEM=1 scripts/install-tools.sh
@@ -84,7 +87,7 @@ jobs:
       - name: Install this package
         run: |
           uv venv .venv
-          uv pip install --python .venv -e ".[parquet]"
+          uv pip install --python .venv -e .
 
       - name: Check out the reports branch
         run: |
@@ -100,7 +103,15 @@ jobs:
         id: run
         # Exit 0 even when the catalog is non-conformant: that is the report's content.
         # Non-zero means an infrastructure error (e.g. catalog unreachable).
-        run: .venv/bin/conformance run --config config.yaml --out site/reports --mode ${{ steps.mode.outputs.mode }} ${{ steps.mode.outputs.args }}
+        run: .venv/bin/conformance run --require stac-validator --config config.yaml --out site/reports --mode ${{ steps.mode.outputs.mode }} ${{ steps.mode.outputs.args }}
+
+      - name: Check the Parquet exports were written
+        run: |
+          d=site/reports/latest; [ "${{ steps.mode.outputs.mode }}" = "light" ] && d=site/reports/light/latest
+          for f in findings.parquet checks.parquet; do
+            test -s "$d/$f" || { echo "::error::$d/$f missing"; exit 1; }
+          done
+          .venv/bin/python -c "import pyarrow.parquet as pq, sys; m = pq.ParquetFile(sys.argv[1]).metadata; print('findings.parquet: format', m.format_version, '-', m.num_rows, 'rows')" "$d/findings.parquet"
 
       - name: Comment summary on the PR
         if: github.event_name == 'pull_request'
@@ -116,7 +127,6 @@ jobs:
         if: steps.mode.outputs.publish == 'true'
         working-directory: site
         run: |
-          touch reports/.nojekyll
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add reports
@@ -147,14 +157,14 @@ jobs:
 
       - name: Upload Pages artifact
         if: steps.mode.outputs.publish == 'true'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: site/reports
 
   deploy:
     needs: run
     if: needs.run.outputs.publish == 'true'
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       pages: write
       id-token: write
@@ -163,4 +173,4 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - id: deploy
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

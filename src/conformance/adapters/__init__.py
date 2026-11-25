@@ -5,8 +5,8 @@ from .cloud_native import CloudNative
 from .copc import Copc
 from .docs import Docs
 from .gpio import Gpio
-from .gpq import Gpq
 from .hosting import Hosting
+from .parquet_footer import ParquetFooter
 from .pmtiles import Pmtiles
 from .portolan_cli import PortolanCli
 from .rashid import Rashid
@@ -21,7 +21,7 @@ ALL_ADAPTERS: list[type[Adapter]] = [
     StacValidator,
     StacCheck,
     Gpio,
-    Gpq,
+    ParquetFooter,
     RioCogeo,
     Pmtiles,
     Zarr,

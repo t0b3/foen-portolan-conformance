@@ -1,10 +1,16 @@
-"""PMTiles: native v3 header checks (always) plus `pmtiles verify` / `pmtiles show` (go-pmtiles)."""
+"""PMTiles: native v3 header checks (always) plus `pmtiles verify` / `pmtiles show` (go-pmtiles).
+
+Each header test is logged as its own check with the observed value, so a reader can see
+what passed as well as what failed. Reproduce the header with `pmtiles show <url>` or by
+reading the first 127 bytes.
+"""
 
 from __future__ import annotations
 
+from .. import repro
 from ..formats import parse_pmtiles_header
 from ..toolchain import run, supports, which
-from .base import Adapter, Context, parse_json_loose
+from .base import Adapter, Context, parse_json_loose, worst
 
 
 class Pmtiles(Adapter):
@@ -12,6 +18,8 @@ class Pmtiles(Adapter):
     key = "pmtiles"
     binary = "pmtiles"
     layer = "PMTiles"
+    scope = "asset"
+    formats = ("pmtiles",)
 
     def available(self) -> bool:
         return True  # native header checks need no binary
@@ -29,16 +37,25 @@ class Pmtiles(Adapter):
         if which(self.binary):
             jobs += self.per_asset(ctx, ("pmtiles",), lambda a: self.tool_checks(ctx, a))
         elif jobs and ctx.mode == "full":
-            jobs.append(
-                lambda: [
-                    self.finding(
+            for a in ctx.assets_of("pmtiles"):
+                jobs.append(
+                    lambda a=a: self.record(
                         ctx,
-                        "tool-missing",
-                        "info",
-                        "go-pmtiles not installed: native header checks ran, `pmtiles verify` did not",
+                        "pmtiles verify",
+                        [
+                            self.finding(
+                                ctx,
+                                "tool-missing",
+                                "info",
+                                "go-pmtiles not installed: native header checks ran, `pmtiles verify` did not",
+                                asset=a,
+                            )
+                        ],
+                        command="# install: https://github.com/protomaps/go-pmtiles/releases\n"
+                        + repro.tool(["pmtiles", "verify", a.href], None),
+                        asset=a,
                     )
-                ]
-            )
+                )
         return jobs
 
     def _bbox(self, ctx: Context, asset) -> list[float] | None:
@@ -56,35 +73,93 @@ class Pmtiles(Adapter):
         head = probe.first_bytes if probe else b""
         if not head:
             return None  # not looked at; unreachable assets are reported by the hosting probe
-        h = parse_pmtiles_header(head)
+        cmd = repro.lines(
+            repro.tool(["pmtiles", "show", asset.href], None),
+            "# or the raw 127-byte header:",
+            repro.first_bytes(asset.href, 127),
+        )
+        parent = self.make_check(ctx, "PMTiles header", command=cmd, asset=asset).id
         f = lambda rule, sev, msg, **d: self.finding(
             ctx, rule, sev, msg, asset=asset, fmt="pmtiles", **d
         )
-        if h is None:
-            return [f("PMT-001", "error", "Not a PMTiles archive (bad magic bytes)")]
+
+        def sub(name, findings, evidence):
+            return self.record(
+                ctx, name, findings, command=cmd, asset=asset, parent=parent, evidence=evidence
+            )
+
+        h = parse_pmtiles_header(head)
         out = []
-        if h["spec_version"] != 3:
-            out.append(
-                f("PMT-002", "error", f"PMTiles spec version {h['spec_version']} (expected 3)")
+        if h is None:
+            out += sub(
+                "magic bytes 'PMTiles'",
+                [f("PMT-001", "error", "Not a PMTiles archive (bad magic bytes)")],
+                f"first bytes: {head[:7]!r}",
             )
-        if not h["clustered"]:
-            out.append(
-                f(
-                    "PMT-003",
-                    "warning",
-                    "Archive is not clustered (tiles not in Hilbert order); "
-                    "range reads are less efficient",
+        else:
+            out += sub("magic bytes 'PMTiles'", [], "PMTiles")
+            out += sub(
+                "spec version is 3",
+                [f("PMT-002", "error", f"PMTiles spec version {h['spec_version']} (expected 3)")]
+                if h["spec_version"] != 3
+                else [],
+                f"spec_version={h['spec_version']}",
+            )
+            out += sub(
+                "clustered (Hilbert order)",
+                []
+                if h["clustered"]
+                else [
+                    f(
+                        "PMT-003",
+                        "warning",
+                        "Archive is not clustered (tiles not in Hilbert order); "
+                        "range reads are less efficient",
+                    )
+                ],
+                f"clustered={str(h['clustered']).lower()}",
+            )
+            out += sub(
+                "min_zoom <= max_zoom",
+                [f("PMT-004", "error", f"min_zoom {h['min_zoom']} > max_zoom {h['max_zoom']}")]
+                if h["min_zoom"] > h["max_zoom"]
+                else [],
+                f"min_zoom={h['min_zoom']}, max_zoom={h['max_zoom']}",
+            )
+            out += sub(
+                "tile type known",
+                [f("PMT-005", "warning", "Tile type is 'unknown'")]
+                if h["tile_type"] == "unknown"
+                else [],
+                f"tile_type={h['tile_type']}",
+            )
+            stac = self._bbox(ctx, asset)
+            if stac:
+                bcmd = repro.lines(
+                    cmd,
+                    "# STAC bbox of the owning collection/item:",
+                    repro.json_query(asset.owner_url, ".extent.spatial.bbox[0] // .bbox"),
                 )
-            )
-        if h["min_zoom"] > h["max_zoom"]:
-            out.append(
-                f("PMT-004", "error", f"min_zoom {h['min_zoom']} > max_zoom {h['max_zoom']}")
-            )
-        if h["tile_type"] == "unknown":
-            out.append(f("PMT-005", "warning", "Tile type is 'unknown'"))
-        stac = self._bbox(ctx, asset)
-        if stac:
-            out += self._compare_bounds(f, h["bounds"], stac)
+                out += self.record(
+                    ctx,
+                    "bounds match STAC bbox",
+                    self._compare_bounds(f, h["bounds"], stac),
+                    command=bcmd,
+                    asset=asset,
+                    parent=parent,
+                    evidence=f"pmtiles={[round(x, 5) for x in h['bounds']]} stac={stac}",
+                )
+        self.record(
+            ctx,
+            "PMTiles header",
+            [],
+            command=cmd,
+            asset=asset,
+            outcome=worst([c.outcome for c in ctx.checks if c.parent == parent]),
+            evidence=None
+            if h is None
+            else f"{h['tile_type']} z{h['min_zoom']}-{h['max_zoom']}, clustered={str(h['clustered']).lower()}",
+        )
         return out
 
     @staticmethod
@@ -112,12 +187,14 @@ class Pmtiles(Adapter):
     def tool_checks(self, ctx: Context, asset):
         out = []
         t = float(ctx.config.limits["tool_timeout_s"])
-        r = run([self.binary, "verify", asset.href], timeout=t)
+        cmd = [self.binary, "verify", asset.href]
+        r = run(cmd, timeout=t)
+        fs = []
         if r.timed_out or r.returncode < 0:
-            out.append(self.tool_error(ctx, r, asset.href, asset=asset))
+            fs.append(self.tool_error(ctx, r, asset.href, asset=asset))
         elif r.returncode != 0:
             msg = (r.stderr or r.stdout).strip().splitlines()
-            out.append(
+            fs.append(
                 self.finding(
                     ctx,
                     "pmtiles:verify",
@@ -127,9 +204,29 @@ class Pmtiles(Adapter):
                     fmt="pmtiles",
                 )
             )
+        out += self.record(
+            ctx,
+            "pmtiles verify",
+            fs,
+            command=self.tool_cmd(cmd),
+            asset=asset,
+            evidence=f"exit code {r.returncode}",
+        )
         if supports(self.binary, "--header-json", "show"):
-            r = run([self.binary, "show", asset.href, "--header-json"], timeout=t)
+            cmd = [self.binary, "show", asset.href, "--header-json"]
+            r = run(cmd, timeout=t)
             hdr = parse_json_loose(r.stdout)
-            if r.returncode != 0 or not isinstance(hdr, dict):
-                out.append(self.tool_error(ctx, r, asset.href, asset=asset))
+            fs = (
+                [self.tool_error(ctx, r, asset.href, asset=asset)]
+                if r.returncode != 0 or not isinstance(hdr, dict)
+                else []
+            )
+            out += self.record(
+                ctx,
+                "pmtiles show --header-json",
+                fs,
+                command=self.tool_cmd(cmd),
+                asset=asset,
+                evidence=f"exit code {r.returncode}",
+            )
         return out

@@ -20,6 +20,8 @@ src/conformance/
   adapters/<tool>.py        one adapter per tool
   report/                   summary, markdown, html, build (json/csv/parquet/badge)
   regression.py             open/update/close logic for the regression issue
+  grading.py                asset grade A-F: one level down per best practice not met
+  antipatterns.py           general anti-patterns, ranked by severity ("where to start")
 tests/                      pytest; `-m tools` needs the real validators
 tests/fixtures/             mini catalog, recorded BAFU responses, binary fixture generator
 ```
@@ -37,7 +39,12 @@ tests/fixtures/             mini catalog, recorded BAFU responses, binary fixtur
    string found in it). Own checks use `CNC-…`, `PMT-…`, `ZARR-…`, `COPC-…`.
 6. **Keep output deterministic.** Sort everything; keep timestamps and versions out of `Finding.fingerprint`.
    `tests/test_report.py::test_rerun_is_deterministic` must pass.
-7. **Assets nobody validated are "unverified", never conformant.** Format adapters mark success through
+7. **Log every check, pass or fail, with a command.** Use `Adapter.record(...)` (or `record_object`)
+   for each test: it stamps findings with `reproduce` and `check_id`. Sub-tests use `parent=`
+   (`make_check(...).id`). Record the observed value in `evidence`. `tests/test_report.py` fails if a
+   finding has no command or no check, or if a summary number does not equal its drill-down list.
+8. **New summary numbers go through `Drill.put`** in `report/summary.py`, so the page can open them.
+9. **Assets nobody validated are "unverified", never conformant.** Format adapters mark success through
    `per_asset` (return `None` from a check that could not look at the asset).
 
 ## Adding an adapter
@@ -58,7 +65,7 @@ tests/fixtures/             mini catalog, recorded BAFU responses, binary fixtur
 ## Commands
 
 ```bash
-uv venv && uv pip install -e ".[parquet,dev]"
+uv venv && uv pip install -e ".[dev]"
 .venv/bin/pytest -q                 # unit tests, tools tests skip if tools are missing
 .venv/bin/ruff check . && .venv/bin/ruff format --check .
 .venv/bin/conformance run --offline tests/fixtures/recorded/bafu/index.json --out /tmp/r

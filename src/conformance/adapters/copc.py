@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from .. import repro
 from ..toolchain import run, which
 from .base import Adapter, Context
 
@@ -13,6 +14,8 @@ class Copc(Adapter):
     key = "pdal"
     binary = None
     layer = "COPC (incubating)"
+    scope = "asset"
+    formats = ("copc",)
 
     def version(self):
         from .. import __version__
@@ -21,10 +24,20 @@ class Copc(Adapter):
         return f"pdal-{version('pdal')}" if which("pdal") else f"native-{__version__}"
 
     def jobs(self, ctx: Context):
-        jobs = self.per_asset(ctx, ("copc",), lambda a: self.header(ctx, a), header_only=True)
+        jobs = self.per_asset(ctx, ("copc",), lambda a: self._rec_header(ctx, a), header_only=True)
         if which("pdal"):
             jobs += self.per_asset(ctx, ("copc",), lambda a: self.pdal(ctx, a))
         return jobs
+
+    def _rec_header(self, ctx: Context, asset):
+        out = self.header(ctx, asset)
+        if out is None:
+            return None
+        cmd = repro.lines(
+            "# bytes 0-3 must be LASF, bytes 377-380 must be 'copc':",
+            repro.first_bytes(asset.href, 589),
+        )
+        return self.record(ctx, "COPC header", out, command=cmd, asset=asset)
 
     def header(self, ctx: Context, asset):
         b = ctx.probes[asset.href].first_bytes if asset.href in ctx.probes else b""
@@ -47,12 +60,14 @@ class Copc(Adapter):
         return out
 
     def pdal(self, ctx: Context, asset):
+        cmd = ["pdal", "info", "--summary", asset.href]
         r = run(
-            ["pdal", "info", "--summary", asset.href],
+            cmd,
             timeout=float(ctx.config.limits["tool_timeout_s"]),
         )
+        fs = []
         if r.returncode != 0:
-            return [
+            fs = [
                 self.finding(
                     ctx,
                     "pdal:info",
@@ -62,4 +77,11 @@ class Copc(Adapter):
                     fmt="copc",
                 )
             ]
-        return []
+        return self.record(
+            ctx,
+            "pdal info",
+            fs,
+            command=repro.tool(cmd, None),
+            asset=asset,
+            evidence=f"exit code {r.returncode}",
+        )

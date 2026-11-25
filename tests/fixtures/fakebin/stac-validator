@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+"""Fake stac-validator 4.6.3 CLI (click-style) for offline tests."""
+import json, sys
+a = sys.argv[1:]
+HELP = """Usage: stac-validator [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  batch     Validate multiple STAC files concurrently using all available...
+  validate  Main function for the `stac-validator` command line tool.
+"""
+if a == ["--help"]:
+    print(HELP); sys.exit(0)
+if a and a[0] == "validate":
+    path = a[1]
+    doc = json.load(open(path))
+    ok = "license" in doc or doc.get("type") != "Collection"
+    out = [{"version": doc.get("stac_version"), "path": path, "schema": ["https://schemas.stacspec.org/v1.1.0/collection-spec/json-schema/collection.json"],
+            "valid_stac": ok, "asset_type": doc.get("type", "").upper(), "validation_method": "default"}]
+    if not ok:
+        out[0] |= {"error_type": "JSONSchemaValidationError", "error_message": "'license' is a required property"}
+    print(json.dumps(out, indent=4)); sys.exit(0 if ok else 1)
+print("Usage: stac-validator [OPTIONS] COMMAND [ARGS]...\nTry 'stac-validator --help' for help.\n", file=sys.stderr)
+print(f"Error: No such {'option' if a and a[0].startswith('-') else 'command'} '{a[0] if a else ''}'.", file=sys.stderr)
+sys.exit(2)

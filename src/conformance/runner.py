@@ -35,6 +35,7 @@ class RunOutput:
     tool_versions: dict[str, str | None] = field(default_factory=dict)
     coverage: list[dict] = field(default_factory=list)
     infra_errors: list[str] = field(default_factory=list)
+    max_asset_size_gb: float = 2.0
 
 
 def _now() -> str:
@@ -49,7 +50,9 @@ def execute(
     spec: SpecInfo | None = None,
     log=print,
 ) -> RunOutput:
-    out = RunOutput(started=_now(), mode=mode)
+    out = RunOutput(
+        started=_now(), mode=mode, max_asset_size_gb=float(config.limits["max_asset_size_gb"])
+    )
     out.spec = spec or resolve_spec(
         fetcher,
         config.spec["repo"],
@@ -87,7 +90,7 @@ def execute(
         for a in cr.assets:
             p = ctx.probes.get(a.href)
             ctx.formats[a.href] = detect(a.href, a.media_type, p.first_bytes if p else None)
-        findings = list(cr.findings)
+        findings = _crawl_checks(ctx)
         findings += _run_adapters(ctx, adapters, out, int(config.limits["concurrency"]), log)
         out.findings += findings
         out.catalogs.append(
@@ -176,6 +179,8 @@ def _run_adapters(
                     "reason": "lightweight run (metadata and STAC only)",
                 }
             )
+            for c in _skipped_checks(ctx, ad, "lightweight run (metadata and STAC only)"):
+                ctx.checks.append(c)
             continue
         try:
             ad_jobs = ad.jobs(ctx)
@@ -185,19 +190,7 @@ def _run_adapters(
         if not ad_jobs:
             continue
         if not ad.available():
-            jobs.append(
-                (
-                    ad,
-                    lambda ad=ad, n=len(ad_jobs): [
-                        ad.finding(
-                            ctx,
-                            "tool-missing",
-                            "info",
-                            f"{ad.name} is not installed; {n} check(s) not run",
-                        )
-                    ],
-                )
-            )
+            jobs.append((ad, lambda ad=ad: ad.missing(ctx, "not installed in this run")))
             continue
         jobs += [(ad, j) for j in ad_jobs]
 
@@ -216,6 +209,58 @@ def _run_adapters(
         for fs in ex.map(go, jobs):
             results += fs
     return results
+
+
+class _Crawler(Adapter):
+    name = "crawler"
+
+
+def _crawl_checks(ctx: Context) -> list[Finding]:
+    """One check per STAC document the crawler read (or failed to read)."""
+    from . import repro
+
+    ad = _Crawler()
+    out: list[Finding] = []
+    for o in ctx.crawl.objects:
+        ad.record(
+            ctx,
+            "STAC document readable",
+            [],
+            command=repro.json_query(
+                o.url, "{type, id, stac_version, links: [.links[] | {rel, href}]}"
+            ),
+            target=o.url,
+            collection=o.collection,
+            item=o.id if o.kind == "Feature" else None,
+            evidence=f"{o.kind} '{o.id}'",
+        )
+    for f in ctx.crawl.findings:
+        url = f.asset_href or ctx.crawl.root_url
+        out += ad.record(
+            ctx,
+            "STAC document readable" if f.rule_id == "CRAWL-001" else f.rule_id,
+            [f],
+            command=repro.json_query(url, "."),
+            target=url,
+            collection=f.collection,
+        )
+    return out
+
+
+def _skipped_checks(ctx: Context, ad: Adapter, reason: str):
+    """Log what a mode-skipped adapter would have run, without findings (not a failure)."""
+    tmp = Context(
+        config=ctx.config,
+        fetcher=ctx.fetcher,
+        crawl=ctx.crawl,
+        mode=ctx.mode,
+        probes=ctx.probes,
+        formats=ctx.formats,
+    )
+    ad.missing(tmp, reason, rule="skipped-mode")
+    for c in tmp.checks:
+        c.findings = []
+    return tmp.checks
 
 
 def _raise(e: Exception):

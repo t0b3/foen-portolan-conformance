@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 
+from .. import repro
 from .base import Adapter, Context
 
 INCUBATING = "Zarr is incubating in the Portolan spec; findings are advisory."
@@ -18,11 +19,25 @@ class Zarr(Adapter):
     key = "zarr"
     binary = None
     layer = "Zarr (incubating)"
+    scope = "asset"
+    formats = ("zarr",)
 
     def jobs(self, ctx: Context):
         return self.per_asset(ctx, ("zarr",), lambda a: self.check(ctx, a), header_only=True)
 
     def check(self, ctx: Context, asset):
+        base = asset.href.rstrip("/")
+        cmd = repro.lines(
+            "# Zarr v3 (consolidated metadata inline):",
+            repro.json_query(base + "/zarr.json", "."),
+            "# Zarr v2 consolidated:",
+            repro.json_query(base + "/.zmetadata", ".metadata | keys"),
+        )
+        return self.record(
+            ctx, "Zarr consolidated metadata", self._check(ctx, asset), command=cmd, asset=asset
+        )
+
+    def _check(self, ctx: Context, asset):
         base = asset.href.rstrip("/")
         f = lambda rule, sev, msg: self.finding(
             ctx, rule, sev, msg, asset=asset, fmt="zarr", note=INCUBATING

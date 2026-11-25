@@ -185,3 +185,70 @@ def test_hosting_probe(ctx):
     assert rules == ["CNC-HOST-001", "CNC-HOST-002", "CNC-HOST-003", "CNC-HOST-005", "CNC-HOST-006"]
     ctx.probes[a.href] = Probe(range=Response(a.href, 403, {}), head=Response(a.href, 403, {}))
     assert [f.rule_id for f in Hosting().check(ctx, a)] == ["CNC-HOST-000"]
+
+
+def test_gpio_optimization_score_parsing():
+    from conformance.adapters.gpio import parse_score
+
+    assert parse_score('{"score": 73.5, "factors": []}') == 73.5
+    assert parse_score("Optimization score: 4/5 factors ... 80/100") == 80.0
+    assert parse_score("Spatial query optimization score: 64") == 64.0
+    assert parse_score("nothing here") is None
+
+
+def test_parquet_footer_version_decoding():
+    from conformance.adapters.parquet_footer import footer_length, metadata_version
+
+    assert metadata_version(b"\x15\x04rest") == 2  # field 1, i32, zigzag(4) = 2
+    assert metadata_version(b"\x15\x02rest") == 1
+    assert metadata_version(b"\x05\x02\x04") == 2  # long-form field header
+    assert metadata_version(b"\x16\x04") is None  # not an i32
+    assert metadata_version(b"\x25\x04") is None  # field 2, not version
+    assert footer_length(b"\x10\x00\x00\x00PAR1") == 16
+    assert footer_length(b"\x10\x00\x00\x00PAR2") is None
+
+
+def _parquet_like(path, version: int):
+    """Minimal file with a real Parquet tail: PAR1 ... <footer><len>PAR1 (footer: version + filler)."""
+    import struct
+
+    footer = bytes([0x15, version * 2]) + b"\x00" * 30
+    path.write_bytes(b"PAR1" + b"\x00" * 100 + footer + struct.pack("<I", len(footer)) + b"PAR1")
+
+
+def test_parquet_footer_check_reads_two_ranges(tmp_path, config):
+    from conformance.adapters.parquet_footer import ParquetFooter
+    from conformance.crawl import Asset, CrawlResult
+    from conformance.http import Fetcher
+
+    cat = CatalogConfig(id="t", url=str(tmp_path / "catalog.json"))
+    for v in (1, 2):
+        p = tmp_path / f"v{v}.parquet"
+        _parquet_like(p, v)
+        a = Asset(
+            "t",
+            "data",
+            str(p),
+            "application/vnd.apache.parquet",
+            ["data"],
+            "c",
+            None,
+            str(tmp_path / "c.json"),
+        )
+        ctx = Context(
+            config=config,
+            fetcher=Fetcher(retries=0),
+            crawl=CrawlResult(catalog=cat, root_url=cat.url),
+        )
+        version, cid = ParquetFooter().check(ctx, a)
+        assert version == v
+        c = ctx.checks[0]
+        assert c.id == cid and c.outcome == ("pass" if v == 2 else "warn")
+        assert f"FileMetaData.version={v}" in c.evidence and "tail -c 8" in c.command
+    junk = tmp_path / "junk.parquet"
+    junk.write_bytes(b"not a parquet file at all")
+    a = Asset("t", "data", str(junk), None, ["data"], "c", None, str(tmp_path / "c.json"))
+    ctx = Context(
+        config=config, fetcher=Fetcher(retries=0), crawl=CrawlResult(catalog=cat, root_url=cat.url)
+    )
+    assert ParquetFooter().check(ctx, a)[0] is None and ctx.checks[0].outcome == "skipped"

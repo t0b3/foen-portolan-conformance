@@ -45,7 +45,6 @@ checks:
     stac_validator: true
     stac_check: true
     gpio: true
-    gpq: true
     rio_cogeo: true
     pmtiles: true
     pdal: true

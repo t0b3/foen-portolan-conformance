@@ -51,7 +51,11 @@ def _s(x) -> str:
 
 @functools.cache
 def version(binary: str, *args: str) -> str | None:
-    """Best-effort version string; tries `--version` then `version`."""
+    """Best-effort version string: `--version`, then `version`, then `uv tool list`.
+
+    The last one covers CLIs without a version flag (stac-validator 4.x): it reports the
+    version of the uv-installed package that provides the command.
+    """
     if not which(binary):
         return None
     for probe in ([*args, "--version"], [*args, "version"]):
@@ -61,7 +65,29 @@ def version(binary: str, *args: str) -> str | None:
             m = VERSION_RE.search(text)
             if m:
                 return m.group(1)
-    return "unknown"
+    return uv_tool_versions().get(binary, "unknown")
+
+
+@functools.cache
+def uv_tool_versions() -> dict[str, str]:
+    """Map executable -> version from `uv tool list` (package lines "name vX.Y.Z", then "- exe")."""
+    if not which("uv"):
+        return {}
+    return parse_uv_tool_list(run(["uv", "tool", "list"], timeout=60).stdout)
+
+
+def parse_uv_tool_list(text: str) -> dict[str, str]:
+    out: dict[str, str] = {}
+    current = None
+    for line in text.splitlines():
+        m = re.match(r"^(\S+) v(\d[\w.+-]*)", line)
+        if m:
+            current = m.group(2)
+            continue
+        m = re.match(r"^\s*-\s+(\S+)", line)
+        if m and current:
+            out[m.group(1)] = current
+    return out
 
 
 @functools.cache

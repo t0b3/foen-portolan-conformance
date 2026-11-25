@@ -31,6 +31,13 @@ def main(argv: list[str] | None = None) -> int:
     r.add_argument("--max-asset-size-gb", type=float)
     r.add_argument("--strict", action="store_true", help="exit 3 if any MUST requirement fails")
     r.add_argument(
+        "--require",
+        action="append",
+        default=[],
+        metavar="BINARY",
+        help="exit 4 before running if this tool is not on PATH (repeatable)",
+    )
+    r.add_argument(
         "--fail-on-tool-error",
         action="store_true",
         help="exit 4 if a tool crashed, timed out or is missing (used by the tool canary)",
@@ -73,7 +80,12 @@ def cmd_run(a) -> int:
     from .report import build_report, load_previous, write_outputs
     from .runner import execute
     from .spec import SpecInfo, parse_requirements
+    from .toolchain import which
 
+    missing = [b for b in a.require if not which(b)]
+    if missing:
+        print(f"required tool(s) not installed: {', '.join(missing)}", file=sys.stderr)
+        return EXIT_TOOL
     cfg = load_config(a.config)
     if a.max_asset_size_gb is not None:
         cfg.limits["max_asset_size_gb"] = a.max_asset_size_gb

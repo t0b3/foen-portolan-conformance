@@ -62,3 +62,30 @@ def test_rio_cogeo_real(mctx, mini_dir):
 def test_pmtiles_real(mctx):
     good = Pmtiles().tool_checks(mctx, _asset(mctx, "good.pmtiles"))
     assert not any(f.severity == "error" for f in good), good
+
+
+@pytest.mark.skipif(not shutil.which("stac-validator"), reason="stac-validator not installed")
+def test_stac_validator_real(tmp_path):
+    """The adapter runs the real stac-validator and parses its JSON (valid + invalid object)."""
+    import json
+
+    from conformance.adapters.stac_validator import StacValidator
+    from conformance.config import load_config
+
+    from conftest import FIXTURES
+
+    good = FIXTURES / "smoke" / "collection.json"
+    bad = tmp_path / "bad.json"
+    doc = json.loads(good.read_text())
+    del doc["license"]
+    bad.write_text(json.dumps(doc))
+    cfg = load_config(FIXTURES.parents[1] / "config.yaml")
+    for path, expect_error in ((good, False), (bad, True)):
+        cr = crawl(CatalogConfig(id="smoke", url=str(path)), Fetcher(retries=0))
+        ctx = Context(config=cfg, fetcher=Fetcher(retries=0), crawl=cr)
+        obj = cr.objects[0]
+        ad = StacValidator()
+        fs = ad.record_object(ctx, obj, ad.check(ctx, obj), ad.cmd(obj.url))
+        assert not any(f.rule_id == "tool-error" for f in fs), fs
+        assert any(f.severity == "error" for f in fs) is expect_error, fs
+        assert ctx.checks and ctx.checks[0].command.startswith("uvx --from stac-valid==")

@@ -18,7 +18,7 @@ resolved again on every run.
 | Portolan catalog | [`rashid`](https://github.com/portolan-sdi/rashid) | `rashid check <url> --json --all --schema --live`; rule IDs `PTL-…` and requirement IDs `PORTO-…` are kept on every finding. `PTL-GEN-002` is shown as a coverage limit, not a failure. |
 | Portolan CLI | `portolan-cli` | Read-only second opinion, **only if** `portolan check --help` shows it accepts a remote URL. As of 0.9.0 it needs a local directory, so it is left out and the report says so. Never `--fix`, never `push`. |
 | STAC | `stac-validator`, `stac-check` | Root, every collection and every item. |
-| GeoParquet | `gpio check spec` + `gpio check all`; `gpq validate` as cross-check | |
+| GeoParquet | `gpio check spec` + `gpio check all` (geoparquet-io); Parquet v2 from the file footer | Feeds the grade. |
 | COG | `rio cogeo validate --strict` | GDAL reads over HTTP range requests. |
 | PMTiles | native v3 header parser + `pmtiles verify` / `pmtiles show` | Clustered flag, tile type, zooms, bounds against the STAC bbox. |
 | Zarr / COPC | native metadata/header probe (+ `pdal info`) | Marked "incubating in spec". |
@@ -33,8 +33,8 @@ reads, and assets above `max_asset_size_gb` (default 2 GB) get header checks onl
 ## Run locally
 
 ```bash
-uv venv && uv pip install -e ".[parquet,dev]"
-scripts/install-tools.sh            # latest rashid, gpio, stac-validator, stac-check, rio-cogeo, pmtiles, gpq
+uv venv && uv pip install -e ".[dev]"
+scripts/install-tools.sh            # latest rashid, gpio, stac-valid (stac-validator), stac-check, rio-cogeo, pmtiles
 .venv/bin/conformance run --config config.yaml --out reports/
 open reports/latest/index.html
 ```
@@ -48,6 +48,7 @@ Useful options:
 | `--max-asset-size-gb N` | change the size cap |
 | `--strict` | exit 3 when any MUST requirement fails (red CI on non-conformance) |
 | `--fail-on-tool-error` | exit 4 when a tool crashed, timed out or is missing |
+| `--require BINARY` | exit 4 before running if this tool is not on PATH (the workflows pass `--require stac-validator`) |
 | `--offline tests/fixtures/recorded/bafu/index.json` | replay recorded HTTP responses (no network) |
 | `--spec-file requirements.yaml --spec-version 0.3.0` | use a local requirements manifest |
 
@@ -81,6 +82,24 @@ A local directory path works too (that is how the tool canary checks the referen
   binaries) and writes a `tool_versions` block into the report. `constraints.txt` is empty; add a line such as
   `rashid!=0.5.1` to pin out a broken release. The validator cache is keyed by ISO week.
 
+## Reproducing any result by hand
+
+Nothing in the report has to be taken on trust:
+
+- **Every finding** has a `reproduce` command: the exact tool call, pinned to the version that ran
+  (`uvx --from geoparquet-io==1.8.0 gpio check all <url>`), or for this repo's own checks the `curl`/`jq`/`xxd`
+  commands that show the same evidence (headers, magic bytes, STAC fields).
+- **Every check is logged, passes included** (`checks.csv`, `report.json → checks`): tool, version, target, the
+  value that was observed (e.g. `Access-Control-Allow-Origin: (absent)`, `clustered=true`), outcome, command,
+  and the findings it produced. Tool runs are parent checks; the individual tests they report are children.
+- **Every dataset** (asset and collection) lists the commands to inspect it yourself: its STAC entry, the headers of
+  a ranged cross-origin GET, its size, its first bytes, and its format validator.
+- **The whole run** has a reproduce block: install commands with the same tool versions, then the `conformance run` call.
+
+In `index.html`, **every number is a link**. It opens the exact list it counts (assets, findings, checks or spec
+requirements). From there each item expands to its checks, their sub-checks, the observed evidence and a
+**copy** button for the command. The test suite asserts that every number equals the length of its list.
+
 ## Reading the report
 
 `reports/latest/` (and a dated snapshot `reports/YYYY-MM-DD/`) holds:
@@ -90,7 +109,11 @@ A local directory path works too (that is how the tool canary checks the referen
   changes since the last run, trend charts, coverage, tool versions.
 - `report.json`: every normalized finding plus run metadata.
 - `report.md`: the summary (also posted on PRs and in the job summary).
-- `findings.csv`, `findings.parquet`: for analysis.
+- `findings.parquet`, `checks.parquet`: Parquet format **2.6 with V2 data pages** ("Parquet v2"), ZSTD,
+  typed columns (`is_coverage` bool, `findings` list of fingerprints). Run metadata (spec and tool versions)
+  sits in the file's key-value metadata under `foen-portolan-conformance`.
+  `duckdb -c "select severity, count(*) from 'findings.parquet' group by 1"`
+- `findings.csv`, `checks.csv`: the same rows as CSV (with `reproduce` and `check_id` columns).
 - `badge.json`: shields.io endpoint.
 
 Each finding is `{catalog_id, collection, item, asset_href, format, tool, tool_version, rule_id, severity, message, spec_requirement_id}`.
@@ -103,6 +126,40 @@ Each finding is `{catalog_id, collection, item, asset_href, format, tool, tool_v
 | **Unverified** | a cloud-native asset that no validator could read (tool missing, size cap, light mode) - never counted as conformant |
 | **Scored assets** | data and tiles; thumbnails, styles and documents are ancillary (hosting-probed, not scored) |
 | **Coverage** | what did not run and why (tool missing / error, size cap, remote-crawl limits). Not a failure. |
+
+### Grades (A to F)
+
+Every scored asset gets a grade, with the same rule for every cloud-native format (GeoParquet, COG,
+PMTiles, COPC, Zarr):
+
+- start at **A**; each best practice or recommendation that is not met drops the grade **one level**.
+  That is every MUST failure and SHOULD warning on the asset, from any tool: gpio, rio-cogeo, the
+  PMTiles/COPC/Zarr checks, the hosting probe (range requests, CORS) and rashid
+- GeoParquet: not being **Parquet v2** is one of them (`CNC-PQ-001`), so a file whose only gap is Parquet v1 is a
+  **B**. A version that could not be confirmed (`CNC-PQ-002`) counts too
+- **A only if every best practice is met** (and confirmed); floor is **F**
+- a data asset in a format that is not cloud-native (GeoPackage, Shapefile, plain GeoTIFF, …) is **F**
+- an asset no format validator could read gets no grade: an unchecked file must not look like an A
+- the same problem reported twice by one tool counts once; info notes (missing ETag, media type spelling) don't count
+
+Each grade links to the exact findings that cost it a level, each with its reproduce command. The rule lives in
+`src/conformance/grading.py`. The Parquet version is read from the file footer with two small range requests
+(`curl -sS -r -8 <url> | xxd`).
+
+### Where to start: anti-patterns
+
+At the top of the report, every MUST and SHOULD finding is sorted into one **general anti-pattern** and the
+groups are ranked by **severity** (critical → high → medium → low), then by how many assets they hit. Each group
+says why it matters and how to fix it, and drills down to the affected assets, findings and rules:
+
+| Severity | Anti-pattern |
+|---|---|
+| critical | Data not in a cloud-native format · Not readable with HTTP range requests · Invalid or broken files and metadata |
+| high | Portolan MUST requirements broken · Blocked for browser clients (CORS) |
+| medium | No spatial index or ordering · Inefficient storage layout (incl. Parquet v1, compression, row groups) · Metadata does not match the data · Portolan SHOULD not followed |
+| low | Missing documentation · STAC best practices · Other |
+
+The classification table is `src/conformance/antipatterns.py`.
 
 Rule IDs: `PTL-…` come from rashid, `gpio:…`, `stac-check:…` etc. from those tools, `CNC-…`, `PMT-…`,
 `ZARR-…`, `COPC-…` from this repo's own checks (they carry no `PORTO-…` ID unless a tool supplied one).
@@ -117,6 +174,25 @@ Rule IDs: `PTL-…` come from rashid, `gpio:…`, `stac-check:…` etc. from tho
 - `.github/workflows/tool-canary.yml`: weekly, latest tools against the reference catalogs in the spec repo.
   If the canary is red, a tool changed, not the FOEN catalog.
 - `.github/workflows/ci.yml`: ruff + unit tests.
+
+**stac-validator is required.** It is installed from the PyPI package **`stac-valid`**: the project was renamed at
+4.2.0 and `stac-validator` on PyPI is now an alias with no code, so `uv tool install stac-validator` fails. The command
+is still called `stac-validator`; since 4.x it validates with `stac-validator validate <path>` and has no `--version`
+(the report takes the version from `uv tool list`). The adapter reads `--help` and also handles the 3.x form. `scripts/install-tools.sh` installs it first, retries once, and runs it against
+`tests/fixtures/smoke/collection.json`; if it is missing or the smoke test fails, the script exits 1 and the workflow
+fails. The run step also passes `--require stac-validator`. `ci.yml` runs the stac-validator adapter test against the
+real tool on every PR. Other validators are best effort: a failed install shows up in the report as "tool-missing".
+Set `REQUIRED_TOOLS="stac-validator rashid"` (space-separated, command names) to make more tools mandatory.
+
+`INSTALL_SYSTEM=1` also installs `gdal-bin` and `pdal` from apt, one at a time. `pdal` is not in Ubuntu 24.04's default
+archive, so on GitHub runners it is skipped with a warning; it is only needed for COPC assets, which the FOEN catalog
+does not have.
+
+Workflows run on the **`ubuntu-26.04`** runner (pinned rather than `ubuntu-latest`, so an OS move is a deliberate
+change) with **Python 3.14**, set in `.python-version`, the workflows and `install-tools.sh` (`PYTHON_VERSION`).
+3.14 is the newest Python for which every validator installs from wheels: Python 3.15 is out, but gpio pins
+`duckdb<1.6`, and duckdb 1.5.x ships no 3.15 wheels (checked 2026-11-26). Move to 3.15 once gpio allows duckdb 2.x or
+duckdb publishes 1.5.x wheels for 3.15. Action versions are kept current by Dependabot.
 
 One-time setup: *Settings → Pages → Source: GitHub Actions*.
 

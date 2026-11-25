@@ -35,6 +35,7 @@ def render_markdown(r: dict, max_rows: int = 25) -> str:
         f"| MUST failures (errors) | **{s['must_failures']}** |",
         f"| SHOULD warnings | {s['should_warnings']} |",
         f"| Coverage notes (skipped / tool issues) | {s['coverage_notes']} |",
+        *_antipatterns(s.get("anti_patterns") or []),
         "",
         "## Spec version",
         "",
@@ -65,6 +66,39 @@ def render_markdown(r: dict, max_rows: int = 25) -> str:
         L.append(
             f"| {k} | {v['assets']} | {v['fully_conformant']} ({_p(v['pct'])}) | {v['unverified']} | {v['errors']} | {v['warnings']} |"
         )
+    gs = s.get("grades")
+    if gs:
+        L += [
+            "",
+            "## Grades",
+            "",
+            gs["method"],
+            "",
+            f"{gs['graded']} graded, {gs['ungraded']} not graded (unverified). "
+            + ", ".join(f"{g}: {n}" for g, n in gs["overall"].items()),
+            "",
+        ]
+        if gs["by_format"]:
+            L += ["| Format | A | B | C | D | E | F |", "|---|---:|---:|---:|---:|---:|---:|"]
+            L += [
+                f"| {f} | " + " | ".join(str(v[g]) for g in "ABCDEF") + " |"
+                for f, v in gs["by_format"].items()
+            ]
+            L.append("")
+        by_id = {a["id"]: a for a in r["assets"]}
+        fs_by = {f["fingerprint"]: f for f in r["findings"]}
+        ranked = [by_id[i] for i in gs["ranked"]]
+        if ranked:
+            L += ["| Grade | Asset | Format | Collection | Not met |", "|:-:|---|---|---|---|"]
+            for a in ranked:
+                g = a["grade"]
+                why = (
+                    "; ".join(f"`{fs_by[fp]['rule_id']}`" for fp in g["unmet"] if fp in fs_by)
+                    or "-"
+                )
+                L.append(
+                    f"| **{g['grade']}** | {_short(a['href'])} | {a['format']} | {a['collection'] or '-'} | {why} |"
+                )
     L += [
         "",
         "## By collection",
@@ -95,17 +129,40 @@ def render_markdown(r: dict, max_rows: int = 25) -> str:
                 ]
                 if len(rows) > max_rows:
                     L.append(f"- … and {len(rows) - max_rows} more")
-    errs = [f for f in r["findings"] if f["severity"] == "error"]
-    if errs:
-        L += ["", "## MUST failures", ""]
+    for sev, title in (("error", "MUST failures"), ("warning", "SHOULD warnings")):
+        fs = [f for f in r["findings"] if f["severity"] == sev]
+        if not fs:
+            continue
         L += [
-            f"- {f['collection'] or '-'} · {_short(f.get('asset_href'))} · {f['tool']} `{f['rule_id']}`"
-            + (f" ({f['spec_requirement_id']})" if f.get("spec_requirement_id") else "")
-            + f": {f['message']}"
-            for f in errs[:max_rows]
+            "",
+            f"## {title} ({len(fs)})",
+            "",
+            "Each entry ends with the command that reproduces it.",
+            "",
         ]
-        if len(errs) > max_rows:
-            L.append(f"- … and {len(errs) - max_rows} more (see report.json)")
+        for f in fs[:max_rows]:
+            L.append(
+                f"- **{f['collection'] or '(catalog)'}** · {_short(f.get('asset_href'))} · "
+                f"{f['tool']} {f.get('tool_version') or ''} `{f['rule_id']}`"
+                + (f" ({f['spec_requirement_id']})" if f.get("spec_requirement_id") else "")
+                + f": {f['message']}"
+            )
+            if f.get("reproduce"):
+                L += ["", "  ```sh", *("  " + x for x in f["reproduce"].splitlines()), "  ```", ""]
+        if len(fs) > max_rows:
+            L.append(f"- … and {len(fs) - max_rows} more (see findings.csv, column `reproduce`)")
+    ck = r["summary"].get("checks")
+    if ck:
+        L += [
+            "",
+            "## Checks",
+            "",
+            f"{ck['total']} checks: {ck['pass']} pass, {ck['fail']} fail, {ck['warn']} warn, {ck['info']} info, "
+            f"{ck['skipped']} skipped, {ck['error']} tool error. Every check, with what was observed and its "
+            "command, is in `checks.csv` and in the HTML report.",
+        ]
+    if r["run"].get("reproduce"):
+        L += ["", "## Reproduce this run", "", "```sh", r["run"]["reproduce"], "```"]
     L += ["", "## Coverage", ""]
     if r["coverage"]:
         seen = set()
@@ -120,6 +177,36 @@ def render_markdown(r: dict, max_rows: int = 25) -> str:
     L += ["", "## Tool versions", "", "| Tool | Version |", "|---|---|"]
     L += [f"| {k} | {v or 'not installed'} |" for k, v in r["tool_versions"].items()]
     return "\n".join(L) + "\n"
+
+
+def _antipatterns(aps: list[dict]) -> list[str]:
+    """'Where to start': general anti-patterns, worst first."""
+    out = ["", "## Where to start: anti-patterns by severity", ""]
+    if not aps:
+        return [*out, "No anti-pattern found."]
+    out += [
+        "| # | Severity | Anti-pattern | Assets | Findings (MUST / SHOULD) | Rules |",
+        "|---:|---|---|---:|---|---|",
+    ]
+    for g in aps:
+        rules = ", ".join(f"`{x['rule_id']}` ×{x['count']}" for x in g["rules"][:6])
+        if len(g["rules"]) > 6:
+            rules += f", … {len(g['rules']) - 6} more"
+        out.append(
+            f"| {g['rank']} | {g['severity']} | **{g['title']}** | {len(g['assets'])} | "
+            f"{len(g['findings'])} ({g['must']} / {g['should']}) | {rules} |"
+        )
+    out.append("")
+    for g in aps:
+        out += [
+            f"**{g['rank']}. {g['title']}** ({g['severity']}). {g['why']} *Fix:* {g['fix']}",
+            "",
+        ]
+    return out
+
+
+def _n(x) -> str:
+    return "-" if x is None else f"{x:g}"
 
 
 def _short(href: str | None) -> str:

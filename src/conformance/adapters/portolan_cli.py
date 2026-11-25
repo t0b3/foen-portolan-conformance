@@ -11,7 +11,7 @@ from __future__ import annotations
 import re
 
 from ..toolchain import help_text, run, supports
-from .base import Adapter, Context, parse_json_loose, sev_from_status, walk_checks
+from .base import Adapter, Context, parse_json_loose, sev_from_status, walk_checks, worst
 
 FORBIDDEN = {"--fix", "--remove-legacy", "push", "--dry-run"}
 
@@ -22,6 +22,10 @@ class PortolanCli(Adapter):
     binary = "portolan"
     layer = "Portolan catalog (second opinion)"
     light = True
+    install = "uv tool install portolan-cli"
+
+    def example_cmd(self, url):
+        return ["portolan", "check", "<local-copy-of-catalog>", "--json"]
 
     def accepts_remote(self) -> bool:
         h = help_text(self.binary, "check")
@@ -40,15 +44,22 @@ class PortolanCli(Adapter):
 
     def check(self, ctx: Context):
         if not self.accepts_remote():
-            return [
-                self.finding(
-                    ctx,
-                    "coverage-limit",
-                    "info",
-                    "portolan-cli left out: `portolan check` only validates a local directory; it cannot "
-                    "check a remote catalog without a local copy. rashid covers the same requirements.",
-                )
-            ]
+            return self.record(
+                ctx,
+                "portolan check",
+                [
+                    self.finding(
+                        ctx,
+                        "coverage-limit",
+                        "info",
+                        "portolan-cli left out: `portolan check` only validates a local directory; it cannot "
+                        "check a remote catalog without a local copy. rashid covers the same requirements.",
+                    )
+                ],
+                command="portolan check --help   # PATH must be a local directory",
+                target=ctx.crawl.root_url,
+                outcome="skipped",
+            )
         cmd = [self.binary, "check", ctx.crawl.root_url]
         if supports(self.binary, "--json", "check"):
             cmd.append("--json")
@@ -56,13 +67,44 @@ class PortolanCli(Adapter):
             cmd.append("--no-data")
         assert not FORBIDDEN & set(cmd), "portolan-cli must run read-only"
         r = run(cmd, timeout=float(ctx.config.limits["tool_timeout_s"]))
+        command = self.tool_cmd(cmd)
         if r.returncode not in (0, 1):
-            return [self.tool_error(ctx, r, ctx.crawl.root_url)]
+            return self.record(
+                ctx,
+                "portolan check",
+                [self.tool_error(ctx, r, ctx.crawl.root_url)],
+                command=command,
+                target=ctx.crawl.root_url,
+                evidence=f"exit code {r.returncode}",
+            )
         doc = parse_json_loose(r.stdout)
+        parent = self.make_check(
+            ctx, "portolan check", command=command, target=ctx.crawl.root_url
+        ).id
         out = []
         for name, status, msg in walk_checks(doc or {}):
-            if status in ("fail", "warn"):
-                out.append(
-                    self.finding(ctx, f"portolan-cli:{name}", sev_from_status(status), msg or name)
-                )
+            fs = (
+                [self.finding(ctx, f"portolan-cli:{name}", sev_from_status(status), msg or name)]
+                if status in ("fail", "warn")
+                else []
+            )
+            out += self.record(
+                ctx,
+                name,
+                fs,
+                command=command,
+                target=ctx.crawl.root_url,
+                parent=parent,
+                evidence=msg or status,
+                outcome={"pass": "pass"}.get(status),
+            )
+        self.record(
+            ctx,
+            "portolan check",
+            [],
+            command=command,
+            target=ctx.crawl.root_url,
+            outcome=worst([c.outcome for c in ctx.checks if c.parent == parent]),
+            evidence=f"exit code {r.returncode}",
+        )
         return out
