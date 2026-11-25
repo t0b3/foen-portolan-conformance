@@ -1,0 +1,51 @@
+# foen-portolan-conformance configuration
+#
+# Add catalogs to the list below. Each needs an `id` and a `url` (https://… or a local path).
+# `include` / `exclude` are glob patterns matched against the collection id.
+
+catalogs:
+  - id: bafu-portolan
+    url: https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/catalog.json
+    browser: https://browser.portolan-sdi.org/#/external/ron-portolan.s3.eu-central-1.amazonaws.com/portolan/catalog.json
+    # include: ["*"]
+    # exclude: ["test_*"]
+
+  # Example for a later official FOEN catalog or BAFU's own STAC endpoint:
+  # - id: bafu-official
+  #   url: https://data.example.admin.ch/portolan/catalog.json
+  #   include: ["*"]
+
+spec:
+  repo: portolan-sdi/portolan-spec
+  requirements_path: specs/portolan/requirements.yaml
+  # "latest-release" (falls back to main if there are no releases) or an explicit tag/branch.
+  ref: latest-release
+
+limits:
+  max_asset_size_gb: 2          # above this only metadata/header checks run ("skipped: size")
+  concurrency: 8                # parallel adapter jobs
+  http_timeout_s: 30
+  http_retries: 3
+  tool_timeout_s: 900           # per tool invocation
+  max_items_per_collection: 5000
+
+checks:
+  # Severity given to a data asset that is not a Portolan cloud-native format.
+  non_cloud_native_severity: warning
+  # Asset roles that are ancillary: probed for hosting, but not scored for conformance.
+  ancillary_roles: [thumbnail, overview, style, metadata, documentation, legend, source]
+  docs:
+    # Files looked for beside the root catalog and each collection.
+    root: [README.md, AGENTS.md, llms.txt]
+    collection: [README.md, AGENTS.md]
+    severity: warning
+  tools:
+    rashid: true
+    portolan_cli: true      # runs only on a metadata-only local mirror, never --fix / push
+    stac_validator: true
+    stac_check: true
+    gpio: true
+    gpq: true
+    rio_cogeo: true
+    pmtiles: true
+    pdal: true

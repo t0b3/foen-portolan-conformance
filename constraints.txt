@@ -1,0 +1,4 @@
+# Empty on purpose: every run installs the newest release of every validator.
+# If an upstream release breaks, pin it out here and open an issue, e.g.
+#   rashid!=0.5.1
+#   geoparquet-io<1.9

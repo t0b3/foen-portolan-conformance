@@ -1,0 +1,73 @@
+name: tool-canary
+
+# Runs the latest validators against the Portolan reference catalogs shipped in the spec repo.
+# If this goes red while the FOEN catalog did not change, a tool changed - not the catalog.
+
+on:
+  schedule:
+    - cron: "37 4 * * 0"   # weekly, Sunday 04:37 UTC (the day before the full FOEN run)
+  workflow_dispatch:
+  pull_request:
+    paths: ["src/conformance/adapters/**", "scripts/install-tools.sh", "constraints.txt"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tool-canary-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  canary:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      - name: "Install latest validators (no cache, always fresh)"
+        run: |
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          INSTALL_SYSTEM=1 scripts/install-tools.sh
+      - name: Install this package
+        run: |
+          uv venv .venv
+          uv pip install --python .venv -e ".[parquet,dev]"
+
+      - name: Fetch the Portolan reference catalogs (latest spec release)
+        id: spec
+        run: |
+          tag=$(gh release view --repo portolan-sdi/portolan-spec --json tagName -q .tagName 2>/dev/null || echo main)
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          git clone --depth 1 --branch "$tag" https://github.com/portolan-sdi/portolan-spec.git /tmp/spec
+          {
+            echo "catalogs:"
+            find /tmp/spec/examples -name catalog.json | sort | while read -r c; do
+              id=$(basename "$(dirname "$c")")
+              echo "  - id: golden-$id"
+              echo "    url: $c"
+            done
+            echo "spec: {ref: $tag}"
+          } > /tmp/canary.yaml
+          cat /tmp/canary.yaml
+          grep -q "url:" /tmp/canary.yaml || { echo "::error::no example catalogs found in portolan-spec@$tag"; exit 1; }
+
+      - name: Adapter tests against fixtures with the real tools
+        run: .venv/bin/pytest -m tools -v
+
+      - name: Run the latest tools against the reference catalogs
+        # Exit 4 = a tool crashed, timed out or did not install => the canary is red.
+        run: |
+          .venv/bin/conformance run --config /tmp/canary.yaml --out /tmp/canary-reports --fail-on-tool-error \
+            --spec-file /tmp/spec/specs/portolan/requirements.yaml --spec-version "${{ steps.spec.outputs.tag }}"
+
+      - name: Upload canary report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tool-canary-report
+          path: /tmp/canary-reports

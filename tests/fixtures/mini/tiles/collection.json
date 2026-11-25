@@ -1,0 +1,53 @@
+{
+  "type": "Collection",
+  "id": "tiles",
+  "stac_version": "1.1.0",
+  "description": "Tiles",
+  "stac_extensions": [],
+  "extent": {
+    "spatial": {
+      "bbox": [
+        [
+          6.0,
+          46.0,
+          10.0,
+          48.0
+        ]
+      ]
+    },
+    "temporal": {
+      "interval": [
+        [
+          null,
+          null
+        ]
+      ]
+    }
+  },
+  "links": [
+    {
+      "rel": "root",
+      "href": "../catalog.json"
+    },
+    {
+      "rel": "parent",
+      "href": "../catalog.json"
+    }
+  ],
+  "assets": {
+    "good": {
+      "href": "./good.pmtiles",
+      "type": "application/vnd.pmtiles",
+      "roles": [
+        "tiles"
+      ]
+    },
+    "bad": {
+      "href": "./bad.pmtiles",
+      "type": "application/vnd.pmtiles",
+      "roles": [
+        "tiles"
+      ]
+    }
+  }
+}

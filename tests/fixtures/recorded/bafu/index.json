@@ -1,0 +1,972 @@
+{
+ "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/catalog.json": {
+  "status": 200,
+  "headers": {
+   "Content-Type": "application/json"
+  },
+  "body": {
+   "type": "Catalog",
+   "id": "karstgrundwasser_v2",
+   "stac_version": "1.1.0",
+   "title": "BAFU Portolan",
+   "description": "Portolan ist ein Pilotprojekt zur standardisierten Publikation von Geodaten des BAFU.",
+   "links": [
+    {
+     "rel": "root",
+     "href": "./catalog.json",
+     "type": "application/json",
+     "title": "BAFU Portolan"
+    },
+    {
+     "rel": "child",
+     "href": "./ub/collection.json",
+     "type": "application/json",
+     "title": "Karst-Einzugsgebieteinheiten"
+    },
+    {
+     "rel": "child",
+     "href": "./ba/collection.json",
+     "type": "application/json",
+     "title": "Karst-Einzugsgebiete"
+    },
+    {
+     "rel": "child",
+     "href": "./ei/collection.json",
+     "type": "application/json",
+     "title": "Unterirdische Fliesswege"
+    },
+    {
+     "rel": "child",
+     "href": "./ip/collection.json",
+     "type": "application/json",
+     "title": "Karstquellen und Schwinden"
+    },
+    {
+     "rel": "child",
+     "href": "./nk/collection.json",
+     "type": "application/json",
+     "title": "Karstwasservorkommen"
+    },
+    {
+     "rel": "child",
+     "href": "./naqua_regions/collection.json",
+     "type": "application/json",
+     "title": "Geographische Regionen NAQUA"
+    },
+    {
+     "rel": "child",
+     "href": "./nawa_trend_stations/collection.json",
+     "type": "application/json",
+     "title": "NAWA Trend Messstationen"
+    },
+    {
+     "rel": "child",
+     "href": "./hydro_stations/collection.json",
+     "type": "application/json",
+     "title": "Hydrologische Beobachtungsstationen"
+    },
+    {
+     "rel": "child",
+     "href": "./mfm-u_stations/collection.json",
+     "type": "application/json",
+     "title": "MfM-U Messstationen (Monitoring flankierende Massnahmen Umwelt)"
+    },
+    {
+     "rel": "agents",
+     "href": "./AGENTS.md",
+     "type": "text/markdown"
+    },
+    {
+     "rel": "describedby",
+     "href": "./README.md",
+     "type": "text/markdown"
+    }
+   ],
+   "stac_extensions": [
+    "https://schemas.portolan-sdi.org/portolan/v0.1.2/schema.json"
+   ]
+  }
+ },
+ "https://api.github.com/repos/portolan-sdi/portolan-spec/releases/latest": {
+  "status": 200,
+  "body": {
+   "tag_name": "v0.3.0",
+   "name": "v0.3.0",
+   "published_at": "2026-11-17T12:46:37Z"
+  }
+ },
+ "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ub/collection.json": {
+  "status": 200,
+  "headers": {
+   "Content-Type": "application/json"
+  },
+  "body": {
+   "type": "Collection",
+   "id": "ub",
+   "stac_version": "1.1.0",
+   "title": "Karst-Einzugsgebieteinheiten",
+   "description": "Karst-Einzugsgebieteinheiten",
+   "links": [
+    {
+     "rel": "root",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "parent",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "agents",
+     "href": "./AGENTS.md",
+     "type": "text/markdown"
+    },
+    {
+     "rel": "describedby",
+     "href": "./README.md",
+     "type": "text/markdown"
+    }
+   ],
+   "stac_extensions": [
+    "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+    "https://schemas.portolan-sdi.org/portolan/v0.1.2/schema.json"
+   ],
+   "license": "CC-BY-4.0",
+   "extent": {
+    "spatial": {
+     "bbox": [
+      [
+       6.04686937,
+       46.39228475,
+       9.55790832,
+       47.33090495
+      ]
+     ]
+    },
+    "temporal": {
+     "interval": [
+      [
+       null,
+       null
+      ]
+     ]
+    }
+   },
+   "assets": {
+    "UB": {
+     "href": "./UB.parquet",
+     "type": "application/x-parquet",
+     "roles": [
+      "data"
+     ]
+    },
+    "thumbnail": {
+     "href": "./UB.thumb.jpg",
+     "type": "image/jpeg",
+     "title": "Thumbnail",
+     "roles": [
+      "thumbnail"
+     ]
+    },
+    "geopackage": {
+     "href": "./UB.gpkg",
+     "type": "application/geopackage+sqlite3",
+     "title": "GeoPackage",
+     "roles": [
+      "data"
+     ]
+    },
+    "style": {
+     "href": "./style.json",
+     "type": "application/vnd.mapbox.style+json",
+     "title": "MapLibre Style",
+     "roles": [
+      "style"
+     ]
+    }
+   },
+   "providers": [
+    {
+     "name": "Bundesamt für Umwelt BAFU",
+     "roles": [
+      "producer",
+      "licensor",
+      "host"
+     ],
+     "url": "https://www.bafu.admin.ch"
+    }
+   ]
+  }
+ },
+ "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ba/collection.json": {
+  "status": 200,
+  "headers": {
+   "Content-Type": "application/json"
+  },
+  "body": {
+   "type": "Collection",
+   "id": "ba",
+   "stac_version": "1.1.0",
+   "title": "Karst-Einzugsgebiete",
+   "description": "Karst-Einzugsgebiete",
+   "links": [
+    {
+     "rel": "root",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "parent",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "agents",
+     "href": "./AGENTS.md",
+     "type": "text/markdown"
+    },
+    {
+     "rel": "describedby",
+     "href": "./README.md",
+     "type": "text/markdown"
+    }
+   ],
+   "stac_extensions": [
+    "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+    "https://schemas.portolan-sdi.org/portolan/v0.1.2/schema.json"
+   ],
+   "license": "CC-BY-4.0",
+   "extent": {
+    "spatial": {
+     "bbox": [
+      [
+       6.04686937,
+       46.39228475,
+       9.55790832,
+       47.33090495
+      ]
+     ]
+    },
+    "temporal": {
+     "interval": [
+      [
+       null,
+       null
+      ]
+     ]
+    }
+   },
+   "assets": {
+    "ba": {
+     "href": "./ba.parquet",
+     "type": "application/x-parquet",
+     "roles": [
+      "data"
+     ]
+    },
+    "thumbnail": {
+     "href": "./ba.thumb.jpg",
+     "type": "image/jpeg",
+     "title": "Thumbnail",
+     "roles": [
+      "thumbnail"
+     ]
+    },
+    "geopackage": {
+     "href": "./ba.gpkg",
+     "type": "application/geopackage+sqlite3",
+     "title": "GeoPackage",
+     "roles": [
+      "data"
+     ]
+    },
+    "style": {
+     "href": "./style.json",
+     "type": "application/vnd.mapbox.style+json",
+     "title": "MapLibre Style",
+     "roles": [
+      "style"
+     ]
+    }
+   },
+   "providers": [
+    {
+     "name": "Bundesamt für Umwelt BAFU",
+     "roles": [
+      "producer",
+      "licensor",
+      "host"
+     ],
+     "url": "https://www.bafu.admin.ch"
+    }
+   ]
+  }
+ },
+ "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ei/collection.json": {
+  "status": 200,
+  "headers": {
+   "Content-Type": "application/json"
+  },
+  "body": {
+   "type": "Collection",
+   "id": "ei",
+   "stac_version": "1.1.0",
+   "title": "Unterirdische Fliesswege",
+   "description": "Unterirdische Fliesswege",
+   "links": [
+    {
+     "rel": "root",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "parent",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "agents",
+     "href": "./AGENTS.md",
+     "type": "text/markdown"
+    },
+    {
+     "rel": "describedby",
+     "href": "./README.md",
+     "type": "text/markdown"
+    }
+   ],
+   "stac_extensions": [
+    "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+    "https://schemas.portolan-sdi.org/portolan/v0.1.2/schema.json"
+   ],
+   "license": "CC-BY-4.0",
+   "extent": {
+    "spatial": {
+     "bbox": [
+      [
+       6.04686937,
+       46.39228475,
+       9.55790832,
+       47.33090495
+      ]
+     ]
+    },
+    "temporal": {
+     "interval": [
+      [
+       null,
+       null
+      ]
+     ]
+    }
+   },
+   "assets": {
+    "ei": {
+     "href": "./ei.parquet",
+     "type": "application/x-parquet",
+     "roles": [
+      "data"
+     ]
+    },
+    "thumbnail": {
+     "href": "./ei.thumb.jpg",
+     "type": "image/jpeg",
+     "title": "Thumbnail",
+     "roles": [
+      "thumbnail"
+     ]
+    },
+    "geopackage": {
+     "href": "./ei.gpkg",
+     "type": "application/geopackage+sqlite3",
+     "title": "GeoPackage",
+     "roles": [
+      "data"
+     ]
+    },
+    "style": {
+     "href": "./style.json",
+     "type": "application/vnd.mapbox.style+json",
+     "title": "MapLibre Style",
+     "roles": [
+      "style"
+     ]
+    }
+   },
+   "providers": [
+    {
+     "name": "Bundesamt für Umwelt BAFU",
+     "roles": [
+      "producer",
+      "licensor",
+      "host"
+     ],
+     "url": "https://www.bafu.admin.ch"
+    }
+   ]
+  }
+ },
+ "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ip/collection.json": {
+  "status": 200,
+  "headers": {
+   "Content-Type": "application/json"
+  },
+  "body": {
+   "type": "Collection",
+   "id": "ip",
+   "stac_version": "1.1.0",
+   "title": "Karstquellen und Schwinden",
+   "description": "Karstquellen und Schwinden",
+   "links": [
+    {
+     "rel": "root",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "parent",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "agents",
+     "href": "./AGENTS.md",
+     "type": "text/markdown"
+    },
+    {
+     "rel": "describedby",
+     "href": "./README.md",
+     "type": "text/markdown"
+    }
+   ],
+   "stac_extensions": [
+    "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+    "https://schemas.portolan-sdi.org/portolan/v0.1.2/schema.json"
+   ],
+   "license": "CC-BY-4.0",
+   "extent": {
+    "spatial": {
+     "bbox": [
+      [
+       6.04686937,
+       46.39228475,
+       9.55790832,
+       47.33090495
+      ]
+     ]
+    },
+    "temporal": {
+     "interval": [
+      [
+       null,
+       null
+      ]
+     ]
+    }
+   },
+   "assets": {
+    "ip": {
+     "href": "./ip.parquet",
+     "type": "application/x-parquet",
+     "roles": [
+      "data"
+     ]
+    },
+    "thumbnail": {
+     "href": "./ip.thumb.jpg",
+     "type": "image/jpeg",
+     "title": "Thumbnail",
+     "roles": [
+      "thumbnail"
+     ]
+    },
+    "geopackage": {
+     "href": "./ip.gpkg",
+     "type": "application/geopackage+sqlite3",
+     "title": "GeoPackage",
+     "roles": [
+      "data"
+     ]
+    },
+    "style": {
+     "href": "./style.json",
+     "type": "application/vnd.mapbox.style+json",
+     "title": "MapLibre Style",
+     "roles": [
+      "style"
+     ]
+    }
+   },
+   "providers": [
+    {
+     "name": "Bundesamt für Umwelt BAFU",
+     "roles": [
+      "producer",
+      "licensor",
+      "host"
+     ],
+     "url": "https://www.bafu.admin.ch"
+    }
+   ]
+  }
+ },
+ "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nk/collection.json": {
+  "status": 200,
+  "headers": {
+   "Content-Type": "application/json"
+  },
+  "body": {
+   "type": "Collection",
+   "id": "nk",
+   "stac_version": "1.1.0",
+   "title": "Karstwasservorkommen",
+   "description": "Karstwasservorkommen",
+   "links": [
+    {
+     "rel": "root",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "parent",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "agents",
+     "href": "./AGENTS.md",
+     "type": "text/markdown"
+    },
+    {
+     "rel": "describedby",
+     "href": "./README.md",
+     "type": "text/markdown"
+    }
+   ],
+   "stac_extensions": [
+    "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+    "https://schemas.portolan-sdi.org/portolan/v0.1.2/schema.json"
+   ],
+   "license": "CC-BY-4.0",
+   "extent": {
+    "spatial": {
+     "bbox": [
+      [
+       6.04686937,
+       46.39228475,
+       9.55790832,
+       47.33090495
+      ]
+     ]
+    },
+    "temporal": {
+     "interval": [
+      [
+       null,
+       null
+      ]
+     ]
+    }
+   },
+   "assets": {
+    "nk": {
+     "href": "./nk.parquet",
+     "type": "application/x-parquet",
+     "roles": [
+      "data"
+     ]
+    },
+    "thumbnail": {
+     "href": "./nk.thumb.jpg",
+     "type": "image/jpeg",
+     "title": "Thumbnail",
+     "roles": [
+      "thumbnail"
+     ]
+    },
+    "geopackage": {
+     "href": "./nk.gpkg",
+     "type": "application/geopackage+sqlite3",
+     "title": "GeoPackage",
+     "roles": [
+      "data"
+     ]
+    },
+    "style": {
+     "href": "./style.json",
+     "type": "application/vnd.mapbox.style+json",
+     "title": "MapLibre Style",
+     "roles": [
+      "style"
+     ]
+    }
+   },
+   "providers": [
+    {
+     "name": "Bundesamt für Umwelt BAFU",
+     "roles": [
+      "producer",
+      "licensor",
+      "host"
+     ],
+     "url": "https://www.bafu.admin.ch"
+    }
+   ]
+  }
+ },
+ "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/naqua_regions/collection.json": {
+  "status": 200,
+  "headers": {
+   "Content-Type": "application/json"
+  },
+  "body": {
+   "type": "Collection",
+   "id": "naqua_regions",
+   "stac_version": "1.1.0",
+   "title": "Geographische Regionen NAQUA",
+   "description": "Geographische Regionen NAQUA",
+   "links": [
+    {
+     "rel": "root",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "parent",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "agents",
+     "href": "./AGENTS.md",
+     "type": "text/markdown"
+    },
+    {
+     "rel": "describedby",
+     "href": "./README.md",
+     "type": "text/markdown"
+    }
+   ],
+   "stac_extensions": [
+    "https://stac-extensions.github.io/table/v1.2.0/schema.json"
+   ],
+   "license": "CC-BY-4.0",
+   "extent": {
+    "spatial": {
+     "bbox": [
+      [
+       5.95590196,
+       45.81796213,
+       10.4920634,
+       47.80845431
+      ]
+     ]
+    },
+    "temporal": {
+     "interval": [
+      [
+       null,
+       null
+      ]
+     ]
+    }
+   },
+   "assets": {
+    "naqua_regions": {
+     "href": "./naqua_regions.parquet",
+     "type": "application/x-parquet",
+     "roles": [
+      "data"
+     ]
+    },
+    "thumbnail": {
+     "href": "./naqua_regions.thumb.jpg",
+     "type": "image/jpeg",
+     "title": "Thumbnail",
+     "roles": [
+      "thumbnail"
+     ]
+    },
+    "pmtiles": {
+     "href": "./naqua_regions.pmtiles",
+     "type": "application/vnd.pmtiles",
+     "roles": [
+      "tiles"
+     ]
+    },
+    "style": {
+     "href": "./style.json",
+     "type": "application/json",
+     "roles": [
+      "style"
+     ]
+    },
+    "style_rot": {
+     "href": "./style_rot.json",
+     "type": "application/json",
+     "roles": [
+      "style"
+     ]
+    }
+   },
+   "providers": [
+    {
+     "name": "Bundesamt für Umwelt BAFU",
+     "roles": [
+      "producer",
+      "licensor",
+      "host"
+     ],
+     "url": "https://www.bafu.admin.ch"
+    }
+   ]
+  }
+ },
+ "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nawa_trend_stations/collection.json": {
+  "status": 200,
+  "headers": {
+   "Content-Type": "application/json"
+  },
+  "body": {
+   "type": "Collection",
+   "id": "nawa_trend_stations",
+   "stac_version": "1.1.0",
+   "title": "NAWA Trend Messstationen",
+   "description": "NAWA Trend Messstationen",
+   "links": [
+    {
+     "rel": "root",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "parent",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "agents",
+     "href": "./AGENTS.md",
+     "type": "text/markdown"
+    },
+    {
+     "rel": "describedby",
+     "href": "./README.md",
+     "type": "text/markdown"
+    }
+   ],
+   "stac_extensions": [
+    "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+    "https://schemas.portolan-sdi.org/portolan/v0.1.2/schema.json"
+   ],
+   "license": "CC-BY-4.0",
+   "extent": {
+    "spatial": {
+     "bbox": [
+      [
+       5.97074343,
+       45.96930644,
+       9.99518029,
+       47.76519718
+      ]
+     ]
+    },
+    "temporal": {
+     "interval": [
+      [
+       null,
+       null
+      ]
+     ]
+    }
+   },
+   "assets": {
+    "nawa_trend_stations": {
+     "href": "./nawa_trend_stations.parquet",
+     "type": "application/x-parquet",
+     "roles": [
+      "data"
+     ]
+    },
+    "thumbnail": {
+     "href": "./nawa_trend_stations.thumb.jpg",
+     "type": "image/jpeg",
+     "title": "Thumbnail",
+     "roles": [
+      "thumbnail"
+     ]
+    }
+   },
+   "providers": [
+    {
+     "name": "Bundesamt für Umwelt BAFU",
+     "roles": [
+      "producer",
+      "licensor",
+      "host"
+     ],
+     "url": "https://www.bafu.admin.ch"
+    }
+   ]
+  }
+ },
+ "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/hydro_stations/collection.json": {
+  "status": 200,
+  "headers": {
+   "Content-Type": "application/json"
+  },
+  "body": {
+   "type": "Collection",
+   "id": "hydro_stations",
+   "stac_version": "1.1.0",
+   "title": "Hydrologische Beobachtungsstationen",
+   "description": "Hydrologische Beobachtungsstationen",
+   "links": [
+    {
+     "rel": "root",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "parent",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "agents",
+     "href": "./AGENTS.md",
+     "type": "text/markdown"
+    },
+    {
+     "rel": "describedby",
+     "href": "./README.md",
+     "type": "text/markdown"
+    }
+   ],
+   "stac_extensions": [
+    "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+    "https://schemas.portolan-sdi.org/portolan/v0.1.2/schema.json"
+   ],
+   "license": "CC-BY-4.0",
+   "extent": {
+    "spatial": {
+     "bbox": [
+      [
+       5.97078346,
+       45.84557412,
+       10.4648729,
+       47.68244215
+      ]
+     ]
+    },
+    "temporal": {
+     "interval": [
+      [
+       null,
+       null
+      ]
+     ]
+    }
+   },
+   "assets": {
+    "hydro_stations": {
+     "href": "./hydro_stations.parquet",
+     "type": "application/x-parquet",
+     "roles": [
+      "data"
+     ]
+    },
+    "thumbnail": {
+     "href": "./hydro_stations.thumb.jpg",
+     "type": "image/jpeg",
+     "title": "Thumbnail",
+     "roles": [
+      "thumbnail"
+     ]
+    }
+   },
+   "providers": [
+    {
+     "name": "Bundesamt für Umwelt BAFU",
+     "roles": [
+      "producer",
+      "licensor",
+      "host"
+     ],
+     "url": "https://www.bafu.admin.ch"
+    }
+   ]
+  }
+ },
+ "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/mfm-u_stations/collection.json": {
+  "status": 200,
+  "headers": {
+   "Content-Type": "application/json"
+  },
+  "body": {
+   "type": "Collection",
+   "id": "mfm-u_stations",
+   "stac_version": "1.1.0",
+   "title": "MfM-U Messstationen (Monitoring flankierende Massnahmen Umwelt)",
+   "description": "MfM-U Messstationen (Monitoring flankierende Massnahmen Umwelt)",
+   "links": [
+    {
+     "rel": "root",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "parent",
+     "href": "../catalog.json"
+    },
+    {
+     "rel": "agents",
+     "href": "./AGENTS.md",
+     "type": "text/markdown"
+    },
+    {
+     "rel": "describedby",
+     "href": "./README.md",
+     "type": "text/markdown"
+    }
+   ],
+   "stac_extensions": [
+    "https://stac-extensions.github.io/table/v1.2.0/schema.json",
+    "https://schemas.portolan-sdi.org/portolan/v0.1.2/schema.json"
+   ],
+   "license": "CC-BY-4.0",
+   "extent": {
+    "spatial": {
+     "bbox": [
+      [
+       7.64891898,
+       46.10378873,
+       9.42259387,
+       47.5380939
+      ]
+     ]
+    },
+    "temporal": {
+     "interval": [
+      [
+       null,
+       null
+      ]
+     ]
+    }
+   },
+   "assets": {
+    "mfm-u_stations": {
+     "href": "./mfm-u_stations.parquet",
+     "type": "application/x-parquet",
+     "roles": [
+      "data"
+     ]
+    },
+    "thumbnail": {
+     "href": "./mfm-u_stations.thumb.jpg",
+     "type": "image/jpeg",
+     "title": "Thumbnail",
+     "roles": [
+      "thumbnail"
+     ]
+    }
+   },
+   "providers": [
+    {
+     "name": "Bundesamt für Umwelt BAFU",
+     "roles": [
+      "producer",
+      "licensor",
+      "host"
+     ],
+     "url": "https://www.bafu.admin.ch"
+    }
+   ]
+  }
+ }
+}

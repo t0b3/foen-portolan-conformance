@@ -1,0 +1,75 @@
+{
+  "type": "Feature",
+  "stac_version": "1.1.0",
+  "id": "item-1",
+  "collection": "raster",
+  "stac_extensions": [
+    "https://schemas.portolan-sdi.org/portolan/v0.3.0/schema.json"
+  ],
+  "bbox": [
+    7.0,
+    46.0,
+    8.0,
+    47.0
+  ],
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          7,
+          46
+        ],
+        [
+          8,
+          46
+        ],
+        [
+          8,
+          47
+        ],
+        [
+          7,
+          47
+        ],
+        [
+          7,
+          46
+        ]
+      ]
+    ]
+  },
+  "properties": {
+    "datetime": "2026-01-01T00:00:00Z"
+  },
+  "links": [
+    {
+      "rel": "root",
+      "href": "../../catalog.json"
+    },
+    {
+      "rel": "parent",
+      "href": "../collection.json"
+    },
+    {
+      "rel": "collection",
+      "href": "../collection.json"
+    }
+  ],
+  "assets": {
+    "cog": {
+      "href": "./good.tif",
+      "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+      "roles": [
+        "data"
+      ]
+    },
+    "plain": {
+      "href": "./bad.tif",
+      "type": "image/tiff; application=geotiff",
+      "roles": [
+        "data"
+      ]
+    }
+  }
+}

@@ -1,0 +1,166 @@
+name: conformance
+
+on:
+  schedule:
+    - cron: "17 5 * * 1"   # weekly full run: Monday 05:17 UTC
+    - cron: "43 3 * * *"   # daily lightweight run: rashid --no-data + STAC + docs
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      catalog_id:
+        description: "Catalog id from config.yaml, or 'all'"
+        default: all
+      full_data_checks:
+        description: "Run data checks (GeoParquet / COG / PMTiles / hosting). Off = lightweight run."
+        type: boolean
+        default: true
+      max_asset_size_gb:
+        description: "Assets above this size get metadata/header checks only"
+        default: "2"
+
+permissions:
+  contents: read
+
+concurrency:
+  # One publishing run at a time; PR runs are per-PR and cancel superseded pushes.
+  group: ${{ github.event_name == 'pull_request' && format('conformance-pr-{0}', github.ref) || 'conformance-publish' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  PYTHON_VERSION: "3.12"
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  run:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    permissions:
+      contents: write        # push the dated snapshot to the `reports` branch
+      pages: write
+      id-token: write
+      issues: write          # open/update/close the conformance-regression issue
+      pull-requests: write   # PR summary comment
+    outputs:
+      publish: ${{ steps.mode.outputs.publish }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Decide mode
+        id: mode
+        run: |
+          mode=full
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "${{ github.event.schedule }}" = "43 3 * * *" ]; then mode=light; fi
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.full_data_checks }}" = "false" ]; then mode=light; fi
+          publish=true; [ "${{ github.event_name }}" = "pull_request" ] && publish=false
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "publish=$publish" >> "$GITHUB_OUTPUT"
+          echo "week=$(date -u +%G-W%V)" >> "$GITHUB_OUTPUT"
+          args=()
+          cat_id="${{ inputs.catalog_id }}"
+          if [ -n "$cat_id" ] && [ "$cat_id" != "all" ]; then args+=(--catalog "$cat_id"); fi
+          size="${{ inputs.max_asset_size_gb }}"
+          if [ -n "$size" ]; then args+=(--max-asset-size-gb "$size"); fi
+          echo "args=${args[*]}" >> "$GITHUB_OUTPUT"
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Cache validators (refreshed weekly)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.local/share/uv/tools
+            ~/.local/bin
+          key: tools-${{ runner.os }}-${{ steps.mode.outputs.week }}-${{ hashFiles('constraints.txt') }}
+
+      - name: Install latest validators
+        run: |
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          INSTALL_SYSTEM=1 scripts/install-tools.sh
+
+      - name: Install this package
+        run: |
+          uv venv .venv
+          uv pip install --python .venv -e ".[parquet]"
+
+      - name: Check out the reports branch
+        run: |
+          if git ls-remote --exit-code --heads origin reports >/dev/null; then
+            git fetch --depth 1 origin reports
+            git worktree add -B reports site FETCH_HEAD
+          else
+            git worktree add --orphan -b reports site
+          fi
+          mkdir -p site/reports
+
+      - name: Run conformance checks
+        id: run
+        # Exit 0 even when the catalog is non-conformant: that is the report's content.
+        # Non-zero means an infrastructure error (e.g. catalog unreachable).
+        run: .venv/bin/conformance run --config config.yaml --out site/reports --mode ${{ steps.mode.outputs.mode }} ${{ steps.mode.outputs.args }}
+
+      - name: Comment summary on the PR
+        if: github.event_name == 'pull_request'
+        continue-on-error: true   # forks get a read-only token
+        run: |
+          f=site/reports/latest/report.md
+          [ "${{ steps.mode.outputs.mode }}" = "light" ] && f=site/reports/light/latest/report.md
+          { echo "<!-- conformance-summary -->"; head -c 60000 "$f"; } > /tmp/comment.md
+          gh pr comment ${{ github.event.pull_request.number }} --body-file /tmp/comment.md --edit-last \
+            || gh pr comment ${{ github.event.pull_request.number }} --body-file /tmp/comment.md
+
+      - name: Commit the dated snapshot to the reports branch
+        if: steps.mode.outputs.publish == 'true'
+        working-directory: site
+        run: |
+          touch reports/.nojekyll
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add reports
+          if git diff --cached --quiet; then echo "nothing to commit"; exit 0; fi
+          git commit -m "report: ${{ steps.mode.outputs.mode }} run $(date -u +%Y-%m-%dT%H:%MZ) (${{ github.event_name }})"
+          git push origin reports
+
+      - name: Open, update or close the regression issue
+        if: steps.mode.outputs.publish == 'true' && steps.mode.outputs.mode == 'full'
+        run: |
+          gh label create conformance-regression --color B60205 --description "MUST failures went up" 2>/dev/null || true
+          issue=$(gh issue list --label conformance-regression --state open --json number,body --limit 1 -q '.[0] // {}')
+          [ -z "$issue" ] && issue='{}'
+          num=$(jq -r '.number // empty' <<<"$issue")
+          jq -r '.body // empty' <<<"$issue" > /tmp/issue-body.md
+          pages="https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/latest/"
+          args=(--report site/reports/latest/report.json --pages-url "$pages")
+          [ -n "$num" ] && args+=(--open-issue-body /tmp/issue-body.md)
+          .venv/bin/conformance regression "${args[@]}" > /tmp/decision.json
+          action=$(jq -r .action /tmp/decision.json); jq -r .body /tmp/decision.json > /tmp/body.md
+          title=$(jq -r .title /tmp/decision.json)
+          echo "regression decision: $action"
+          case "$action" in
+            open)   gh issue create --title "$title" --label conformance-regression --body-file /tmp/body.md ;;
+            update) gh issue edit "$num" --body-file /tmp/body.md && gh issue comment "$num" --body "MUST failures went up again in run ${{ github.run_id }}." ;;
+            close)  gh issue close "$num" --comment "$(cat /tmp/body.md)" ;;
+          esac
+
+      - name: Upload Pages artifact
+        if: steps.mode.outputs.publish == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/reports
+
+  deploy:
+    needs: run
+    if: needs.run.outputs.publish == 'true'
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

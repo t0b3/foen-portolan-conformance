@@ -1,0 +1,48 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "foen-portolan-conformance"
+version = "0.1.0"
+description = "Cloud-native conformance report for the FOEN (BAFU) Portolan catalog"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = [
+  "requests>=2.31",
+  "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# pyarrow writes findings.parquet; without it the parquet export is skipped (and recorded).
+parquet = ["pyarrow>=15"]
+dev = ["pytest>=8", "ruff>=0.6", "pre-commit>=3.7"]
+
+[project.scripts]
+conformance = "conformance.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/conformance"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+  "tools: needs the external validators on PATH (skipped when missing)",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["E501", "E731", "RUF001", "B008"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["conformance"]
+known-local-folder = ["conftest", "generate"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["RUF005", "B023"]

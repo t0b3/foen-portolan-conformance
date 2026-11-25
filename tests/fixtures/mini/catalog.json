@@ -1,0 +1,47 @@
+{
+  "type": "Catalog",
+  "id": "mini",
+  "stac_version": "1.1.0",
+  "title": "Mini test catalog",
+  "description": "Fixture",
+  "stac_extensions": [
+    "https://schemas.portolan-sdi.org/portolan/v0.3.0/schema.json"
+  ],
+  "links": [
+    {
+      "rel": "root",
+      "href": "./catalog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "self",
+      "href": "./catalog.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "child",
+      "href": "./vector/collection.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "child",
+      "href": "./tiles/collection.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "child",
+      "href": "./raster/collection.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "child",
+      "href": "./missing/collection.json",
+      "type": "application/json"
+    },
+    {
+      "rel": "describedby",
+      "href": "./README.md",
+      "type": "text/markdown"
+    }
+  ]
+}

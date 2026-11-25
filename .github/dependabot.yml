@@ -1,0 +1,9 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels: [dependencies]
+  # Validators are NOT managed here: they float to the latest release on every run
+  # (see scripts/install-tools.sh and constraints.txt).
