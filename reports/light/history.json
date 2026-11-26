@@ -1,0 +1,12 @@
+[
+  {
+    "date": "2026-11-26",
+    "started": "2026-11-26T13:13:33Z",
+    "pct_fully_conformant": 0.0,
+    "pct_must_conformant": 33.3,
+    "must_failures": 21,
+    "should_warnings": 133,
+    "scored_assets": 15,
+    "spec_version": "0.3.0"
+  }
+]
