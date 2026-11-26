@@ -1,11 +1,11 @@
 {
   "schema": "foen-portolan-conformance/report@1",
   "run": {
-    "started": "2026-11-26T09:35:53Z",
-    "finished": "2026-11-26T09:36:46Z",
+    "started": "2026-11-26T14:35:43Z",
+    "finished": "2026-11-26T14:36:34Z",
     "mode": "full",
     "infra_errors": [],
-    "previous_run": null,
+    "previous_run": "2026-11-26T09:35:53Z",
     "reproduce": "# Validators at the versions used in this run:\nuv tool install --force rashid==0.5.0\nuv tool install --force portolan-cli==0.9.0\nuv tool install --force stac-valid==4.6.4\nuv tool install --force stac-check==1.15.1\nuv tool install --force geoparquet-io==1.8.0\nuv tool install --force rasterio --with rio-cogeo==7.0.4\n# pmtiles 1.31.2: https://github.com/protomaps/go-pmtiles/releases/tag/v1.31.2\n# This repository at the same commit, then:\nconformance run --config config.yaml --out reports/ --mode full --catalog bafu-portolan --max-asset-size-gb 2\n# Spec: portolan-sdi/portolan-spec@v0.3.0 (f758c6e5ec05e411a19a276251bbbe3b8ba53916)",
     "findings_parquet": true,
     "parquet": {
@@ -45,12 +45,13 @@
     "copc": "native-0.1.0",
     "docs-check": "native-0.1.0",
     "foen-portolan-conformance": "0.1.0",
-    "gdal": "3.8.4",
+    "gdal": "3.12.2",
     "gpio": "1.8.0",
     "hosting-probe": "native-0.1.0",
+    "parquet-footer": "native-0.1.0",
     "pmtiles": "1.31.2",
     "portolan-cli": "0.9.0",
-    "python": "3.12.3",
+    "python": "3.14.4",
     "rashid": "0.5.0",
     "rio-cogeo": "7.0.4",
     "stac-check": "1.15.1",
@@ -81,44 +82,1038 @@
     "pct_fully_conformant": 0.0,
     "pct_must_conformant": 66.7,
     "must_failures": 35,
-    "should_warnings": 181,
+    "should_warnings": 189,
     "infos": 22,
     "coverage_notes": 2,
     "checks": {
       "total": 675,
       "pass": 487,
       "fail": 43,
-      "warn": 61,
-      "info": 83,
+      "warn": 69,
+      "info": 75,
       "skipped": 1,
       "error": 0,
       "top_level": 129
     },
-    "parquet_rating": {
-      "assets": 9,
-      "rated": 9,
-      "not_rated": 0,
-      "mean_score": 95.4,
-      "grades": {
+    "grades": {
+      "method": "Start at A; each best practice or recommendation not met (any MUST or SHOULD finding on the asset; for GeoParquet also Parquet v2 missing or unconfirmed) drops one level; floor F. Not a cloud-native format: F. No validator could read it: no grade. A only if every best practice is met.",
+      "graded": 15,
+      "ungraded": 0,
+      "overall": {
         "A": 0,
-        "B": 9,
+        "B": 1,
         "C": 0,
-        "D": 0,
-        "E": 0
+        "D": 5,
+        "E": 0,
+        "F": 9
       },
-      "method": "pass=1, warn=0.5, fail=0; spec checks weigh 2, best-practice checks 1; A>=90, B>=75, C>=60, D>=40, else E; A only if every gpio recommendation is met and the file is Parquet v2, otherwise at best B",
-      "capped": 9,
-      "parquet_v2": 1,
-      "parquet_v1": 8,
-      "parquet_unknown": 0
+      "by_format": {
+        "GeoParquet": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 5,
+          "E": 0,
+          "F": 4
+        },
+        "PMTiles": {
+          "A": 0,
+          "B": 1,
+          "C": 0,
+          "D": 0,
+          "E": 0,
+          "F": 0
+        },
+        "Other": {
+          "A": 0,
+          "B": 0,
+          "C": 0,
+          "D": 0,
+          "E": 0,
+          "F": 5
+        }
+      },
+      "ranked": [
+        "ad0505ca13a42",
+        "acffb03e04261",
+        "a04bba077f704",
+        "a335dfad9a4c1",
+        "a370886f9580b",
+        "a5671b4bdc605",
+        "a73c10275bb1f",
+        "a6ef6fe186160",
+        "a85bd7dd882b6",
+        "a8ce305a4de7c",
+        "a73ceca123946",
+        "a43e77936c52f",
+        "adcd7bfeb24f9",
+        "aa1af32026099",
+        "a247ecb93ab28"
+      ]
     },
+    "anti_patterns": [
+      {
+        "key": "invalid",
+        "title": "Invalid or broken files and metadata",
+        "severity": "critical",
+        "why": "Readers may reject the file or silently misread it.",
+        "fix": "Fix the reported validation errors; re-run the tool command shown with each finding.",
+        "findings": [
+          "ffed6fb2631aac7e",
+          "e947a46019cf09c0",
+          "365780ccf08126c0",
+          "e0425179e8f0128a",
+          "fb5a5d35c11a9b25",
+          "fbe74a30e6f488b7",
+          "0c09de33bc44bc52",
+          "798382394602162f",
+          "c4b4f76427556e8a",
+          "b3d1d18915745f17",
+          "e921c2a0c88c58f8",
+          "e3eb76e485b2d637",
+          "4150f69fd1d5aaeb",
+          "51e66d1162d84ea0",
+          "cabea9ef787a5b57",
+          "391cb73e5b4e16a3",
+          "f4243e4545b34310",
+          "08cedee97529f88d",
+          "bd851ad393f82558",
+          "fc2f0f85c17fa7d8",
+          "0000430a11a4933b",
+          "7bc669229b3141ba",
+          "1bef857f7493205c"
+        ],
+        "must": 23,
+        "should": 0,
+        "assets": [
+          "a43e77936c52f",
+          "a6ef6fe186160",
+          "a8ce305a4de7c",
+          "aa1af32026099",
+          "ad0505ca13a42"
+        ],
+        "collections": [
+          "bafu-portolan/ba",
+          "bafu-portolan/ei",
+          "bafu-portolan/hydro_stations",
+          "bafu-portolan/ip",
+          "bafu-portolan/mfm-u_stations",
+          "bafu-portolan/naqua_regions",
+          "bafu-portolan/nawa_trend_stations",
+          "bafu-portolan/nk",
+          "bafu-portolan/ub"
+        ],
+        "rules": [
+          {
+            "rule_id": "stac-check:invalid",
+            "count": 9,
+            "findings": [
+              "ffed6fb2631aac7e",
+              "e0425179e8f0128a",
+              "0c09de33bc44bc52",
+              "c4b4f76427556e8a",
+              "e3eb76e485b2d637",
+              "51e66d1162d84ea0",
+              "f4243e4545b34310",
+              "bd851ad393f82558",
+              "7bc669229b3141ba"
+            ],
+            "example": "",
+            "tool": "stac-check",
+            "drill": "antipatterns.invalid.rule.stac-check:invalid"
+          },
+          {
+            "rule_id": "stac-validator:Exception",
+            "count": 9,
+            "findings": [
+              "e947a46019cf09c0",
+              "fb5a5d35c11a9b25",
+              "798382394602162f",
+              "b3d1d18915745f17",
+              "4150f69fd1d5aaeb",
+              "cabea9ef787a5b57",
+              "08cedee97529f88d",
+              "fc2f0f85c17fa7d8",
+              "1bef857f7493205c"
+            ],
+            "example": "'list' object has no attribute 'get' [Schema: https://schemas.portolan-sdi.org/portolan/v0.1.2/schema.json]. Error in Extensions.",
+            "tool": "stac-validator",
+            "drill": "antipatterns.invalid.rule.stac-validator:Exception"
+          },
+          {
+            "rule_id": "gpio:spec:geometry-types-match-data-geometry",
+            "count": 4,
+            "findings": [
+              "365780ccf08126c0",
+              "fbe74a30e6f488b7",
+              "e921c2a0c88c58f8",
+              "0000430a11a4933b"
+            ],
+            "example": "found undeclared geometry types: {'MultiPolygon Z'} (162 checked)",
+            "tool": "gpio",
+            "drill": "antipatterns.invalid.rule.gpio:spec:geometry-types-match-data-geometry"
+          },
+          {
+            "rule_id": "pmtiles:verify",
+            "count": 1,
+            "findings": [
+              "391cb73e5b4e16a3"
+            ],
+            "example": "pmtiles verify failed: pmtiles: error: <input>: stat /home/runner/work/foen-portolan-conformance/foen-portolan-conformance/https:/ron-portolan.s3.eu-central-1.amazonaws.com/portolan/naqua_regions/naqua_regions.pmtiles: no such file or directory",
+            "tool": "pmtiles",
+            "drill": "antipatterns.invalid.rule.pmtiles:verify"
+          }
+        ],
+        "rank": 1,
+        "drill": "antipatterns.invalid"
+      },
+      {
+        "key": "not_cloud_native",
+        "title": "Data not in a cloud-native format",
+        "severity": "critical",
+        "why": "Clients must download the whole file before reading anything; no partial or remote reads.",
+        "fix": "Convert: vector to GeoParquet (`gpio convert`), raster to COG (`rio cogeo create`), tiles to PMTiles. Keep the old format only as an extra download.",
+        "findings": [
+          "2d0eee60e81bd15d",
+          "2f4fa687311a0aae",
+          "c49fbd241a59b5cf",
+          "97167859c18f7369",
+          "d94e8d0ab7f99c18"
+        ],
+        "must": 0,
+        "should": 5,
+        "assets": [
+          "a247ecb93ab28",
+          "a73c10275bb1f",
+          "a73ceca123946",
+          "a85bd7dd882b6",
+          "adcd7bfeb24f9"
+        ],
+        "collections": [
+          "bafu-portolan/ba",
+          "bafu-portolan/ei",
+          "bafu-portolan/ip",
+          "bafu-portolan/nk",
+          "bafu-portolan/ub"
+        ],
+        "rules": [
+          {
+            "rule_id": "CNC-FMT-001",
+            "count": 5,
+            "findings": [
+              "2d0eee60e81bd15d",
+              "2f4fa687311a0aae",
+              "c49fbd241a59b5cf",
+              "97167859c18f7369",
+              "d94e8d0ab7f99c18"
+            ],
+            "example": "non-cloud-native asset: GeoPackage (application/geopackage+sqlite3)",
+            "tool": "cloud-native-classifier",
+            "drill": "antipatterns.not_cloud_native.rule.CNC-FMT-001"
+          }
+        ],
+        "rank": 2,
+        "drill": "antipatterns.not_cloud_native"
+      },
+      {
+        "key": "portolan_must",
+        "title": "Portolan MUST requirements broken",
+        "severity": "high",
+        "why": "The catalog does not meet the Portolan specification it declares.",
+        "fix": "Follow the requirement text linked with each finding (rashid rule and PORTO- ID).",
+        "findings": [
+          "426db897513de184",
+          "14d2ad14b4a8c16c",
+          "2c48ab2f66bc335a",
+          "c5e8626dd70538cb"
+        ],
+        "must": 4,
+        "should": 0,
+        "assets": [],
+        "collections": [
+          "bafu-portolan/mfm-u_stations",
+          "bafu-portolan/naqua_regions"
+        ],
+        "rules": [
+          {
+            "rule_id": "PTL-AST-009",
+            "count": 2,
+            "findings": [
+              "14d2ad14b4a8c16c",
+              "2c48ab2f66bc335a"
+            ],
+            "example": "PMTiles asset 'pmtiles' has no GeoParquet reference in its collection",
+            "tool": "rashid",
+            "drill": "antipatterns.portolan_must.rule.PTL-AST-009"
+          },
+          {
+            "rule_id": "PTL-DAT-007",
+            "count": 1,
+            "findings": [
+              "426db897513de184"
+            ],
+            "example": "asset 'mfm-u_stations' provides no per-row-group spatial statistics (no bbox covering column with min/max stats, nor native GeospatialStatistics)",
+            "tool": "rashid",
+            "drill": "antipatterns.portolan_must.rule.PTL-DAT-007"
+          },
+          {
+            "rule_id": "PTL-LIV-004",
+            "count": 1,
+            "findings": [
+              "c5e8626dd70538cb"
+            ],
+            "example": "host 'ron-portolan.s3.eu-central-1.amazonaws.com': Access-Control-Expose-Headers omits Accept-Ranges",
+            "tool": "rashid",
+            "drill": "antipatterns.portolan_must.rule.PTL-LIV-004"
+          }
+        ],
+        "rank": 3,
+        "drill": "antipatterns.portolan_must"
+      },
+      {
+        "key": "metadata_mismatch",
+        "title": "Metadata does not match the data",
+        "severity": "medium",
+        "why": "Catalog search and clients make wrong assumptions: wrong format, extent or licence.",
+        "fix": "Set the STAC asset `type` to the registered media type, keep bboxes in sync with the data, declare the Portolan extension and a licence.",
+        "findings": [
+          "b2f9256c2dbb68f7",
+          "c7ad5a7c798c9a72",
+          "e09c890a701d0a88",
+          "8d33f072127d47c6",
+          "ce5086ce3bfa1786",
+          "ba1d365023de7f76",
+          "93d4aa8ddea352e5",
+          "b98fd7aa337dd0fe",
+          "49a9a06e85da5412",
+          "d32f9d4b2bde90e8",
+          "1ac5c48c7c997d42",
+          "c5678cc9ae48bad7",
+          "87b41c22df6c837e",
+          "39874ebfbea97750"
+        ],
+        "must": 0,
+        "should": 14,
+        "assets": [
+          "a04bba077f704",
+          "a247ecb93ab28",
+          "a335dfad9a4c1",
+          "a370886f9580b",
+          "a43e77936c52f",
+          "a5671b4bdc605",
+          "a6ef6fe186160",
+          "a73c10275bb1f",
+          "a73ceca123946",
+          "a85bd7dd882b6",
+          "a8ce305a4de7c",
+          "aa1af32026099",
+          "acffb03e04261",
+          "adcd7bfeb24f9"
+        ],
+        "collections": [
+          "bafu-portolan/ba",
+          "bafu-portolan/ei",
+          "bafu-portolan/hydro_stations",
+          "bafu-portolan/ip",
+          "bafu-portolan/mfm-u_stations",
+          "bafu-portolan/naqua_regions",
+          "bafu-portolan/nawa_trend_stations",
+          "bafu-portolan/nk",
+          "bafu-portolan/ub"
+        ],
+        "rules": [
+          {
+            "rule_id": "CNC-HOST-005",
+            "count": 14,
+            "findings": [
+              "b2f9256c2dbb68f7",
+              "c7ad5a7c798c9a72",
+              "e09c890a701d0a88",
+              "8d33f072127d47c6",
+              "ce5086ce3bfa1786",
+              "ba1d365023de7f76",
+              "93d4aa8ddea352e5",
+              "b98fd7aa337dd0fe",
+              "49a9a06e85da5412",
+              "d32f9d4b2bde90e8",
+              "1ac5c48c7c997d42",
+              "c5678cc9ae48bad7",
+              "87b41c22df6c837e",
+              "39874ebfbea97750"
+            ],
+            "example": "Served Content-Type 'binary/octet-stream' differs from the STAC asset type 'application/geopackage+sqlite3'",
+            "tool": "hosting-probe",
+            "drill": "antipatterns.metadata_mismatch.rule.CNC-HOST-005"
+          }
+        ],
+        "rank": 4,
+        "drill": "antipatterns.metadata_mismatch"
+      },
+      {
+        "key": "no_spatial_index",
+        "title": "No spatial index or ordering",
+        "severity": "medium",
+        "why": "A query for a small area still reads most of the file.",
+        "fix": "GeoParquet: sort spatially (`gpio sort hilbert`) and add a bbox covering column (see `gpio add --help`). COG: internal tiling and overviews. PMTiles: write a clustered archive.",
+        "findings": [
+          "6f3993e759bf316d",
+          "b2dfaadb37987b35",
+          "375b1c720336ba3a",
+          "dadf83d26276b3c0",
+          "e699b441ab02da20",
+          "d4e210909f4411b9",
+          "8fdd6818244a21b2",
+          "9ac835df3ab5284d",
+          "2b19b97fad413338",
+          "cbf3aebd3c0f1e6d",
+          "b9fcde0fd0ae46e6",
+          "27979806f94fc4bc",
+          "5dad2643dde9f3e7",
+          "ad934a5ab3277df5",
+          "9d031360353b1f4a",
+          "f1ce9ed7150292bf",
+          "1fa3207613d2c223",
+          "6040dd090f5e246a",
+          "2381db7a714cfc01",
+          "2cc284f6e6088a36",
+          "78b493f9c98833a8",
+          "c47cad76450f1534",
+          "6d082a30c407c097",
+          "a166ddba3bcadfbd"
+        ],
+        "must": 0,
+        "should": 24,
+        "assets": [
+          "a04bba077f704",
+          "a335dfad9a4c1",
+          "a370886f9580b",
+          "a43e77936c52f",
+          "a5671b4bdc605",
+          "a6ef6fe186160",
+          "a8ce305a4de7c",
+          "aa1af32026099",
+          "acffb03e04261"
+        ],
+        "collections": [
+          "bafu-portolan/ba",
+          "bafu-portolan/ei",
+          "bafu-portolan/hydro_stations",
+          "bafu-portolan/ip",
+          "bafu-portolan/mfm-u_stations",
+          "bafu-portolan/naqua_regions",
+          "bafu-portolan/nawa_trend_stations",
+          "bafu-portolan/nk",
+          "bafu-portolan/ub"
+        ],
+        "rules": [
+          {
+            "rule_id": "gpio:all:warning",
+            "count": 9,
+            "findings": [
+              "b2dfaadb37987b35",
+              "d4e210909f4411b9",
+              "2b19b97fad413338",
+              "5dad2643dde9f3e7",
+              "ad934a5ab3277df5",
+              "f1ce9ed7150292bf",
+              "6040dd090f5e246a",
+              "78b493f9c98833a8",
+              "a166ddba3bcadfbd"
+            ],
+            "example": "WARNING: ba.parquet - No bbox column found",
+            "tool": "gpio",
+            "drill": "antipatterns.no_spatial_index.rule.gpio:all:warning"
+          },
+          {
+            "rule_id": "PTL-DAT-007",
+            "count": 8,
+            "findings": [
+              "6f3993e759bf316d",
+              "e699b441ab02da20",
+              "9ac835df3ab5284d",
+              "27979806f94fc4bc",
+              "9d031360353b1f4a",
+              "1fa3207613d2c223",
+              "2cc284f6e6088a36",
+              "6d082a30c407c097"
+            ],
+            "example": "asset 'ba' relies on native GeospatialStatistics without a bbox covering column; a covering column remains recommended for page-level pruning",
+            "tool": "rashid",
+            "drill": "antipatterns.no_spatial_index.rule.PTL-DAT-007"
+          },
+          {
+            "rule_id": "PTL-DAT-006",
+            "count": 4,
+            "findings": [
+              "dadf83d26276b3c0",
+              "8fdd6818244a21b2",
+              "b9fcde0fd0ae46e6",
+              "c47cad76450f1534"
+            ],
+            "example": "asset 'ei' rows are not spatially ordered: 483 rows in 1 row group, split into 10 chunks in file order, a typical query window, sized 10% of the chunk it lands in, reads 48% of the bytes against 11% for an ideal tiling (efficiency 0.59, under the 0.65 bar); windows at 1% and 25% read 45% and 53%; the boxes sum to 3.63 of the extent; the largest boxes are chunks 8, 5, 7, counted from 0",
+            "tool": "rashid",
+            "drill": "antipatterns.no_spatial_index.rule.PTL-DAT-006"
+          },
+          {
+            "rule_id": "PTL-DAT-005",
+            "count": 3,
+            "findings": [
+              "375b1c720336ba3a",
+              "cbf3aebd3c0f1e6d",
+              "2381db7a714cfc01"
+            ],
+            "example": "collection 'ei' declared bbox [6.0469, 46.3923, 9.5579, 47.3309] is inconsistent with its asset union [6.1198, 46.4609, 9.5539, 47.3296]",
+            "tool": "rashid",
+            "drill": "antipatterns.no_spatial_index.rule.PTL-DAT-005"
+          }
+        ],
+        "rank": 5,
+        "drill": "antipatterns.no_spatial_index"
+      },
+      {
+        "key": "inefficient_layout",
+        "title": "Inefficient storage layout",
+        "severity": "medium",
+        "why": "More bytes and more requests than needed for every read.",
+        "fix": "GeoParquet: Parquet format v2, ZSTD compression, row groups of roughly 64-256 MB (`gpio convert`). COG: DEFLATE/ZSTD/LERC compression. Zarr: consolidated metadata.",
+        "findings": [
+          "9fe636aef2055369",
+          "f7dfcd6e9c98f6f6",
+          "ee09988df80df351",
+          "5ed649d5e9743476",
+          "5658af7d382743ef",
+          "d9a501d66013d36b",
+          "01df214681cc3bf2",
+          "0e4ef5e62d5d525f",
+          "4724d607b1678eed"
+        ],
+        "must": 0,
+        "should": 9,
+        "assets": [
+          "a04bba077f704",
+          "a335dfad9a4c1",
+          "a370886f9580b",
+          "a43e77936c52f",
+          "a5671b4bdc605",
+          "a6ef6fe186160",
+          "a8ce305a4de7c",
+          "aa1af32026099",
+          "acffb03e04261"
+        ],
+        "collections": [
+          "bafu-portolan/ba",
+          "bafu-portolan/ei",
+          "bafu-portolan/hydro_stations",
+          "bafu-portolan/ip",
+          "bafu-portolan/mfm-u_stations",
+          "bafu-portolan/naqua_regions",
+          "bafu-portolan/nawa_trend_stations",
+          "bafu-portolan/nk",
+          "bafu-portolan/ub"
+        ],
+        "rules": [
+          {
+            "rule_id": "CNC-PQ-001",
+            "count": 8,
+            "findings": [
+              "9fe636aef2055369",
+              "f7dfcd6e9c98f6f6",
+              "ee09988df80df351",
+              "5ed649d5e9743476",
+              "d9a501d66013d36b",
+              "01df214681cc3bf2",
+              "0e4ef5e62d5d525f",
+              "4724d607b1678eed"
+            ],
+            "example": "Parquet format v1, not v2 (rewrite with format version 2.x and data page v2)",
+            "tool": "parquet-footer",
+            "drill": "antipatterns.inefficient_layout.rule.CNC-PQ-001"
+          },
+          {
+            "rule_id": "gpio:all:warning",
+            "count": 1,
+            "findings": [
+              "5658af7d382743ef"
+            ],
+            "example": "WARNING: mfm-u_stations.parquet - SNAPPY compression instead of ZSTD",
+            "tool": "gpio",
+            "drill": "antipatterns.inefficient_layout.rule.gpio:all:warning"
+          }
+        ],
+        "rank": 6,
+        "drill": "antipatterns.inefficient_layout"
+      },
+      {
+        "key": "portolan_should",
+        "title": "Portolan recommendations (SHOULD) not followed",
+        "severity": "medium",
+        "why": "Not wrong, but harder to find, use or trust than the spec intends.",
+        "fix": "Follow the requirement text linked with each finding.",
+        "findings": [
+          "78c2090e38db09b5",
+          "2054a660ecb36068",
+          "5f46c90e5844fbb5",
+          "c40113eca255e419",
+          "5a81bbc344fbbaca",
+          "7d3bec3016f782ce",
+          "4347a07a5c746704",
+          "e7726398b37fc3f1",
+          "457a929bdedb5255",
+          "e48c205ea0a4df1b",
+          "6316beac48ecac5c",
+          "64f3604c2392ddf9",
+          "5b891ef46d6da86d",
+          "a4ee9613f2ab6710",
+          "959f2d293ec3d2eb",
+          "d38306261c23293d",
+          "806fb064c8140024",
+          "b6b94d954e310aa5",
+          "1ab05f132731f8a2",
+          "fc0f5fcf84f9c192",
+          "5d54681a9aaa8377",
+          "0bb300521952dbc0",
+          "93373da23de73427",
+          "a962f1b4caee3358",
+          "d4c520c14401884f",
+          "954c0222063c29f3",
+          "4ac830a2526be238",
+          "c1b60e1f05f59da9",
+          "c3bfd75590bdeb00",
+          "638e0e09debc6bf6",
+          "5df91337268ce971",
+          "4b9d8f48051f87b7",
+          "5ce2b6a7f20e62a2",
+          "43663a4314ff4f07",
+          "e42b229b76bf1b97",
+          "04c1f2df2e03adc3",
+          "eb2716e47a3e7c3e",
+          "38d847a48ce0e0c5",
+          "f6065134ff177247",
+          "b11991e3157e7c60",
+          "f8b45a84092b6aff",
+          "dad01ce2297f2a89",
+          "18f73e85c2919d0a",
+          "d76d972689958616",
+          "5ca54d65ca416e8b",
+          "aad7404037e2aabd",
+          "9e73caede3073abb",
+          "9345ddb2a2e8ecfe",
+          "6b49395177b44b8f",
+          "a52bba567c37fb0f",
+          "3ba6dac5c35a6842",
+          "f1091f3722fc3d69",
+          "98eaf91809727ff7",
+          "911d009b0db35765",
+          "6b6901edd2cf67ca",
+          "f14f72bfe0b08282",
+          "bff457c3f2c6dae6",
+          "80b4d9d2a24eed64",
+          "12878c32c8e2f9d7",
+          "c4487f5cdf753805",
+          "7c605961b2f07893",
+          "e4e9604ca1628262",
+          "35a482ea968770c8",
+          "fa6970812434899f",
+          "609bd04fa08e8b9a",
+          "c3d0450e509b7ee7",
+          "6a08da49af435f44",
+          "e68e013b12333ab1",
+          "8e431e2f11b8a5e6",
+          "b2175e253f493d59",
+          "917328d1b19673b2",
+          "eff2b103832ddc03",
+          "dc1ca6adb4c6d162",
+          "78c44fd969be5df3",
+          "b69ee041310ac23b",
+          "bfe09f037aa89eed",
+          "f60bd8c9382ea359",
+          "28f83569a5f8262a",
+          "c63cffefa6aee9d4",
+          "cf4e4c746bb6753a",
+          "f2b67a93b4262d87",
+          "a3027e38a5befd2d",
+          "76be447778dd5f1d",
+          "f1c64b397c27d8e4",
+          "f789632c06e60b31",
+          "0270726fd76c5abb",
+          "1be56ca329fffde6",
+          "661227e0b615acf4",
+          "a564f04ee8233a1a",
+          "66d6c54cd52ba4ea",
+          "0d2d8d4dfe6ad179",
+          "f34709771dede4e6",
+          "27461e67f2b4e0f0",
+          "a987abbf41710f8e",
+          "f4c319ac7e254d74",
+          "89b355d2e8965c88",
+          "aac58d8a11ee75a3",
+          "bc83a10cf04b2e65",
+          "a9cf07b9725a52cb",
+          "9eac40ac035ac0db",
+          "7f0452eea09f6d76",
+          "f0b9d9a9545b28cf",
+          "db257fb94a713600",
+          "ed0fdadbb7ab8393",
+          "3eef0623bbe55614",
+          "3587635c38c0fcb5",
+          "996b7eed1195b818",
+          "f88d41526ab43ff2",
+          "9f27a2d54ceb4f7e",
+          "235e1a5fade83f02",
+          "fffdbbabe0dba021",
+          "b21ab464e12e34f3",
+          "a15260b3bbe147a6",
+          "eaa98e5a20bc8338",
+          "d4ff5bf21a4b9a73",
+          "b18eed0af7031c20",
+          "352f0447ffdae9af",
+          "ce5bba5d1c10b6c8",
+          "f9d6928bd69c0141",
+          "5a6ea9de59763dce",
+          "d4b461a81cbf9caa",
+          "8952a135b8250e7d",
+          "3ca06a686317e19d",
+          "ca001ffe2fd47c0e",
+          "81dccc9669ea6a89",
+          "cf9bb4027956c0a9"
+        ],
+        "must": 0,
+        "should": 126,
+        "assets": [],
+        "collections": [
+          "bafu-portolan/ba",
+          "bafu-portolan/ei",
+          "bafu-portolan/hydro_stations",
+          "bafu-portolan/ip",
+          "bafu-portolan/mfm-u_stations",
+          "bafu-portolan/naqua_regions",
+          "bafu-portolan/nawa_trend_stations",
+          "bafu-portolan/nk",
+          "bafu-portolan/ub"
+        ],
+        "rules": [
+          {
+            "rule_id": "PTL-AST-003",
+            "count": 62,
+            "findings": [
+              "78c2090e38db09b5",
+              "2054a660ecb36068",
+              "5f46c90e5844fbb5",
+              "c40113eca255e419",
+              "5a81bbc344fbbaca",
+              "7d3bec3016f782ce",
+              "4347a07a5c746704",
+              "e7726398b37fc3f1",
+              "806fb064c8140024",
+              "b6b94d954e310aa5",
+              "1ab05f132731f8a2",
+              "fc0f5fcf84f9c192",
+              "5d54681a9aaa8377",
+              "0bb300521952dbc0",
+              "93373da23de73427",
+              "a962f1b4caee3358",
+              "5ce2b6a7f20e62a2",
+              "43663a4314ff4f07",
+              "e42b229b76bf1b97",
+              "04c1f2df2e03adc3",
+              "18f73e85c2919d0a",
+              "d76d972689958616",
+              "5ca54d65ca416e8b",
+              "aad7404037e2aabd",
+              "9e73caede3073abb",
+              "9345ddb2a2e8ecfe",
+              "6b49395177b44b8f",
+              "a52bba567c37fb0f",
+              "12878c32c8e2f9d7",
+              "c4487f5cdf753805",
+              "7c605961b2f07893",
+              "e4e9604ca1628262",
+              "e68e013b12333ab1",
+              "8e431e2f11b8a5e6",
+              "b2175e253f493d59",
+              "917328d1b19673b2",
+              "eff2b103832ddc03",
+              "dc1ca6adb4c6d162",
+              "78c44fd969be5df3",
+              "b69ee041310ac23b",
+              "bfe09f037aa89eed",
+              "f60bd8c9382ea359",
+              "0270726fd76c5abb",
+              "1be56ca329fffde6",
+              "661227e0b615acf4",
+              "a564f04ee8233a1a",
+              "f4c319ac7e254d74",
+              "89b355d2e8965c88",
+              "aac58d8a11ee75a3",
+              "bc83a10cf04b2e65",
+              "a9cf07b9725a52cb",
+              "9eac40ac035ac0db",
+              "7f0452eea09f6d76",
+              "f0b9d9a9545b28cf",
+              "fffdbbabe0dba021",
+              "b21ab464e12e34f3",
+              "a15260b3bbe147a6",
+              "eaa98e5a20bc8338",
+              "d4ff5bf21a4b9a73",
+              "b18eed0af7031c20",
+              "352f0447ffdae9af",
+              "ce5bba5d1c10b6c8"
+            ],
+            "example": "asset 'ba' has no file:checksum",
+            "tool": "rashid",
+            "drill": "antipatterns.portolan_should.rule.PTL-AST-003"
+          },
+          {
+            "rule_id": "PTL-AST-010",
+            "count": 40,
+            "findings": [
+              "457a929bdedb5255",
+              "e48c205ea0a4df1b",
+              "6316beac48ecac5c",
+              "64f3604c2392ddf9",
+              "5b891ef46d6da86d",
+              "d4c520c14401884f",
+              "954c0222063c29f3",
+              "4ac830a2526be238",
+              "c1b60e1f05f59da9",
+              "c3bfd75590bdeb00",
+              "eb2716e47a3e7c3e",
+              "38d847a48ce0e0c5",
+              "f6065134ff177247",
+              "3ba6dac5c35a6842",
+              "f1091f3722fc3d69",
+              "98eaf91809727ff7",
+              "911d009b0db35765",
+              "6b6901edd2cf67ca",
+              "35a482ea968770c8",
+              "fa6970812434899f",
+              "609bd04fa08e8b9a",
+              "28f83569a5f8262a",
+              "c63cffefa6aee9d4",
+              "cf4e4c746bb6753a",
+              "f2b67a93b4262d87",
+              "a3027e38a5befd2d",
+              "76be447778dd5f1d",
+              "66d6c54cd52ba4ea",
+              "0d2d8d4dfe6ad179",
+              "f34709771dede4e6",
+              "db257fb94a713600",
+              "ed0fdadbb7ab8393",
+              "3eef0623bbe55614",
+              "3587635c38c0fcb5",
+              "996b7eed1195b818",
+              "f9d6928bd69c0141",
+              "5a6ea9de59763dce",
+              "d4b461a81cbf9caa",
+              "8952a135b8250e7d",
+              "3ca06a686317e19d"
+            ],
+            "example": "asset 'ba' has no description",
+            "tool": "rashid",
+            "drill": "antipatterns.portolan_should.rule.PTL-AST-010"
+          },
+          {
+            "rule_id": "PTL-FIL-005",
+            "count": 15,
+            "findings": [
+              "959f2d293ec3d2eb",
+              "d38306261c23293d",
+              "5df91337268ce971",
+              "4b9d8f48051f87b7",
+              "f8b45a84092b6aff",
+              "dad01ce2297f2a89",
+              "bff457c3f2c6dae6",
+              "80b4d9d2a24eed64",
+              "6a08da49af435f44",
+              "f789632c06e60b31",
+              "a987abbf41710f8e",
+              "9f27a2d54ceb4f7e",
+              "235e1a5fade83f02",
+              "81dccc9669ea6a89",
+              "cf9bb4027956c0a9"
+            ],
+            "example": "README.md does not appear to mention the data's provenance",
+            "tool": "rashid",
+            "drill": "antipatterns.portolan_should.rule.PTL-FIL-005"
+          },
+          {
+            "rule_id": "PTL-DAT-020",
+            "count": 9,
+            "findings": [
+              "a4ee9613f2ab6710",
+              "638e0e09debc6bf6",
+              "b11991e3157e7c60",
+              "f14f72bfe0b08282",
+              "c3d0450e509b7ee7",
+              "f1c64b397c27d8e4",
+              "27461e67f2b4e0f0",
+              "f88d41526ab43ff2",
+              "ca001ffe2fd47c0e"
+            ],
+            "example": "asset 'ba': 14 of 14 table:columns entries carry no description (BA_ID, BA_Name, BA_Alt_min, BA_Alt_moy, BA_Alt_max, and 9 more). If the dataset is a mirror and the source has no descriptions, note this in the collection README.",
+            "tool": "rashid",
+            "drill": "antipatterns.portolan_should.rule.PTL-DAT-020"
+          }
+        ],
+        "rank": 7,
+        "drill": "antipatterns.portolan_should"
+      },
+      {
+        "key": "other",
+        "title": "Other best practices not met",
+        "severity": "low",
+        "why": "Reported by a validator but not matched to a general pattern above.",
+        "fix": "See the tool message and the reproduce command with each finding.",
+        "findings": [
+          "3c72d9d7d82fd3fd",
+          "e93ccae0282dcb5b",
+          "00eb74839c86fae7",
+          "9c25913d1e0f103e",
+          "c7a061b9e4b586e8",
+          "eecdb0d66ffd78bd",
+          "74a3b6087ed82d55",
+          "785ce4c0f0abc195"
+        ],
+        "must": 8,
+        "should": 0,
+        "assets": [
+          "a43e77936c52f",
+          "a6ef6fe186160",
+          "a8ce305a4de7c",
+          "aa1af32026099"
+        ],
+        "collections": [
+          "bafu-portolan/ba",
+          "bafu-portolan/ei",
+          "bafu-portolan/ip",
+          "bafu-portolan/nk"
+        ],
+        "rules": [
+          {
+            "rule_id": "gpio:all:1-failed-23-passed",
+            "count": 4,
+            "findings": [
+              "3c72d9d7d82fd3fd",
+              "00eb74839c86fae7",
+              "c7a061b9e4b586e8",
+              "74a3b6087ed82d55"
+            ],
+            "example": "1 failed, 23 passed",
+            "tool": "gpio",
+            "drill": "antipatterns.other.rule.gpio:all:1-failed-23-passed"
+          },
+          {
+            "rule_id": "gpio:all:error",
+            "count": 4,
+            "findings": [
+              "e93ccae0282dcb5b",
+              "9c25913d1e0f103e",
+              "eecdb0d66ffd78bd",
+              "785ce4c0f0abc195"
+            ],
+            "example": "ERROR: ba.parquet - Spec validation: 1 checks failed",
+            "tool": "gpio",
+            "drill": "antipatterns.other.rule.gpio:all:error"
+          }
+        ],
+        "rank": 8,
+        "drill": "antipatterns.other"
+      },
+      {
+        "key": "stac_best_practice",
+        "title": "STAC best practices not followed",
+        "severity": "low",
+        "why": "Interoperability and discoverability suffer in generic STAC tools.",
+        "fix": "Apply the stac-check suggestions shown with each finding.",
+        "findings": [
+          "cd2f8b1ad6b3f2d6",
+          "dc824b957505ab9c",
+          "46fe8b51c6f2c920",
+          "57bf2acf12e5fb72",
+          "eda1b1cfdc3090bf",
+          "12f933c0f6c7d689",
+          "4c0f335695487626",
+          "123c4cbcf02c47a5",
+          "82dff24be6f1293e",
+          "69860dea437b0073"
+        ],
+        "must": 0,
+        "should": 10,
+        "assets": [],
+        "collections": [
+          "bafu-portolan/",
+          "bafu-portolan/ba",
+          "bafu-portolan/ei",
+          "bafu-portolan/hydro_stations",
+          "bafu-portolan/ip",
+          "bafu-portolan/mfm-u_stations",
+          "bafu-portolan/naqua_regions",
+          "bafu-portolan/nawa_trend_stations",
+          "bafu-portolan/nk",
+          "bafu-portolan/ub"
+        ],
+        "rules": [
+          {
+            "rule_id": "stac-check:best-practice",
+            "count": 10,
+            "findings": [
+              "cd2f8b1ad6b3f2d6",
+              "dc824b957505ab9c",
+              "46fe8b51c6f2c920",
+              "57bf2acf12e5fb72",
+              "eda1b1cfdc3090bf",
+              "12f933c0f6c7d689",
+              "4c0f335695487626",
+              "123c4cbcf02c47a5",
+              "82dff24be6f1293e",
+              "69860dea437b0073"
+            ],
+            "example": "Additional Information:",
+            "tool": "stac-check",
+            "drill": "antipatterns.stac_best_practice.rule.stac-check:best-practice"
+          }
+        ],
+        "rank": 9,
+        "drill": "antipatterns.stac_best_practice"
+      },
+      {
+        "key": "missing_docs",
+        "title": "Missing documentation",
+        "severity": "low",
+        "why": "People and agents cannot tell what the data is or how to use it.",
+        "fix": "Add README.md and AGENTS.md beside the catalog and each collection (and llms.txt at the root), linked from the STAC JSON.",
+        "findings": [
+          "f2ac92d0d626f172"
+        ],
+        "must": 0,
+        "should": 1,
+        "assets": [],
+        "collections": [
+          "bafu-portolan/"
+        ],
+        "rules": [
+          {
+            "rule_id": "CNC-DOC-001",
+            "count": 1,
+            "findings": [
+              "f2ac92d0d626f172"
+            ],
+            "example": "llms.txt missing beside catalog",
+            "tool": "docs-check",
+            "drill": "antipatterns.missing_docs.rule.CNC-DOC-001"
+          }
+        ],
+        "rank": 10,
+        "drill": "antipatterns.missing_docs"
+      }
+    ],
     "by_format": {
       "GeoParquet": {
         "assets": 9,
         "fully_conformant": 0,
         "unverified": 0,
         "errors": 12,
-        "warnings": 19,
+        "warnings": 27,
         "pct": 0.0
       },
       "PMTiles": {
@@ -168,7 +1163,7 @@
         "fully_conformant": 0,
         "unverified": 0,
         "errors": 5,
-        "warnings": 22,
+        "warnings": 23,
         "infos": 3,
         "checks": 77,
         "checks_failed": 7,
@@ -188,7 +1183,7 @@
         "fully_conformant": 0,
         "unverified": 0,
         "errors": 5,
-        "warnings": 24,
+        "warnings": 25,
         "infos": 2,
         "checks": 77,
         "checks_failed": 7,
@@ -208,7 +1203,7 @@
         "fully_conformant": 0,
         "unverified": 0,
         "errors": 2,
-        "warnings": 15,
+        "warnings": 16,
         "infos": 1,
         "checks": 59,
         "checks_failed": 2,
@@ -228,7 +1223,7 @@
         "fully_conformant": 0,
         "unverified": 0,
         "errors": 5,
-        "warnings": 24,
+        "warnings": 25,
         "infos": 2,
         "checks": 77,
         "checks_failed": 7,
@@ -268,7 +1263,7 @@
         "fully_conformant": 0,
         "unverified": 0,
         "errors": 6,
-        "warnings": 22,
+        "warnings": 23,
         "infos": 4,
         "checks": 91,
         "checks_failed": 3,
@@ -288,7 +1283,7 @@
         "fully_conformant": 0,
         "unverified": 0,
         "errors": 2,
-        "warnings": 13,
+        "warnings": 14,
         "infos": 2,
         "checks": 59,
         "checks_failed": 2,
@@ -308,7 +1303,7 @@
         "fully_conformant": 0,
         "unverified": 0,
         "errors": 5,
-        "warnings": 23,
+        "warnings": 24,
         "infos": 3,
         "checks": 77,
         "checks_failed": 7,
@@ -328,7 +1323,7 @@
         "fully_conformant": 0,
         "unverified": 0,
         "errors": 2,
-        "warnings": 23,
+        "warnings": 24,
         "infos": 2,
         "checks": 76,
         "checks_failed": 2,
@@ -557,6 +1552,7 @@
           "b2f9256c2dbb68f7",
           "b2dfaadb37987b35",
           "c7ad5a7c798c9a72",
+          "9fe636aef2055369",
           "806fb064c8140024",
           "b6b94d954e310aa5",
           "1ab05f132731f8a2",
@@ -581,6 +1577,7 @@
           "e09c890a701d0a88",
           "d4e210909f4411b9",
           "8d33f072127d47c6",
+          "f7dfcd6e9c98f6f6",
           "5ce2b6a7f20e62a2",
           "43663a4314ff4f07",
           "e42b229b76bf1b97",
@@ -596,6 +1593,7 @@
           "57bf2acf12e5fb72",
           "2b19b97fad413338",
           "ce5086ce3bfa1786",
+          "ee09988df80df351",
           "18f73e85c2919d0a",
           "d76d972689958616",
           "5ca54d65ca416e8b",
@@ -620,6 +1618,7 @@
           "ba1d365023de7f76",
           "5dad2643dde9f3e7",
           "93d4aa8ddea352e5",
+          "5ed649d5e9743476",
           "12878c32c8e2f9d7",
           "c4487f5cdf753805",
           "7c605961b2f07893",
@@ -655,6 +1654,7 @@
           "4c0f335695487626",
           "f1ce9ed7150292bf",
           "49a9a06e85da5412",
+          "d9a501d66013d36b",
           "0270726fd76c5abb",
           "1be56ca329fffde6",
           "661227e0b615acf4",
@@ -668,6 +1668,7 @@
           "123c4cbcf02c47a5",
           "6040dd090f5e246a",
           "d32f9d4b2bde90e8",
+          "01df214681cc3bf2",
           "f4c319ac7e254d74",
           "89b355d2e8965c88",
           "aac58d8a11ee75a3",
@@ -691,6 +1692,7 @@
           "1ac5c48c7c997d42",
           "78b493f9c98833a8",
           "c5678cc9ae48bad7",
+          "0e4ef5e62d5d525f",
           "fffdbbabe0dba021",
           "b21ab464e12e34f3",
           "a15260b3bbe147a6",
@@ -713,7 +1715,8 @@
           "d94e8d0ab7f99c18",
           "87b41c22df6c837e",
           "a166ddba3bcadfbd",
-          "39874ebfbea97750"
+          "39874ebfbea97750",
+          "4724d607b1678eed"
         ],
         "label": "SHOULD warnings (severity warning)"
       },
@@ -1995,6 +2998,7 @@
           "c39e6eb3b90cb",
           "c417ddc73f483",
           "c5c5aad33e7dd",
+          "c45685894f645",
           "cdef4fa85fc36",
           "caadcc02370c0",
           "ce3c0794b0c47",
@@ -2002,10 +3006,12 @@
           "c77b4ebb5af15",
           "c7fcf7e4bd30f",
           "cc504c51522bf",
+          "cf67eb43f32fe",
           "c357591409713",
           "c5d08d479a422",
           "ce9d5ec1f87f0",
           "c45253d08b34a",
+          "c0416fe47c6e5",
           "cdfd6b224ada2",
           "cbc39da67b13d",
           "c942024b27569",
@@ -2013,6 +3019,7 @@
           "cdf6697d94602",
           "c15acf5a1944d",
           "c44b39ebd6d83",
+          "c9f15b55fe18a",
           "c87af9451d436",
           "c49b926ea5f58",
           "c563f6de49028",
@@ -2021,10 +3028,12 @@
           "c0bfa938f2bf4",
           "c0ddc1f4f49cd",
           "c1fae582453d9",
+          "ce1aad87fe923",
           "ce1c47ad14497",
           "cc1021b274150",
           "c7b38a37d7031",
           "cfb22e19c1173",
+          "c89bb98766cf9",
           "c004c58908461",
           "cc1f654904002",
           "cb2fb1182f892",
@@ -2032,6 +3041,7 @@
           "c2bbd00eb1827",
           "c65d17930abb2",
           "ccbc4354dba67",
+          "c5b4ec2214780",
           "c95262b581afb",
           "c93fb170e0fda",
           "ce4ffb02aa5a5",
@@ -2039,7 +3049,8 @@
           "c7d2e0f011f66",
           "c102b813e2f00",
           "c15ca5efa6a36",
-          "c7a732a977704"
+          "c7a732a977704",
+          "c3b8d09b1fd7e"
         ],
         "label": "Checks with outcome 'warn'"
       },
@@ -2054,7 +3065,6 @@
           "ca653cff16718",
           "ca175133fd459",
           "cf389c0e609ef",
-          "c45685894f645",
           "cb2a1722cc8e2",
           "cb3d2f5bd591d",
           "c735b044f2b41",
@@ -2063,7 +3073,6 @@
           "c33f36b7ea49a",
           "ccf0183f55794",
           "c35773a3aacbc",
-          "cf67eb43f32fe",
           "c735a0688798d",
           "cba81a4f16a24",
           "c3ed7c450e5f4",
@@ -2073,14 +3082,12 @@
           "c198bfab89759",
           "cfc95206489a9",
           "cfc1d959132bf",
-          "c0416fe47c6e5",
           "ca13fd4d8e657",
           "c10e58e6ccb63",
           "cb71c14f2b2dd",
           "c0b4c88b81222",
           "c00b01100b520",
           "cf00539d76598",
-          "c9f15b55fe18a",
           "c4c2ee10fbf17",
           "cea43f1f00a62",
           "c46bec2eaf0f2",
@@ -2097,7 +3104,6 @@
           "c2aab45627026",
           "c4e6235f24881",
           "c7b6f038928fb",
-          "ce1aad87fe923",
           "c792156ea3477",
           "c3d1b7ddd6502",
           "ce74447524710",
@@ -2109,14 +3115,12 @@
           "c53965963ba47",
           "c4dc322d4f63b",
           "ceda4799f142f",
-          "c89bb98766cf9",
           "c61d895c94515",
           "c12957f25985d",
           "c3377d05ace87",
           "c4c0539c153f7",
           "cab7138eb9266",
           "cc28e70cad588",
-          "c5b4ec2214780",
           "c8762c798b022",
           "cf18ce1b086ca",
           "c9c8ee5f10403",
@@ -2126,7 +3130,6 @@
           "c8f5a571f9f5d",
           "c0ff830d07ca5",
           "ced40a0d4c4c4",
-          "c3b8d09b1fd7e",
           "cbe5dcb83b451",
           "cfde068be7da1"
         ],
@@ -2279,489 +3282,1405 @@
         ],
         "label": "Top-level checks (one per tool run)"
       },
-      "parquet_rating.assets": {
+      "grades.graded": {
         "kind": "assets",
         "ids": [
           "a6ef6fe186160",
+          "a73c10275bb1f",
           "a8ce305a4de7c",
+          "a85bd7dd882b6",
           "acffb03e04261",
+          "a73ceca123946",
           "a43e77936c52f",
           "a04bba077f704",
           "a335dfad9a4c1",
+          "ad0505ca13a42",
           "a370886f9580b",
+          "adcd7bfeb24f9",
           "aa1af32026099",
-          "a5671b4bdc605"
+          "a5671b4bdc605",
+          "a247ecb93ab28"
         ],
-        "label": "GeoParquet assets (scored)"
+        "label": "Graded assets"
       },
-      "parquet_rating.rated": {
+      "grades.ungraded": {
+        "kind": "assets",
+        "ids": [],
+        "label": "Not graded: no format validator could read them"
+      },
+      "grades.overall.A": {
+        "kind": "assets",
+        "ids": [],
+        "label": "Assets graded A"
+      },
+      "grades.overall.B": {
+        "kind": "assets",
+        "ids": [
+          "ad0505ca13a42"
+        ],
+        "label": "Assets graded B"
+      },
+      "grades.overall.C": {
+        "kind": "assets",
+        "ids": [],
+        "label": "Assets graded C"
+      },
+      "grades.overall.D": {
         "kind": "assets",
         "ids": [
           "acffb03e04261",
+          "a04bba077f704",
           "a335dfad9a4c1",
           "a370886f9580b",
-          "a5671b4bdc605",
+          "a5671b4bdc605"
+        ],
+        "label": "Assets graded D"
+      },
+      "grades.overall.E": {
+        "kind": "assets",
+        "ids": [],
+        "label": "Assets graded E"
+      },
+      "grades.overall.F": {
+        "kind": "assets",
+        "ids": [
+          "a73c10275bb1f",
+          "a6ef6fe186160",
+          "a85bd7dd882b6",
+          "a8ce305a4de7c",
+          "a73ceca123946",
+          "a43e77936c52f",
+          "adcd7bfeb24f9",
+          "aa1af32026099",
+          "a247ecb93ab28"
+        ],
+        "label": "Assets graded F"
+      },
+      "grades.GeoParquet.A": {
+        "kind": "assets",
+        "ids": [],
+        "label": "GeoParquet assets graded A"
+      },
+      "grades.GeoParquet.B": {
+        "kind": "assets",
+        "ids": [],
+        "label": "GeoParquet assets graded B"
+      },
+      "grades.GeoParquet.C": {
+        "kind": "assets",
+        "ids": [],
+        "label": "GeoParquet assets graded C"
+      },
+      "grades.GeoParquet.D": {
+        "kind": "assets",
+        "ids": [
+          "acffb03e04261",
           "a04bba077f704",
+          "a335dfad9a4c1",
+          "a370886f9580b",
+          "a5671b4bdc605"
+        ],
+        "label": "GeoParquet assets graded D"
+      },
+      "grades.GeoParquet.E": {
+        "kind": "assets",
+        "ids": [],
+        "label": "GeoParquet assets graded E"
+      },
+      "grades.GeoParquet.F": {
+        "kind": "assets",
+        "ids": [
           "a6ef6fe186160",
           "a8ce305a4de7c",
           "a43e77936c52f",
           "aa1af32026099"
         ],
-        "label": "Rated GeoParquet assets"
+        "label": "GeoParquet assets graded F"
       },
-      "parquet_rating.not_rated": {
+      "grades.PMTiles.A": {
         "kind": "assets",
         "ids": [],
-        "label": "GeoParquet assets without a rating (gpio did not run on them)"
+        "label": "PMTiles assets graded A"
       },
-      "parquet_rating.grade.A": {
-        "kind": "assets",
-        "ids": [],
-        "label": "GeoParquet assets rated A"
-      },
-      "parquet_rating.grade.B": {
+      "grades.PMTiles.B": {
         "kind": "assets",
         "ids": [
+          "ad0505ca13a42"
+        ],
+        "label": "PMTiles assets graded B"
+      },
+      "grades.PMTiles.C": {
+        "kind": "assets",
+        "ids": [],
+        "label": "PMTiles assets graded C"
+      },
+      "grades.PMTiles.D": {
+        "kind": "assets",
+        "ids": [],
+        "label": "PMTiles assets graded D"
+      },
+      "grades.PMTiles.E": {
+        "kind": "assets",
+        "ids": [],
+        "label": "PMTiles assets graded E"
+      },
+      "grades.PMTiles.F": {
+        "kind": "assets",
+        "ids": [],
+        "label": "PMTiles assets graded F"
+      },
+      "grades.Other.A": {
+        "kind": "assets",
+        "ids": [],
+        "label": "Other assets graded A"
+      },
+      "grades.Other.B": {
+        "kind": "assets",
+        "ids": [],
+        "label": "Other assets graded B"
+      },
+      "grades.Other.C": {
+        "kind": "assets",
+        "ids": [],
+        "label": "Other assets graded C"
+      },
+      "grades.Other.D": {
+        "kind": "assets",
+        "ids": [],
+        "label": "Other assets graded D"
+      },
+      "grades.Other.E": {
+        "kind": "assets",
+        "ids": [],
+        "label": "Other assets graded E"
+      },
+      "grades.Other.F": {
+        "kind": "assets",
+        "ids": [
+          "a73c10275bb1f",
+          "a85bd7dd882b6",
+          "a73ceca123946",
+          "adcd7bfeb24f9",
+          "a247ecb93ab28"
+        ],
+        "label": "Other assets graded F"
+      },
+      "grades.unmet.a6ef6fe186160": {
+        "kind": "findings",
+        "ids": [
+          "3c72d9d7d82fd3fd",
+          "e93ccae0282dcb5b",
+          "365780ccf08126c0",
+          "c7ad5a7c798c9a72",
+          "9fe636aef2055369",
+          "b2dfaadb37987b35"
+        ],
+        "label": "Why ba is F: one level per item"
+      },
+      "grades.unmet.a73c10275bb1f": {
+        "kind": "findings",
+        "ids": [
+          "2d0eee60e81bd15d"
+        ],
+        "label": "Why geopackage is F: one level per item"
+      },
+      "grades.unmet.a8ce305a4de7c": {
+        "kind": "findings",
+        "ids": [
+          "00eb74839c86fae7",
+          "9c25913d1e0f103e",
+          "fbe74a30e6f488b7",
+          "8d33f072127d47c6",
+          "f7dfcd6e9c98f6f6",
+          "d4e210909f4411b9"
+        ],
+        "label": "Why ei is F: one level per item"
+      },
+      "grades.unmet.a85bd7dd882b6": {
+        "kind": "findings",
+        "ids": [
+          "2f4fa687311a0aae"
+        ],
+        "label": "Why geopackage is F: one level per item"
+      },
+      "grades.unmet.acffb03e04261": {
+        "kind": "findings",
+        "ids": [
+          "ce5086ce3bfa1786",
+          "ee09988df80df351",
+          "2b19b97fad413338"
+        ],
+        "label": "Why hydro_stations is D: one level per item"
+      },
+      "grades.unmet.a73ceca123946": {
+        "kind": "findings",
+        "ids": [
+          "c49fbd241a59b5cf"
+        ],
+        "label": "Why geopackage is F: one level per item"
+      },
+      "grades.unmet.a43e77936c52f": {
+        "kind": "findings",
+        "ids": [
+          "c7a061b9e4b586e8",
+          "eecdb0d66ffd78bd",
+          "e921c2a0c88c58f8",
+          "93d4aa8ddea352e5",
+          "5ed649d5e9743476",
+          "5dad2643dde9f3e7"
+        ],
+        "label": "Why ip is F: one level per item"
+      },
+      "grades.unmet.a04bba077f704": {
+        "kind": "findings",
+        "ids": [
+          "b98fd7aa337dd0fe",
+          "ad934a5ab3277df5",
+          "5658af7d382743ef"
+        ],
+        "label": "Why mfm-u_stations is D: one level per item"
+      },
+      "grades.unmet.a335dfad9a4c1": {
+        "kind": "findings",
+        "ids": [
+          "49a9a06e85da5412",
+          "d9a501d66013d36b",
+          "f1ce9ed7150292bf"
+        ],
+        "label": "Why naqua_regions is D: one level per item"
+      },
+      "grades.unmet.ad0505ca13a42": {
+        "kind": "findings",
+        "ids": [
+          "391cb73e5b4e16a3"
+        ],
+        "label": "Why pmtiles is B: one level per item"
+      },
+      "grades.unmet.a370886f9580b": {
+        "kind": "findings",
+        "ids": [
+          "d32f9d4b2bde90e8",
+          "01df214681cc3bf2",
+          "6040dd090f5e246a"
+        ],
+        "label": "Why nawa_trend_stations is D: one level per item"
+      },
+      "grades.unmet.adcd7bfeb24f9": {
+        "kind": "findings",
+        "ids": [
+          "97167859c18f7369"
+        ],
+        "label": "Why geopackage is F: one level per item"
+      },
+      "grades.unmet.aa1af32026099": {
+        "kind": "findings",
+        "ids": [
+          "74a3b6087ed82d55",
+          "785ce4c0f0abc195",
+          "0000430a11a4933b",
+          "c5678cc9ae48bad7",
+          "0e4ef5e62d5d525f",
+          "78b493f9c98833a8"
+        ],
+        "label": "Why nk is F: one level per item"
+      },
+      "grades.unmet.a5671b4bdc605": {
+        "kind": "findings",
+        "ids": [
+          "39874ebfbea97750",
+          "4724d607b1678eed",
+          "a166ddba3bcadfbd"
+        ],
+        "label": "Why UB is D: one level per item"
+      },
+      "grades.unmet.a247ecb93ab28": {
+        "kind": "findings",
+        "ids": [
+          "d94e8d0ab7f99c18"
+        ],
+        "label": "Why geopackage is F: one level per item"
+      },
+      "antipatterns.invalid.findings": {
+        "kind": "findings",
+        "ids": [
+          "ffed6fb2631aac7e",
+          "e947a46019cf09c0",
+          "365780ccf08126c0",
+          "e0425179e8f0128a",
+          "fb5a5d35c11a9b25",
+          "fbe74a30e6f488b7",
+          "0c09de33bc44bc52",
+          "798382394602162f",
+          "c4b4f76427556e8a",
+          "b3d1d18915745f17",
+          "e921c2a0c88c58f8",
+          "e3eb76e485b2d637",
+          "4150f69fd1d5aaeb",
+          "51e66d1162d84ea0",
+          "cabea9ef787a5b57",
+          "391cb73e5b4e16a3",
+          "f4243e4545b34310",
+          "08cedee97529f88d",
+          "bd851ad393f82558",
+          "fc2f0f85c17fa7d8",
+          "0000430a11a4933b",
+          "7bc669229b3141ba",
+          "1bef857f7493205c"
+        ],
+        "label": "Invalid or broken files and metadata: findings"
+      },
+      "antipatterns.invalid.assets": {
+        "kind": "assets",
+        "ids": [
+          "a43e77936c52f",
           "a6ef6fe186160",
           "a8ce305a4de7c",
-          "acffb03e04261",
+          "aa1af32026099",
+          "ad0505ca13a42"
+        ],
+        "label": "Invalid or broken files and metadata: affected assets"
+      },
+      "antipatterns.invalid.must": {
+        "kind": "findings",
+        "ids": [
+          "ffed6fb2631aac7e",
+          "e947a46019cf09c0",
+          "365780ccf08126c0",
+          "e0425179e8f0128a",
+          "fb5a5d35c11a9b25",
+          "fbe74a30e6f488b7",
+          "0c09de33bc44bc52",
+          "798382394602162f",
+          "c4b4f76427556e8a",
+          "b3d1d18915745f17",
+          "e921c2a0c88c58f8",
+          "e3eb76e485b2d637",
+          "4150f69fd1d5aaeb",
+          "51e66d1162d84ea0",
+          "cabea9ef787a5b57",
+          "391cb73e5b4e16a3",
+          "f4243e4545b34310",
+          "08cedee97529f88d",
+          "bd851ad393f82558",
+          "fc2f0f85c17fa7d8",
+          "0000430a11a4933b",
+          "7bc669229b3141ba",
+          "1bef857f7493205c"
+        ],
+        "label": "Invalid or broken files and metadata: MUST failures"
+      },
+      "antipatterns.invalid.should": {
+        "kind": "findings",
+        "ids": [],
+        "label": "Invalid or broken files and metadata: SHOULD warnings"
+      },
+      "antipatterns.invalid.rule.stac-check:invalid": {
+        "kind": "findings",
+        "ids": [
+          "ffed6fb2631aac7e",
+          "e0425179e8f0128a",
+          "0c09de33bc44bc52",
+          "c4b4f76427556e8a",
+          "e3eb76e485b2d637",
+          "51e66d1162d84ea0",
+          "f4243e4545b34310",
+          "bd851ad393f82558",
+          "7bc669229b3141ba"
+        ],
+        "label": "Invalid or broken files and metadata: stac-check:invalid"
+      },
+      "antipatterns.invalid.rule.stac-validator:Exception": {
+        "kind": "findings",
+        "ids": [
+          "e947a46019cf09c0",
+          "fb5a5d35c11a9b25",
+          "798382394602162f",
+          "b3d1d18915745f17",
+          "4150f69fd1d5aaeb",
+          "cabea9ef787a5b57",
+          "08cedee97529f88d",
+          "fc2f0f85c17fa7d8",
+          "1bef857f7493205c"
+        ],
+        "label": "Invalid or broken files and metadata: stac-validator:Exception"
+      },
+      "antipatterns.invalid.rule.gpio:spec:geometry-types-match-data-geometry": {
+        "kind": "findings",
+        "ids": [
+          "365780ccf08126c0",
+          "fbe74a30e6f488b7",
+          "e921c2a0c88c58f8",
+          "0000430a11a4933b"
+        ],
+        "label": "Invalid or broken files and metadata: gpio:spec:geometry-types-match-data-geometry"
+      },
+      "antipatterns.invalid.rule.pmtiles:verify": {
+        "kind": "findings",
+        "ids": [
+          "391cb73e5b4e16a3"
+        ],
+        "label": "Invalid or broken files and metadata: pmtiles:verify"
+      },
+      "antipatterns.not_cloud_native.findings": {
+        "kind": "findings",
+        "ids": [
+          "2d0eee60e81bd15d",
+          "2f4fa687311a0aae",
+          "c49fbd241a59b5cf",
+          "97167859c18f7369",
+          "d94e8d0ab7f99c18"
+        ],
+        "label": "Data not in a cloud-native format: findings"
+      },
+      "antipatterns.not_cloud_native.assets": {
+        "kind": "assets",
+        "ids": [
+          "a247ecb93ab28",
+          "a73c10275bb1f",
+          "a73ceca123946",
+          "a85bd7dd882b6",
+          "adcd7bfeb24f9"
+        ],
+        "label": "Data not in a cloud-native format: affected assets"
+      },
+      "antipatterns.not_cloud_native.must": {
+        "kind": "findings",
+        "ids": [],
+        "label": "Data not in a cloud-native format: MUST failures"
+      },
+      "antipatterns.not_cloud_native.should": {
+        "kind": "findings",
+        "ids": [
+          "2d0eee60e81bd15d",
+          "2f4fa687311a0aae",
+          "c49fbd241a59b5cf",
+          "97167859c18f7369",
+          "d94e8d0ab7f99c18"
+        ],
+        "label": "Data not in a cloud-native format: SHOULD warnings"
+      },
+      "antipatterns.not_cloud_native.rule.CNC-FMT-001": {
+        "kind": "findings",
+        "ids": [
+          "2d0eee60e81bd15d",
+          "2f4fa687311a0aae",
+          "c49fbd241a59b5cf",
+          "97167859c18f7369",
+          "d94e8d0ab7f99c18"
+        ],
+        "label": "Data not in a cloud-native format: CNC-FMT-001"
+      },
+      "antipatterns.portolan_must.findings": {
+        "kind": "findings",
+        "ids": [
+          "426db897513de184",
+          "14d2ad14b4a8c16c",
+          "2c48ab2f66bc335a",
+          "c5e8626dd70538cb"
+        ],
+        "label": "Portolan MUST requirements broken: findings"
+      },
+      "antipatterns.portolan_must.assets": {
+        "kind": "assets",
+        "ids": [],
+        "label": "Portolan MUST requirements broken: affected assets"
+      },
+      "antipatterns.portolan_must.must": {
+        "kind": "findings",
+        "ids": [
+          "426db897513de184",
+          "14d2ad14b4a8c16c",
+          "2c48ab2f66bc335a",
+          "c5e8626dd70538cb"
+        ],
+        "label": "Portolan MUST requirements broken: MUST failures"
+      },
+      "antipatterns.portolan_must.should": {
+        "kind": "findings",
+        "ids": [],
+        "label": "Portolan MUST requirements broken: SHOULD warnings"
+      },
+      "antipatterns.portolan_must.rule.PTL-AST-009": {
+        "kind": "findings",
+        "ids": [
+          "14d2ad14b4a8c16c",
+          "2c48ab2f66bc335a"
+        ],
+        "label": "Portolan MUST requirements broken: PTL-AST-009"
+      },
+      "antipatterns.portolan_must.rule.PTL-DAT-007": {
+        "kind": "findings",
+        "ids": [
+          "426db897513de184"
+        ],
+        "label": "Portolan MUST requirements broken: PTL-DAT-007"
+      },
+      "antipatterns.portolan_must.rule.PTL-LIV-004": {
+        "kind": "findings",
+        "ids": [
+          "c5e8626dd70538cb"
+        ],
+        "label": "Portolan MUST requirements broken: PTL-LIV-004"
+      },
+      "antipatterns.metadata_mismatch.findings": {
+        "kind": "findings",
+        "ids": [
+          "b2f9256c2dbb68f7",
+          "c7ad5a7c798c9a72",
+          "e09c890a701d0a88",
+          "8d33f072127d47c6",
+          "ce5086ce3bfa1786",
+          "ba1d365023de7f76",
+          "93d4aa8ddea352e5",
+          "b98fd7aa337dd0fe",
+          "49a9a06e85da5412",
+          "d32f9d4b2bde90e8",
+          "1ac5c48c7c997d42",
+          "c5678cc9ae48bad7",
+          "87b41c22df6c837e",
+          "39874ebfbea97750"
+        ],
+        "label": "Metadata does not match the data: findings"
+      },
+      "antipatterns.metadata_mismatch.assets": {
+        "kind": "assets",
+        "ids": [
+          "a04bba077f704",
+          "a247ecb93ab28",
+          "a335dfad9a4c1",
+          "a370886f9580b",
           "a43e77936c52f",
+          "a5671b4bdc605",
+          "a6ef6fe186160",
+          "a73c10275bb1f",
+          "a73ceca123946",
+          "a85bd7dd882b6",
+          "a8ce305a4de7c",
+          "aa1af32026099",
+          "acffb03e04261",
+          "adcd7bfeb24f9"
+        ],
+        "label": "Metadata does not match the data: affected assets"
+      },
+      "antipatterns.metadata_mismatch.must": {
+        "kind": "findings",
+        "ids": [],
+        "label": "Metadata does not match the data: MUST failures"
+      },
+      "antipatterns.metadata_mismatch.should": {
+        "kind": "findings",
+        "ids": [
+          "b2f9256c2dbb68f7",
+          "c7ad5a7c798c9a72",
+          "e09c890a701d0a88",
+          "8d33f072127d47c6",
+          "ce5086ce3bfa1786",
+          "ba1d365023de7f76",
+          "93d4aa8ddea352e5",
+          "b98fd7aa337dd0fe",
+          "49a9a06e85da5412",
+          "d32f9d4b2bde90e8",
+          "1ac5c48c7c997d42",
+          "c5678cc9ae48bad7",
+          "87b41c22df6c837e",
+          "39874ebfbea97750"
+        ],
+        "label": "Metadata does not match the data: SHOULD warnings"
+      },
+      "antipatterns.metadata_mismatch.rule.CNC-HOST-005": {
+        "kind": "findings",
+        "ids": [
+          "b2f9256c2dbb68f7",
+          "c7ad5a7c798c9a72",
+          "e09c890a701d0a88",
+          "8d33f072127d47c6",
+          "ce5086ce3bfa1786",
+          "ba1d365023de7f76",
+          "93d4aa8ddea352e5",
+          "b98fd7aa337dd0fe",
+          "49a9a06e85da5412",
+          "d32f9d4b2bde90e8",
+          "1ac5c48c7c997d42",
+          "c5678cc9ae48bad7",
+          "87b41c22df6c837e",
+          "39874ebfbea97750"
+        ],
+        "label": "Metadata does not match the data: CNC-HOST-005"
+      },
+      "antipatterns.no_spatial_index.findings": {
+        "kind": "findings",
+        "ids": [
+          "6f3993e759bf316d",
+          "b2dfaadb37987b35",
+          "375b1c720336ba3a",
+          "dadf83d26276b3c0",
+          "e699b441ab02da20",
+          "d4e210909f4411b9",
+          "8fdd6818244a21b2",
+          "9ac835df3ab5284d",
+          "2b19b97fad413338",
+          "cbf3aebd3c0f1e6d",
+          "b9fcde0fd0ae46e6",
+          "27979806f94fc4bc",
+          "5dad2643dde9f3e7",
+          "ad934a5ab3277df5",
+          "9d031360353b1f4a",
+          "f1ce9ed7150292bf",
+          "1fa3207613d2c223",
+          "6040dd090f5e246a",
+          "2381db7a714cfc01",
+          "2cc284f6e6088a36",
+          "78b493f9c98833a8",
+          "c47cad76450f1534",
+          "6d082a30c407c097",
+          "a166ddba3bcadfbd"
+        ],
+        "label": "No spatial index or ordering: findings"
+      },
+      "antipatterns.no_spatial_index.assets": {
+        "kind": "assets",
+        "ids": [
           "a04bba077f704",
           "a335dfad9a4c1",
           "a370886f9580b",
-          "aa1af32026099",
-          "a5671b4bdc605"
-        ],
-        "label": "GeoParquet assets rated B"
-      },
-      "parquet_rating.grade.C": {
-        "kind": "assets",
-        "ids": [],
-        "label": "GeoParquet assets rated C"
-      },
-      "parquet_rating.grade.D": {
-        "kind": "assets",
-        "ids": [],
-        "label": "GeoParquet assets rated D"
-      },
-      "parquet_rating.grade.E": {
-        "kind": "assets",
-        "ids": [],
-        "label": "GeoParquet assets rated E"
-      },
-      "parquet_rating.checks.a6ef6fe186160": {
-        "kind": "checks",
-        "ids": [
-          "ce01c0230cb8b",
-          "c9604caf78e4a",
-          "c395f1f7b571d",
-          "c7f3bd1c9e3e1",
-          "c082e9a4fca53",
-          "caf0235d7908f",
-          "ce9065775c27b",
-          "ca17e0b57c364",
-          "c7357e0f2aece",
-          "c34910f68b77c",
-          "cbe57347be2bc",
-          "cbe860f3d05fc",
-          "cb32beb0baf31",
-          "c8234f3f43247",
-          "c5fa47a19702d",
-          "c3b5b82fb3d33",
-          "c984dd15e043a",
-          "c6a8d14b09195",
-          "c756f66eadbba",
-          "c4cc0f1184703",
-          "c199e627ca7b1",
-          "cb4cc12b90271",
-          "c6576d74398a4",
-          "c789f4e661f56",
-          "cd049412bed53",
-          "c39e6eb3b90cb",
-          "c6b598fd4370a"
-        ],
-        "label": "gpio checks behind the rating of ba (91.2, B)"
-      },
-      "parquet_rating.why_not_a.a6ef6fe186160": {
-        "kind": "checks",
-        "ids": [
-          "cd049412bed53",
-          "c39e6eb3b90cb",
-          "c6b598fd4370a",
-          "c45685894f645"
-        ],
-        "label": "Why ba cannot reach grade A"
-      },
-      "parquet_rating.checks.a8ce305a4de7c": {
-        "kind": "checks",
-        "ids": [
-          "c37c4e19e5bf4",
-          "cbb6cd897a463",
-          "cc7f662095586",
-          "c305686f405db",
-          "c41767e9fc8bc",
-          "c036d7c057017",
-          "c5283cc4442c3",
-          "c15b5619d8d28",
-          "ce6a79be1ef0d",
-          "c89f1d531d08a",
-          "c479b22742b3b",
-          "ccac806e82353",
-          "c9c57c354e705",
-          "cb3c150896ef9",
-          "cfb4137d3b36c",
-          "c8ce2358a0b5e",
-          "c92118e18d321",
-          "c51de7c309200",
-          "c2e65ad7bccec",
-          "cd1646305e82c",
-          "cb02ad3856284",
-          "c68487365d369",
-          "c779bfc85bb44",
-          "c849edbd2fbc5",
-          "c9a4aa5e333b5",
-          "c77b4ebb5af15",
-          "c58aff9c8cbef"
-        ],
-        "label": "gpio checks behind the rating of ei (91.2, B)"
-      },
-      "parquet_rating.why_not_a.a8ce305a4de7c": {
-        "kind": "checks",
-        "ids": [
-          "c9a4aa5e333b5",
-          "c77b4ebb5af15",
-          "c58aff9c8cbef",
-          "cf67eb43f32fe"
-        ],
-        "label": "Why ei cannot reach grade A"
-      },
-      "parquet_rating.checks.acffb03e04261": {
-        "kind": "checks",
-        "ids": [
-          "cab20cc093a15",
-          "c99a94082dabf",
-          "cb3100a0628f4",
-          "c90c2edc2f242",
-          "cc7fb805b9d3a",
-          "c480710e2819e",
-          "cea000815f2f9",
-          "ce0e6d0b46133",
-          "ce705aeef5a92",
-          "c5edb5355d77e",
-          "caf15b514b1c5",
-          "c5b3a02697569",
-          "c08cf5a346caf",
-          "c03511bdde5ef",
-          "c5a0957e80106",
-          "ca667338237ba",
-          "c344b09dbe96e",
-          "cf49073c83632",
-          "c58ebfbf00329",
-          "c58282ceca513",
-          "cabc3a7e4acdf",
-          "c6baccb677e46",
-          "ca2f44fe16613",
-          "ca0d599eacd87",
-          "c7acc124543f4",
-          "c5d08d479a422"
-        ],
-        "label": "gpio checks behind the rating of hydro_stations (99, B)"
-      },
-      "parquet_rating.why_not_a.acffb03e04261": {
-        "kind": "checks",
-        "ids": [
-          "c5d08d479a422",
-          "c0416fe47c6e5"
-        ],
-        "label": "Why hydro_stations cannot reach grade A"
-      },
-      "parquet_rating.checks.a43e77936c52f": {
-        "kind": "checks",
-        "ids": [
-          "c8991ef212d38",
-          "cf9e39bc831c4",
-          "c6259c826b1a4",
-          "c449e3ca1911c",
-          "c7933dd282acc",
-          "c59ccad16ba27",
-          "cd1874fd2a3f1",
-          "c98009bff0be1",
-          "cd5c337c18624",
-          "c503a594d1909",
-          "c0cbe71c3ec57",
-          "c76686a3f47e6",
-          "c89fc406e7f41",
-          "cb6a75fb2a1df",
-          "c0386d84a39a7",
-          "c2a231aa77e80",
-          "caa04a221f2f0",
-          "c4786714534f2",
-          "c65d8ffc4b45d",
-          "ca61d02da8ce0",
-          "c01053709b8e7",
-          "ca99580ab2bdb",
-          "c80a304357acd",
-          "c25c0562fe0bc",
-          "ca8b50dc535cd",
-          "cdf6697d94602",
-          "c673b0f4454e2"
-        ],
-        "label": "gpio checks behind the rating of ip (91.2, B)"
-      },
-      "parquet_rating.why_not_a.a43e77936c52f": {
-        "kind": "checks",
-        "ids": [
-          "ca8b50dc535cd",
-          "cdf6697d94602",
-          "c673b0f4454e2",
-          "c9f15b55fe18a"
-        ],
-        "label": "Why ip cannot reach grade A"
-      },
-      "parquet_rating.checks.a04bba077f704": {
-        "kind": "checks",
-        "ids": [
-          "cd979d93e7849",
-          "c68153478a1a6",
-          "cde2b7291797c",
-          "cef60e3a9e893",
-          "c66c170582f17",
-          "c22cc8bd0a102",
-          "cde66bd3c2211",
-          "cdbd7e848e32c",
-          "cfb0d93d7894f",
-          "c0fcc9f186bf3",
-          "c9e86df511cd1",
-          "ca3c25f704e00",
-          "c2a26e4265814",
-          "cf51216b7eafe",
-          "c8dd51a990ea1",
-          "c65a727d52748",
-          "ccb063925d307",
-          "cd8fcd878fc92",
-          "cf0bcd911365a",
-          "ce0efabb78dd4",
-          "c92f49a342d74",
-          "c03854d7f79ed",
-          "c0b7516d22de6",
-          "cab8895fa51ef",
-          "c152dc2380495",
-          "c49b926ea5f58",
-          "c49b926ea5f58"
-        ],
-        "label": "gpio checks behind the rating of mfm-u_stations (98, B)"
-      },
-      "parquet_rating.why_not_a.a04bba077f704": {
-        "kind": "checks",
-        "ids": [
-          "c49b926ea5f58",
-          "c49b926ea5f58"
-        ],
-        "label": "Why mfm-u_stations cannot reach grade A"
-      },
-      "parquet_rating.checks.a335dfad9a4c1": {
-        "kind": "checks",
-        "ids": [
-          "c776b570ba74c",
-          "c1ab45776210a",
-          "c6dadaaa2e148",
-          "c98cc3b8a23c8",
-          "ca5311a236865",
-          "ceba3a465b396",
-          "c0a8822ec0078",
-          "c083bac16561e",
-          "c65251e52f51d",
-          "c9695c70d3143",
-          "c3d0128a05f5b",
-          "c6097dfa789ae",
-          "c244758aabb35",
-          "cd63c45309e50",
-          "c1f3f980e350f",
-          "c46f03e607040",
-          "ce60e5ff9fe62",
-          "c6c5ca6bcf32b",
-          "c227af1f748fa",
-          "c5e9e5196a13e",
-          "c4a2ddcf549ec",
-          "ce04785494c40",
-          "c8299b8dc59db",
-          "cc10e4ddf148a",
-          "cfccb7826ef46",
-          "c0bfa938f2bf4"
-        ],
-        "label": "gpio checks behind the rating of naqua_regions (99, B)"
-      },
-      "parquet_rating.why_not_a.a335dfad9a4c1": {
-        "kind": "checks",
-        "ids": [
-          "c0bfa938f2bf4",
-          "ce1aad87fe923"
-        ],
-        "label": "Why naqua_regions cannot reach grade A"
-      },
-      "parquet_rating.checks.a370886f9580b": {
-        "kind": "checks",
-        "ids": [
-          "c3fefffbae305",
-          "c89450743aca3",
-          "cb04fccac6ab6",
-          "c2c9f97de7fcf",
-          "c8401d738f963",
-          "c31bf59a1f71a",
-          "c89558b6ccc54",
-          "c3496e4c4ab4d",
-          "c26ffb787ae13",
-          "cea4491a2089e",
-          "c73696a6d0f28",
-          "c745410fb1f83",
-          "cb9a67974f64d",
-          "ce92cc4179b9a",
-          "c4246dbe3c9cb",
-          "cdbe2b4e25985",
-          "c38d0017b1c5f",
-          "cb56cfdd32cad",
-          "ca973e70d5d19",
-          "c72eed015c053",
-          "c36611cd54ba8",
-          "c17d01a9c8fd3",
-          "c5fd3dbfa63af",
-          "cb0583c5b8436",
-          "cd903e39d968c",
-          "cc1021b274150"
-        ],
-        "label": "gpio checks behind the rating of nawa_trend_stations (99, B)"
-      },
-      "parquet_rating.why_not_a.a370886f9580b": {
-        "kind": "checks",
-        "ids": [
-          "cc1021b274150",
-          "c89bb98766cf9"
-        ],
-        "label": "Why nawa_trend_stations cannot reach grade A"
-      },
-      "parquet_rating.checks.aa1af32026099": {
-        "kind": "checks",
-        "ids": [
-          "ce8a7e99f9c9b",
-          "c1bf80bb660be",
-          "cac397c642b1b",
-          "cbc98ae396524",
-          "c55445619adb1",
-          "c339b4ca4bb54",
-          "cef8e8de3d39e",
-          "cb7d80dd941c6",
-          "cb4d4f9d87c95",
-          "cc29b15f5490f",
-          "c724a2d8350ff",
-          "c6cbacd89d13e",
-          "ca791a812c1ee",
-          "c05774bd6c5ef",
-          "c016955e705a4",
-          "c113d537c29fc",
-          "c53b1915ebc01",
-          "cfc97f4e228f9",
-          "ccc274efd0f85",
-          "cf0f8cfe7e830",
-          "c22d693cbd558",
-          "cdbecbf6d2885",
-          "c81d0366c3920",
-          "c792929b25b29",
-          "cfe73e8833b8a",
-          "c2bbd00eb1827",
-          "c95c325048bf5"
-        ],
-        "label": "gpio checks behind the rating of nk (91.2, B)"
-      },
-      "parquet_rating.why_not_a.aa1af32026099": {
-        "kind": "checks",
-        "ids": [
-          "cfe73e8833b8a",
-          "c2bbd00eb1827",
-          "c95c325048bf5",
-          "c5b4ec2214780"
-        ],
-        "label": "Why nk cannot reach grade A"
-      },
-      "parquet_rating.checks.a5671b4bdc605": {
-        "kind": "checks",
-        "ids": [
-          "c624adf56be9c",
-          "c7943ae66dc27",
-          "cfea2a2944a14",
-          "c2dfc03b88812",
-          "ce1f7843c8de6",
-          "c82a3eeb3ee54",
-          "c61e53770032d",
-          "cb57a328a7916",
-          "cb17aa4960a4d",
-          "ce305e6b6417d",
-          "cd4098f62b7e9",
-          "c09fc319d9420",
-          "c387b1fe85e16",
-          "cea6bbf1d2ecf",
-          "c75d6f2d9d682",
-          "c433821f63353",
-          "c0b6e6596c084",
-          "c6ec51a2f5b19",
-          "cbc3f4738917c",
-          "c57b6509b55d8",
-          "c2c12dbd73235",
-          "ca0e65838c8c5",
-          "c14d61a5d5d0b",
-          "cddaeca328028",
-          "cc5afc70453fa",
-          "c102b813e2f00"
-        ],
-        "label": "gpio checks behind the rating of UB (99, B)"
-      },
-      "parquet_rating.why_not_a.a5671b4bdc605": {
-        "kind": "checks",
-        "ids": [
-          "c102b813e2f00",
-          "c3b8d09b1fd7e"
-        ],
-        "label": "Why UB cannot reach grade A"
-      },
-      "parquet_rating.capped": {
-        "kind": "assets",
-        "ids": [
+          "a43e77936c52f",
+          "a5671b4bdc605",
           "a6ef6fe186160",
           "a8ce305a4de7c",
-          "acffb03e04261",
-          "a43e77936c52f",
+          "aa1af32026099",
+          "acffb03e04261"
+        ],
+        "label": "No spatial index or ordering: affected assets"
+      },
+      "antipatterns.no_spatial_index.must": {
+        "kind": "findings",
+        "ids": [],
+        "label": "No spatial index or ordering: MUST failures"
+      },
+      "antipatterns.no_spatial_index.should": {
+        "kind": "findings",
+        "ids": [
+          "6f3993e759bf316d",
+          "b2dfaadb37987b35",
+          "375b1c720336ba3a",
+          "dadf83d26276b3c0",
+          "e699b441ab02da20",
+          "d4e210909f4411b9",
+          "8fdd6818244a21b2",
+          "9ac835df3ab5284d",
+          "2b19b97fad413338",
+          "cbf3aebd3c0f1e6d",
+          "b9fcde0fd0ae46e6",
+          "27979806f94fc4bc",
+          "5dad2643dde9f3e7",
+          "ad934a5ab3277df5",
+          "9d031360353b1f4a",
+          "f1ce9ed7150292bf",
+          "1fa3207613d2c223",
+          "6040dd090f5e246a",
+          "2381db7a714cfc01",
+          "2cc284f6e6088a36",
+          "78b493f9c98833a8",
+          "c47cad76450f1534",
+          "6d082a30c407c097",
+          "a166ddba3bcadfbd"
+        ],
+        "label": "No spatial index or ordering: SHOULD warnings"
+      },
+      "antipatterns.no_spatial_index.rule.gpio:all:warning": {
+        "kind": "findings",
+        "ids": [
+          "b2dfaadb37987b35",
+          "d4e210909f4411b9",
+          "2b19b97fad413338",
+          "5dad2643dde9f3e7",
+          "ad934a5ab3277df5",
+          "f1ce9ed7150292bf",
+          "6040dd090f5e246a",
+          "78b493f9c98833a8",
+          "a166ddba3bcadfbd"
+        ],
+        "label": "No spatial index or ordering: gpio:all:warning"
+      },
+      "antipatterns.no_spatial_index.rule.PTL-DAT-007": {
+        "kind": "findings",
+        "ids": [
+          "6f3993e759bf316d",
+          "e699b441ab02da20",
+          "9ac835df3ab5284d",
+          "27979806f94fc4bc",
+          "9d031360353b1f4a",
+          "1fa3207613d2c223",
+          "2cc284f6e6088a36",
+          "6d082a30c407c097"
+        ],
+        "label": "No spatial index or ordering: PTL-DAT-007"
+      },
+      "antipatterns.no_spatial_index.rule.PTL-DAT-006": {
+        "kind": "findings",
+        "ids": [
+          "dadf83d26276b3c0",
+          "8fdd6818244a21b2",
+          "b9fcde0fd0ae46e6",
+          "c47cad76450f1534"
+        ],
+        "label": "No spatial index or ordering: PTL-DAT-006"
+      },
+      "antipatterns.no_spatial_index.rule.PTL-DAT-005": {
+        "kind": "findings",
+        "ids": [
+          "375b1c720336ba3a",
+          "cbf3aebd3c0f1e6d",
+          "2381db7a714cfc01"
+        ],
+        "label": "No spatial index or ordering: PTL-DAT-005"
+      },
+      "antipatterns.inefficient_layout.findings": {
+        "kind": "findings",
+        "ids": [
+          "9fe636aef2055369",
+          "f7dfcd6e9c98f6f6",
+          "ee09988df80df351",
+          "5ed649d5e9743476",
+          "5658af7d382743ef",
+          "d9a501d66013d36b",
+          "01df214681cc3bf2",
+          "0e4ef5e62d5d525f",
+          "4724d607b1678eed"
+        ],
+        "label": "Inefficient storage layout: findings"
+      },
+      "antipatterns.inefficient_layout.assets": {
+        "kind": "assets",
+        "ids": [
           "a04bba077f704",
           "a335dfad9a4c1",
           "a370886f9580b",
-          "aa1af32026099",
-          "a5671b4bdc605"
-        ],
-        "label": "Capped at B: an A score, but a gpio recommendation is not met or the file is not Parquet v2"
-      },
-      "parquet_rating.parquet_v2": {
-        "kind": "assets",
-        "ids": [
-          "a04bba077f704"
-        ],
-        "label": "Rated GeoParquet assets with Parquet format v2"
-      },
-      "parquet_rating.parquet_v1": {
-        "kind": "assets",
-        "ids": [
+          "a43e77936c52f",
+          "a5671b4bdc605",
           "a6ef6fe186160",
           "a8ce305a4de7c",
-          "acffb03e04261",
-          "a43e77936c52f",
-          "a335dfad9a4c1",
-          "a370886f9580b",
           "aa1af32026099",
-          "a5671b4bdc605"
+          "acffb03e04261"
         ],
-        "label": "Rated GeoParquet assets with Parquet format v1"
+        "label": "Inefficient storage layout: affected assets"
       },
-      "parquet_rating.parquet_unknown": {
+      "antipatterns.inefficient_layout.must": {
+        "kind": "findings",
+        "ids": [],
+        "label": "Inefficient storage layout: MUST failures"
+      },
+      "antipatterns.inefficient_layout.should": {
+        "kind": "findings",
+        "ids": [
+          "9fe636aef2055369",
+          "f7dfcd6e9c98f6f6",
+          "ee09988df80df351",
+          "5ed649d5e9743476",
+          "5658af7d382743ef",
+          "d9a501d66013d36b",
+          "01df214681cc3bf2",
+          "0e4ef5e62d5d525f",
+          "4724d607b1678eed"
+        ],
+        "label": "Inefficient storage layout: SHOULD warnings"
+      },
+      "antipatterns.inefficient_layout.rule.CNC-PQ-001": {
+        "kind": "findings",
+        "ids": [
+          "9fe636aef2055369",
+          "f7dfcd6e9c98f6f6",
+          "ee09988df80df351",
+          "5ed649d5e9743476",
+          "d9a501d66013d36b",
+          "01df214681cc3bf2",
+          "0e4ef5e62d5d525f",
+          "4724d607b1678eed"
+        ],
+        "label": "Inefficient storage layout: CNC-PQ-001"
+      },
+      "antipatterns.inefficient_layout.rule.gpio:all:warning": {
+        "kind": "findings",
+        "ids": [
+          "5658af7d382743ef"
+        ],
+        "label": "Inefficient storage layout: gpio:all:warning"
+      },
+      "antipatterns.portolan_should.findings": {
+        "kind": "findings",
+        "ids": [
+          "78c2090e38db09b5",
+          "2054a660ecb36068",
+          "5f46c90e5844fbb5",
+          "c40113eca255e419",
+          "5a81bbc344fbbaca",
+          "7d3bec3016f782ce",
+          "4347a07a5c746704",
+          "e7726398b37fc3f1",
+          "457a929bdedb5255",
+          "e48c205ea0a4df1b",
+          "6316beac48ecac5c",
+          "64f3604c2392ddf9",
+          "5b891ef46d6da86d",
+          "a4ee9613f2ab6710",
+          "959f2d293ec3d2eb",
+          "d38306261c23293d",
+          "806fb064c8140024",
+          "b6b94d954e310aa5",
+          "1ab05f132731f8a2",
+          "fc0f5fcf84f9c192",
+          "5d54681a9aaa8377",
+          "0bb300521952dbc0",
+          "93373da23de73427",
+          "a962f1b4caee3358",
+          "d4c520c14401884f",
+          "954c0222063c29f3",
+          "4ac830a2526be238",
+          "c1b60e1f05f59da9",
+          "c3bfd75590bdeb00",
+          "638e0e09debc6bf6",
+          "5df91337268ce971",
+          "4b9d8f48051f87b7",
+          "5ce2b6a7f20e62a2",
+          "43663a4314ff4f07",
+          "e42b229b76bf1b97",
+          "04c1f2df2e03adc3",
+          "eb2716e47a3e7c3e",
+          "38d847a48ce0e0c5",
+          "f6065134ff177247",
+          "b11991e3157e7c60",
+          "f8b45a84092b6aff",
+          "dad01ce2297f2a89",
+          "18f73e85c2919d0a",
+          "d76d972689958616",
+          "5ca54d65ca416e8b",
+          "aad7404037e2aabd",
+          "9e73caede3073abb",
+          "9345ddb2a2e8ecfe",
+          "6b49395177b44b8f",
+          "a52bba567c37fb0f",
+          "3ba6dac5c35a6842",
+          "f1091f3722fc3d69",
+          "98eaf91809727ff7",
+          "911d009b0db35765",
+          "6b6901edd2cf67ca",
+          "f14f72bfe0b08282",
+          "bff457c3f2c6dae6",
+          "80b4d9d2a24eed64",
+          "12878c32c8e2f9d7",
+          "c4487f5cdf753805",
+          "7c605961b2f07893",
+          "e4e9604ca1628262",
+          "35a482ea968770c8",
+          "fa6970812434899f",
+          "609bd04fa08e8b9a",
+          "c3d0450e509b7ee7",
+          "6a08da49af435f44",
+          "e68e013b12333ab1",
+          "8e431e2f11b8a5e6",
+          "b2175e253f493d59",
+          "917328d1b19673b2",
+          "eff2b103832ddc03",
+          "dc1ca6adb4c6d162",
+          "78c44fd969be5df3",
+          "b69ee041310ac23b",
+          "bfe09f037aa89eed",
+          "f60bd8c9382ea359",
+          "28f83569a5f8262a",
+          "c63cffefa6aee9d4",
+          "cf4e4c746bb6753a",
+          "f2b67a93b4262d87",
+          "a3027e38a5befd2d",
+          "76be447778dd5f1d",
+          "f1c64b397c27d8e4",
+          "f789632c06e60b31",
+          "0270726fd76c5abb",
+          "1be56ca329fffde6",
+          "661227e0b615acf4",
+          "a564f04ee8233a1a",
+          "66d6c54cd52ba4ea",
+          "0d2d8d4dfe6ad179",
+          "f34709771dede4e6",
+          "27461e67f2b4e0f0",
+          "a987abbf41710f8e",
+          "f4c319ac7e254d74",
+          "89b355d2e8965c88",
+          "aac58d8a11ee75a3",
+          "bc83a10cf04b2e65",
+          "a9cf07b9725a52cb",
+          "9eac40ac035ac0db",
+          "7f0452eea09f6d76",
+          "f0b9d9a9545b28cf",
+          "db257fb94a713600",
+          "ed0fdadbb7ab8393",
+          "3eef0623bbe55614",
+          "3587635c38c0fcb5",
+          "996b7eed1195b818",
+          "f88d41526ab43ff2",
+          "9f27a2d54ceb4f7e",
+          "235e1a5fade83f02",
+          "fffdbbabe0dba021",
+          "b21ab464e12e34f3",
+          "a15260b3bbe147a6",
+          "eaa98e5a20bc8338",
+          "d4ff5bf21a4b9a73",
+          "b18eed0af7031c20",
+          "352f0447ffdae9af",
+          "ce5bba5d1c10b6c8",
+          "f9d6928bd69c0141",
+          "5a6ea9de59763dce",
+          "d4b461a81cbf9caa",
+          "8952a135b8250e7d",
+          "3ca06a686317e19d",
+          "ca001ffe2fd47c0e",
+          "81dccc9669ea6a89",
+          "cf9bb4027956c0a9"
+        ],
+        "label": "Portolan recommendations (SHOULD) not followed: findings"
+      },
+      "antipatterns.portolan_should.assets": {
         "kind": "assets",
         "ids": [],
-        "label": "Rated GeoParquet assets with Parquet format unknown"
+        "label": "Portolan recommendations (SHOULD) not followed: affected assets"
+      },
+      "antipatterns.portolan_should.must": {
+        "kind": "findings",
+        "ids": [],
+        "label": "Portolan recommendations (SHOULD) not followed: MUST failures"
+      },
+      "antipatterns.portolan_should.should": {
+        "kind": "findings",
+        "ids": [
+          "78c2090e38db09b5",
+          "2054a660ecb36068",
+          "5f46c90e5844fbb5",
+          "c40113eca255e419",
+          "5a81bbc344fbbaca",
+          "7d3bec3016f782ce",
+          "4347a07a5c746704",
+          "e7726398b37fc3f1",
+          "457a929bdedb5255",
+          "e48c205ea0a4df1b",
+          "6316beac48ecac5c",
+          "64f3604c2392ddf9",
+          "5b891ef46d6da86d",
+          "a4ee9613f2ab6710",
+          "959f2d293ec3d2eb",
+          "d38306261c23293d",
+          "806fb064c8140024",
+          "b6b94d954e310aa5",
+          "1ab05f132731f8a2",
+          "fc0f5fcf84f9c192",
+          "5d54681a9aaa8377",
+          "0bb300521952dbc0",
+          "93373da23de73427",
+          "a962f1b4caee3358",
+          "d4c520c14401884f",
+          "954c0222063c29f3",
+          "4ac830a2526be238",
+          "c1b60e1f05f59da9",
+          "c3bfd75590bdeb00",
+          "638e0e09debc6bf6",
+          "5df91337268ce971",
+          "4b9d8f48051f87b7",
+          "5ce2b6a7f20e62a2",
+          "43663a4314ff4f07",
+          "e42b229b76bf1b97",
+          "04c1f2df2e03adc3",
+          "eb2716e47a3e7c3e",
+          "38d847a48ce0e0c5",
+          "f6065134ff177247",
+          "b11991e3157e7c60",
+          "f8b45a84092b6aff",
+          "dad01ce2297f2a89",
+          "18f73e85c2919d0a",
+          "d76d972689958616",
+          "5ca54d65ca416e8b",
+          "aad7404037e2aabd",
+          "9e73caede3073abb",
+          "9345ddb2a2e8ecfe",
+          "6b49395177b44b8f",
+          "a52bba567c37fb0f",
+          "3ba6dac5c35a6842",
+          "f1091f3722fc3d69",
+          "98eaf91809727ff7",
+          "911d009b0db35765",
+          "6b6901edd2cf67ca",
+          "f14f72bfe0b08282",
+          "bff457c3f2c6dae6",
+          "80b4d9d2a24eed64",
+          "12878c32c8e2f9d7",
+          "c4487f5cdf753805",
+          "7c605961b2f07893",
+          "e4e9604ca1628262",
+          "35a482ea968770c8",
+          "fa6970812434899f",
+          "609bd04fa08e8b9a",
+          "c3d0450e509b7ee7",
+          "6a08da49af435f44",
+          "e68e013b12333ab1",
+          "8e431e2f11b8a5e6",
+          "b2175e253f493d59",
+          "917328d1b19673b2",
+          "eff2b103832ddc03",
+          "dc1ca6adb4c6d162",
+          "78c44fd969be5df3",
+          "b69ee041310ac23b",
+          "bfe09f037aa89eed",
+          "f60bd8c9382ea359",
+          "28f83569a5f8262a",
+          "c63cffefa6aee9d4",
+          "cf4e4c746bb6753a",
+          "f2b67a93b4262d87",
+          "a3027e38a5befd2d",
+          "76be447778dd5f1d",
+          "f1c64b397c27d8e4",
+          "f789632c06e60b31",
+          "0270726fd76c5abb",
+          "1be56ca329fffde6",
+          "661227e0b615acf4",
+          "a564f04ee8233a1a",
+          "66d6c54cd52ba4ea",
+          "0d2d8d4dfe6ad179",
+          "f34709771dede4e6",
+          "27461e67f2b4e0f0",
+          "a987abbf41710f8e",
+          "f4c319ac7e254d74",
+          "89b355d2e8965c88",
+          "aac58d8a11ee75a3",
+          "bc83a10cf04b2e65",
+          "a9cf07b9725a52cb",
+          "9eac40ac035ac0db",
+          "7f0452eea09f6d76",
+          "f0b9d9a9545b28cf",
+          "db257fb94a713600",
+          "ed0fdadbb7ab8393",
+          "3eef0623bbe55614",
+          "3587635c38c0fcb5",
+          "996b7eed1195b818",
+          "f88d41526ab43ff2",
+          "9f27a2d54ceb4f7e",
+          "235e1a5fade83f02",
+          "fffdbbabe0dba021",
+          "b21ab464e12e34f3",
+          "a15260b3bbe147a6",
+          "eaa98e5a20bc8338",
+          "d4ff5bf21a4b9a73",
+          "b18eed0af7031c20",
+          "352f0447ffdae9af",
+          "ce5bba5d1c10b6c8",
+          "f9d6928bd69c0141",
+          "5a6ea9de59763dce",
+          "d4b461a81cbf9caa",
+          "8952a135b8250e7d",
+          "3ca06a686317e19d",
+          "ca001ffe2fd47c0e",
+          "81dccc9669ea6a89",
+          "cf9bb4027956c0a9"
+        ],
+        "label": "Portolan recommendations (SHOULD) not followed: SHOULD warnings"
+      },
+      "antipatterns.portolan_should.rule.PTL-AST-003": {
+        "kind": "findings",
+        "ids": [
+          "78c2090e38db09b5",
+          "2054a660ecb36068",
+          "5f46c90e5844fbb5",
+          "c40113eca255e419",
+          "5a81bbc344fbbaca",
+          "7d3bec3016f782ce",
+          "4347a07a5c746704",
+          "e7726398b37fc3f1",
+          "806fb064c8140024",
+          "b6b94d954e310aa5",
+          "1ab05f132731f8a2",
+          "fc0f5fcf84f9c192",
+          "5d54681a9aaa8377",
+          "0bb300521952dbc0",
+          "93373da23de73427",
+          "a962f1b4caee3358",
+          "5ce2b6a7f20e62a2",
+          "43663a4314ff4f07",
+          "e42b229b76bf1b97",
+          "04c1f2df2e03adc3",
+          "18f73e85c2919d0a",
+          "d76d972689958616",
+          "5ca54d65ca416e8b",
+          "aad7404037e2aabd",
+          "9e73caede3073abb",
+          "9345ddb2a2e8ecfe",
+          "6b49395177b44b8f",
+          "a52bba567c37fb0f",
+          "12878c32c8e2f9d7",
+          "c4487f5cdf753805",
+          "7c605961b2f07893",
+          "e4e9604ca1628262",
+          "e68e013b12333ab1",
+          "8e431e2f11b8a5e6",
+          "b2175e253f493d59",
+          "917328d1b19673b2",
+          "eff2b103832ddc03",
+          "dc1ca6adb4c6d162",
+          "78c44fd969be5df3",
+          "b69ee041310ac23b",
+          "bfe09f037aa89eed",
+          "f60bd8c9382ea359",
+          "0270726fd76c5abb",
+          "1be56ca329fffde6",
+          "661227e0b615acf4",
+          "a564f04ee8233a1a",
+          "f4c319ac7e254d74",
+          "89b355d2e8965c88",
+          "aac58d8a11ee75a3",
+          "bc83a10cf04b2e65",
+          "a9cf07b9725a52cb",
+          "9eac40ac035ac0db",
+          "7f0452eea09f6d76",
+          "f0b9d9a9545b28cf",
+          "fffdbbabe0dba021",
+          "b21ab464e12e34f3",
+          "a15260b3bbe147a6",
+          "eaa98e5a20bc8338",
+          "d4ff5bf21a4b9a73",
+          "b18eed0af7031c20",
+          "352f0447ffdae9af",
+          "ce5bba5d1c10b6c8"
+        ],
+        "label": "Portolan recommendations (SHOULD) not followed: PTL-AST-003"
+      },
+      "antipatterns.portolan_should.rule.PTL-AST-010": {
+        "kind": "findings",
+        "ids": [
+          "457a929bdedb5255",
+          "e48c205ea0a4df1b",
+          "6316beac48ecac5c",
+          "64f3604c2392ddf9",
+          "5b891ef46d6da86d",
+          "d4c520c14401884f",
+          "954c0222063c29f3",
+          "4ac830a2526be238",
+          "c1b60e1f05f59da9",
+          "c3bfd75590bdeb00",
+          "eb2716e47a3e7c3e",
+          "38d847a48ce0e0c5",
+          "f6065134ff177247",
+          "3ba6dac5c35a6842",
+          "f1091f3722fc3d69",
+          "98eaf91809727ff7",
+          "911d009b0db35765",
+          "6b6901edd2cf67ca",
+          "35a482ea968770c8",
+          "fa6970812434899f",
+          "609bd04fa08e8b9a",
+          "28f83569a5f8262a",
+          "c63cffefa6aee9d4",
+          "cf4e4c746bb6753a",
+          "f2b67a93b4262d87",
+          "a3027e38a5befd2d",
+          "76be447778dd5f1d",
+          "66d6c54cd52ba4ea",
+          "0d2d8d4dfe6ad179",
+          "f34709771dede4e6",
+          "db257fb94a713600",
+          "ed0fdadbb7ab8393",
+          "3eef0623bbe55614",
+          "3587635c38c0fcb5",
+          "996b7eed1195b818",
+          "f9d6928bd69c0141",
+          "5a6ea9de59763dce",
+          "d4b461a81cbf9caa",
+          "8952a135b8250e7d",
+          "3ca06a686317e19d"
+        ],
+        "label": "Portolan recommendations (SHOULD) not followed: PTL-AST-010"
+      },
+      "antipatterns.portolan_should.rule.PTL-FIL-005": {
+        "kind": "findings",
+        "ids": [
+          "959f2d293ec3d2eb",
+          "d38306261c23293d",
+          "5df91337268ce971",
+          "4b9d8f48051f87b7",
+          "f8b45a84092b6aff",
+          "dad01ce2297f2a89",
+          "bff457c3f2c6dae6",
+          "80b4d9d2a24eed64",
+          "6a08da49af435f44",
+          "f789632c06e60b31",
+          "a987abbf41710f8e",
+          "9f27a2d54ceb4f7e",
+          "235e1a5fade83f02",
+          "81dccc9669ea6a89",
+          "cf9bb4027956c0a9"
+        ],
+        "label": "Portolan recommendations (SHOULD) not followed: PTL-FIL-005"
+      },
+      "antipatterns.portolan_should.rule.PTL-DAT-020": {
+        "kind": "findings",
+        "ids": [
+          "a4ee9613f2ab6710",
+          "638e0e09debc6bf6",
+          "b11991e3157e7c60",
+          "f14f72bfe0b08282",
+          "c3d0450e509b7ee7",
+          "f1c64b397c27d8e4",
+          "27461e67f2b4e0f0",
+          "f88d41526ab43ff2",
+          "ca001ffe2fd47c0e"
+        ],
+        "label": "Portolan recommendations (SHOULD) not followed: PTL-DAT-020"
+      },
+      "antipatterns.other.findings": {
+        "kind": "findings",
+        "ids": [
+          "3c72d9d7d82fd3fd",
+          "e93ccae0282dcb5b",
+          "00eb74839c86fae7",
+          "9c25913d1e0f103e",
+          "c7a061b9e4b586e8",
+          "eecdb0d66ffd78bd",
+          "74a3b6087ed82d55",
+          "785ce4c0f0abc195"
+        ],
+        "label": "Other best practices not met: findings"
+      },
+      "antipatterns.other.assets": {
+        "kind": "assets",
+        "ids": [
+          "a43e77936c52f",
+          "a6ef6fe186160",
+          "a8ce305a4de7c",
+          "aa1af32026099"
+        ],
+        "label": "Other best practices not met: affected assets"
+      },
+      "antipatterns.other.must": {
+        "kind": "findings",
+        "ids": [
+          "3c72d9d7d82fd3fd",
+          "e93ccae0282dcb5b",
+          "00eb74839c86fae7",
+          "9c25913d1e0f103e",
+          "c7a061b9e4b586e8",
+          "eecdb0d66ffd78bd",
+          "74a3b6087ed82d55",
+          "785ce4c0f0abc195"
+        ],
+        "label": "Other best practices not met: MUST failures"
+      },
+      "antipatterns.other.should": {
+        "kind": "findings",
+        "ids": [],
+        "label": "Other best practices not met: SHOULD warnings"
+      },
+      "antipatterns.other.rule.gpio:all:1-failed-23-passed": {
+        "kind": "findings",
+        "ids": [
+          "3c72d9d7d82fd3fd",
+          "00eb74839c86fae7",
+          "c7a061b9e4b586e8",
+          "74a3b6087ed82d55"
+        ],
+        "label": "Other best practices not met: gpio:all:1-failed-23-passed"
+      },
+      "antipatterns.other.rule.gpio:all:error": {
+        "kind": "findings",
+        "ids": [
+          "e93ccae0282dcb5b",
+          "9c25913d1e0f103e",
+          "eecdb0d66ffd78bd",
+          "785ce4c0f0abc195"
+        ],
+        "label": "Other best practices not met: gpio:all:error"
+      },
+      "antipatterns.stac_best_practice.findings": {
+        "kind": "findings",
+        "ids": [
+          "cd2f8b1ad6b3f2d6",
+          "dc824b957505ab9c",
+          "46fe8b51c6f2c920",
+          "57bf2acf12e5fb72",
+          "eda1b1cfdc3090bf",
+          "12f933c0f6c7d689",
+          "4c0f335695487626",
+          "123c4cbcf02c47a5",
+          "82dff24be6f1293e",
+          "69860dea437b0073"
+        ],
+        "label": "STAC best practices not followed: findings"
+      },
+      "antipatterns.stac_best_practice.assets": {
+        "kind": "assets",
+        "ids": [],
+        "label": "STAC best practices not followed: affected assets"
+      },
+      "antipatterns.stac_best_practice.must": {
+        "kind": "findings",
+        "ids": [],
+        "label": "STAC best practices not followed: MUST failures"
+      },
+      "antipatterns.stac_best_practice.should": {
+        "kind": "findings",
+        "ids": [
+          "cd2f8b1ad6b3f2d6",
+          "dc824b957505ab9c",
+          "46fe8b51c6f2c920",
+          "57bf2acf12e5fb72",
+          "eda1b1cfdc3090bf",
+          "12f933c0f6c7d689",
+          "4c0f335695487626",
+          "123c4cbcf02c47a5",
+          "82dff24be6f1293e",
+          "69860dea437b0073"
+        ],
+        "label": "STAC best practices not followed: SHOULD warnings"
+      },
+      "antipatterns.stac_best_practice.rule.stac-check:best-practice": {
+        "kind": "findings",
+        "ids": [
+          "cd2f8b1ad6b3f2d6",
+          "dc824b957505ab9c",
+          "46fe8b51c6f2c920",
+          "57bf2acf12e5fb72",
+          "eda1b1cfdc3090bf",
+          "12f933c0f6c7d689",
+          "4c0f335695487626",
+          "123c4cbcf02c47a5",
+          "82dff24be6f1293e",
+          "69860dea437b0073"
+        ],
+        "label": "STAC best practices not followed: stac-check:best-practice"
+      },
+      "antipatterns.missing_docs.findings": {
+        "kind": "findings",
+        "ids": [
+          "f2ac92d0d626f172"
+        ],
+        "label": "Missing documentation: findings"
+      },
+      "antipatterns.missing_docs.assets": {
+        "kind": "assets",
+        "ids": [],
+        "label": "Missing documentation: affected assets"
+      },
+      "antipatterns.missing_docs.must": {
+        "kind": "findings",
+        "ids": [],
+        "label": "Missing documentation: MUST failures"
+      },
+      "antipatterns.missing_docs.should": {
+        "kind": "findings",
+        "ids": [
+          "f2ac92d0d626f172"
+        ],
+        "label": "Missing documentation: SHOULD warnings"
+      },
+      "antipatterns.missing_docs.rule.CNC-DOC-001": {
+        "kind": "findings",
+        "ids": [
+          "f2ac92d0d626f172"
+        ],
+        "label": "Missing documentation: CNC-DOC-001"
       },
       "by_format.GeoParquet.assets": {
         "kind": "assets",
@@ -2811,23 +4730,31 @@
         "ids": [
           "b2dfaadb37987b35",
           "c7ad5a7c798c9a72",
+          "9fe636aef2055369",
           "d4e210909f4411b9",
           "8d33f072127d47c6",
+          "f7dfcd6e9c98f6f6",
           "2b19b97fad413338",
           "ce5086ce3bfa1786",
+          "ee09988df80df351",
           "5dad2643dde9f3e7",
           "93d4aa8ddea352e5",
+          "5ed649d5e9743476",
           "ad934a5ab3277df5",
           "5658af7d382743ef",
           "b98fd7aa337dd0fe",
           "f1ce9ed7150292bf",
           "49a9a06e85da5412",
+          "d9a501d66013d36b",
           "6040dd090f5e246a",
           "d32f9d4b2bde90e8",
+          "01df214681cc3bf2",
           "78b493f9c98833a8",
           "c5678cc9ae48bad7",
+          "0e4ef5e62d5d525f",
           "a166ddba3bcadfbd",
-          "39874ebfbea97750"
+          "39874ebfbea97750",
+          "4724d607b1678eed"
         ],
         "label": "GeoParquet: SHOULD warnings"
       },
@@ -3058,7 +4985,8 @@
           "2d0eee60e81bd15d",
           "b2f9256c2dbb68f7",
           "b2dfaadb37987b35",
-          "c7ad5a7c798c9a72"
+          "c7ad5a7c798c9a72",
+          "9fe636aef2055369"
         ],
         "label": "ba: SHOULD warnings"
       },
@@ -3242,7 +5170,8 @@
           "2f4fa687311a0aae",
           "e09c890a701d0a88",
           "d4e210909f4411b9",
-          "8d33f072127d47c6"
+          "8d33f072127d47c6",
+          "f7dfcd6e9c98f6f6"
         ],
         "label": "ei: SHOULD warnings"
       },
@@ -3410,7 +5339,8 @@
           "dad01ce2297f2a89",
           "57bf2acf12e5fb72",
           "2b19b97fad413338",
-          "ce5086ce3bfa1786"
+          "ce5086ce3bfa1786",
+          "ee09988df80df351"
         ],
         "label": "hydro_stations: SHOULD warnings"
       },
@@ -3569,7 +5499,8 @@
           "c49fbd241a59b5cf",
           "ba1d365023de7f76",
           "5dad2643dde9f3e7",
-          "93d4aa8ddea352e5"
+          "93d4aa8ddea352e5",
+          "5ed649d5e9743476"
         ],
         "label": "ip: SHOULD warnings"
       },
@@ -3896,7 +5827,8 @@
           "f789632c06e60b31",
           "4c0f335695487626",
           "f1ce9ed7150292bf",
-          "49a9a06e85da5412"
+          "49a9a06e85da5412",
+          "d9a501d66013d36b"
         ],
         "label": "naqua_regions: SHOULD warnings"
       },
@@ -4074,7 +6006,8 @@
           "a987abbf41710f8e",
           "123c4cbcf02c47a5",
           "6040dd090f5e246a",
-          "d32f9d4b2bde90e8"
+          "d32f9d4b2bde90e8",
+          "01df214681cc3bf2"
         ],
         "label": "nawa_trend_stations: SHOULD warnings"
       },
@@ -4233,7 +6166,8 @@
           "97167859c18f7369",
           "1ac5c48c7c997d42",
           "78b493f9c98833a8",
-          "c5678cc9ae48bad7"
+          "c5678cc9ae48bad7",
+          "0e4ef5e62d5d525f"
         ],
         "label": "nk: SHOULD warnings"
       },
@@ -4413,7 +6347,8 @@
           "d94e8d0ab7f99c18",
           "87b41c22df6c837e",
           "a166ddba3bcadfbd",
-          "39874ebfbea97750"
+          "39874ebfbea97750",
+          "4724d607b1678eed"
         ],
         "label": "ub: SHOULD warnings"
       },
@@ -4888,7 +6823,16 @@
       },
       "changes.new": {
         "kind": "findings",
-        "ids": [],
+        "ids": [
+          "9fe636aef2055369",
+          "f7dfcd6e9c98f6f6",
+          "ee09988df80df351",
+          "5ed649d5e9743476",
+          "d9a501d66013d36b",
+          "01df214681cc3bf2",
+          "0e4ef5e62d5d525f",
+          "4724d607b1678eed"
+        ],
         "label": "New since the last run"
       },
       "changes.resolved": {
@@ -4899,8 +6843,137 @@
     }
   },
   "changes": {
-    "baseline": true,
-    "new": [],
+    "baseline": false,
+    "new": [
+      {
+        "catalog_id": "bafu-portolan",
+        "tool": "parquet-footer",
+        "rule_id": "CNC-PQ-001",
+        "severity": "warning",
+        "message": "Parquet format v1, not v2 (rewrite with format version 2.x and data page v2)",
+        "collection": "ba",
+        "item": null,
+        "asset_href": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ba/ba.parquet",
+        "format": "geoparquet",
+        "tool_version": "native-0.1.0",
+        "spec_requirement_id": null,
+        "reproduce": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ba/ba.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ba/ba.parquet",
+        "check_id": "c45685894f645",
+        "fingerprint": "9fe636aef2055369"
+      },
+      {
+        "catalog_id": "bafu-portolan",
+        "tool": "parquet-footer",
+        "rule_id": "CNC-PQ-001",
+        "severity": "warning",
+        "message": "Parquet format v1, not v2 (rewrite with format version 2.x and data page v2)",
+        "collection": "ei",
+        "item": null,
+        "asset_href": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ei/ei.parquet",
+        "format": "geoparquet",
+        "tool_version": "native-0.1.0",
+        "spec_requirement_id": null,
+        "reproduce": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ei/ei.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ei/ei.parquet",
+        "check_id": "cf67eb43f32fe",
+        "fingerprint": "f7dfcd6e9c98f6f6"
+      },
+      {
+        "catalog_id": "bafu-portolan",
+        "tool": "parquet-footer",
+        "rule_id": "CNC-PQ-001",
+        "severity": "warning",
+        "message": "Parquet format v1, not v2 (rewrite with format version 2.x and data page v2)",
+        "collection": "hydro_stations",
+        "item": null,
+        "asset_href": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/hydro_stations/hydro_stations.parquet",
+        "format": "geoparquet",
+        "tool_version": "native-0.1.0",
+        "spec_requirement_id": null,
+        "reproduce": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/hydro_stations/hydro_stations.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/hydro_stations/hydro_stations.parquet",
+        "check_id": "c0416fe47c6e5",
+        "fingerprint": "ee09988df80df351"
+      },
+      {
+        "catalog_id": "bafu-portolan",
+        "tool": "parquet-footer",
+        "rule_id": "CNC-PQ-001",
+        "severity": "warning",
+        "message": "Parquet format v1, not v2 (rewrite with format version 2.x and data page v2)",
+        "collection": "ip",
+        "item": null,
+        "asset_href": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ip/ip.parquet",
+        "format": "geoparquet",
+        "tool_version": "native-0.1.0",
+        "spec_requirement_id": null,
+        "reproduce": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ip/ip.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ip/ip.parquet",
+        "check_id": "c9f15b55fe18a",
+        "fingerprint": "5ed649d5e9743476"
+      },
+      {
+        "catalog_id": "bafu-portolan",
+        "tool": "parquet-footer",
+        "rule_id": "CNC-PQ-001",
+        "severity": "warning",
+        "message": "Parquet format v1, not v2 (rewrite with format version 2.x and data page v2)",
+        "collection": "naqua_regions",
+        "item": null,
+        "asset_href": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/naqua_regions/naqua_regions.parquet",
+        "format": "geoparquet",
+        "tool_version": "native-0.1.0",
+        "spec_requirement_id": null,
+        "reproduce": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/naqua_regions/naqua_regions.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/naqua_regions/naqua_regions.parquet",
+        "check_id": "ce1aad87fe923",
+        "fingerprint": "d9a501d66013d36b"
+      },
+      {
+        "catalog_id": "bafu-portolan",
+        "tool": "parquet-footer",
+        "rule_id": "CNC-PQ-001",
+        "severity": "warning",
+        "message": "Parquet format v1, not v2 (rewrite with format version 2.x and data page v2)",
+        "collection": "nawa_trend_stations",
+        "item": null,
+        "asset_href": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nawa_trend_stations/nawa_trend_stations.parquet",
+        "format": "geoparquet",
+        "tool_version": "native-0.1.0",
+        "spec_requirement_id": null,
+        "reproduce": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nawa_trend_stations/nawa_trend_stations.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nawa_trend_stations/nawa_trend_stations.parquet",
+        "check_id": "c89bb98766cf9",
+        "fingerprint": "01df214681cc3bf2"
+      },
+      {
+        "catalog_id": "bafu-portolan",
+        "tool": "parquet-footer",
+        "rule_id": "CNC-PQ-001",
+        "severity": "warning",
+        "message": "Parquet format v1, not v2 (rewrite with format version 2.x and data page v2)",
+        "collection": "nk",
+        "item": null,
+        "asset_href": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nk/nk.parquet",
+        "format": "geoparquet",
+        "tool_version": "native-0.1.0",
+        "spec_requirement_id": null,
+        "reproduce": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nk/nk.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nk/nk.parquet",
+        "check_id": "c5b4ec2214780",
+        "fingerprint": "0e4ef5e62d5d525f"
+      },
+      {
+        "catalog_id": "bafu-portolan",
+        "tool": "parquet-footer",
+        "rule_id": "CNC-PQ-001",
+        "severity": "warning",
+        "message": "Parquet format v1, not v2 (rewrite with format version 2.x and data page v2)",
+        "collection": "ub",
+        "item": null,
+        "asset_href": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ub/UB.parquet",
+        "format": "geoparquet",
+        "tool_version": "native-0.1.0",
+        "spec_requirement_id": null,
+        "reproduce": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ub/UB.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ub/UB.parquet",
+        "check_id": "c3b8d09b1fd7e",
+        "fingerprint": "4724d607b1678eed"
+      }
+    ],
     "resolved": []
   },
   "coverage": [
@@ -6472,69 +8545,6 @@
         "gpio",
         "rashid"
       ],
-      "rating": {
-        "score": 91.2,
-        "grade": "B",
-        "grade_uncapped": "A",
-        "cap": [
-          "3 gpio recommendation(s) not met",
-          "Parquet format v1, not v2"
-        ],
-        "max_grade": "B",
-        "a_conditions": [
-          "3 gpio recommendation(s) not met",
-          "Parquet format v1, not v2"
-        ],
-        "recommendations_met": false,
-        "unmet_recommendation_ids": [
-          "cd049412bed53",
-          "c39e6eb3b90cb",
-          "c6b598fd4370a"
-        ],
-        "parquet_format_version": 1,
-        "parquet_check_id": "c45685894f645",
-        "spec_score": 95.8,
-        "best_practice_score": 16.7,
-        "optimization_score": 4.0,
-        "checks_rated": 27,
-        "counts": {
-          "pass": 23,
-          "warn": 1,
-          "fail": 3
-        },
-        "check_ids": [
-          "ce01c0230cb8b",
-          "c9604caf78e4a",
-          "c395f1f7b571d",
-          "c7f3bd1c9e3e1",
-          "c082e9a4fca53",
-          "caf0235d7908f",
-          "ce9065775c27b",
-          "ca17e0b57c364",
-          "c7357e0f2aece",
-          "c34910f68b77c",
-          "cbe57347be2bc",
-          "cbe860f3d05fc",
-          "cb32beb0baf31",
-          "c8234f3f43247",
-          "c5fa47a19702d",
-          "c3b5b82fb3d33",
-          "c984dd15e043a",
-          "c6a8d14b09195",
-          "c756f66eadbba",
-          "c4cc0f1184703",
-          "c199e627ca7b1",
-          "cb4cc12b90271",
-          "c6576d74398a4",
-          "c789f4e661f56",
-          "cd049412bed53",
-          "c39e6eb3b90cb",
-          "c6b598fd4370a"
-        ],
-        "method": "pass=1, warn=0.5, fail=0; spec checks weigh 2, best-practice checks 1; A>=90, B>=75, C>=60, D>=40, else E; A only if every gpio recommendation is met and the file is Parquet v2, otherwise at best B",
-        "drill": "parquet_rating.checks.a6ef6fe186160",
-        "a_drill": "parquet_rating.why_not_a.a6ef6fe186160"
-      },
       "commands": [
         {
           "label": "STAC asset entry",
@@ -6559,13 +8569,14 @@
       ],
       "id": "a6ef6fe186160",
       "errors": 3,
-      "warnings": 2,
+      "warnings": 3,
       "finding_ids": [
         "3c72d9d7d82fd3fd",
         "e93ccae0282dcb5b",
         "365780ccf08126c0",
         "b2dfaadb37987b35",
         "c7ad5a7c798c9a72",
+        "9fe636aef2055369",
         "ec6414d207106c6e"
       ],
       "check_ids": [
@@ -6576,7 +8587,22 @@
         "c417ddc73f483",
         "c45685894f645"
       ],
-      "status": "fail"
+      "status": "fail",
+      "grade": {
+        "grade": "F",
+        "levels_dropped": 6,
+        "unmet": [
+          "3c72d9d7d82fd3fd",
+          "e93ccae0282dcb5b",
+          "365780ccf08126c0",
+          "c7ad5a7c798c9a72",
+          "9fe636aef2055369",
+          "b2dfaadb37987b35"
+        ],
+        "reason": "6 best practice(s) or recommendation(s) not met",
+        "method": "Start at A; each best practice or recommendation not met (any MUST or SHOULD finding on the asset; for GeoParquet also Parquet v2 missing or unconfirmed) drops one level; floor F. Not a cloud-native format: F. No validator could read it: no grade. A only if every best practice is met.",
+        "drill": "grades.unmet.a6ef6fe186160"
+      }
     },
     {
       "catalog_id": "bafu-portolan",
@@ -6595,7 +8621,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -6625,7 +8650,17 @@
         "c59a2443dc411",
         "c3953d7e13593"
       ],
-      "status": "warn"
+      "status": "warn",
+      "grade": {
+        "grade": "F",
+        "levels_dropped": null,
+        "unmet": [
+          "2d0eee60e81bd15d"
+        ],
+        "reason": "not a cloud-native format",
+        "method": "Start at A; each best practice or recommendation not met (any MUST or SHOULD finding on the asset; for GeoParquet also Parquet v2 missing or unconfirmed) drops one level; floor F. Not a cloud-native format: F. No validator could read it: no grade. A only if every best practice is met.",
+        "drill": "grades.unmet.a73c10275bb1f"
+      }
     },
     {
       "catalog_id": "bafu-portolan",
@@ -6644,7 +8679,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -6672,7 +8706,8 @@
       "check_ids": [
         "cb2a1722cc8e2"
       ],
-      "status": "pass"
+      "status": "pass",
+      "grade": null
     },
     {
       "catalog_id": "bafu-portolan",
@@ -6691,7 +8726,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -6717,7 +8751,8 @@
       "check_ids": [
         "c733804665413"
       ],
-      "status": "pass"
+      "status": "pass",
+      "grade": null
     },
     {
       "catalog_id": "bafu-portolan",
@@ -6737,69 +8772,6 @@
         "gpio",
         "rashid"
       ],
-      "rating": {
-        "score": 91.2,
-        "grade": "B",
-        "grade_uncapped": "A",
-        "cap": [
-          "3 gpio recommendation(s) not met",
-          "Parquet format v1, not v2"
-        ],
-        "max_grade": "B",
-        "a_conditions": [
-          "3 gpio recommendation(s) not met",
-          "Parquet format v1, not v2"
-        ],
-        "recommendations_met": false,
-        "unmet_recommendation_ids": [
-          "c9a4aa5e333b5",
-          "c77b4ebb5af15",
-          "c58aff9c8cbef"
-        ],
-        "parquet_format_version": 1,
-        "parquet_check_id": "cf67eb43f32fe",
-        "spec_score": 95.8,
-        "best_practice_score": 16.7,
-        "optimization_score": 4.0,
-        "checks_rated": 27,
-        "counts": {
-          "pass": 23,
-          "warn": 1,
-          "fail": 3
-        },
-        "check_ids": [
-          "c37c4e19e5bf4",
-          "cbb6cd897a463",
-          "cc7f662095586",
-          "c305686f405db",
-          "c41767e9fc8bc",
-          "c036d7c057017",
-          "c5283cc4442c3",
-          "c15b5619d8d28",
-          "ce6a79be1ef0d",
-          "c89f1d531d08a",
-          "c479b22742b3b",
-          "ccac806e82353",
-          "c9c57c354e705",
-          "cb3c150896ef9",
-          "cfb4137d3b36c",
-          "c8ce2358a0b5e",
-          "c92118e18d321",
-          "c51de7c309200",
-          "c2e65ad7bccec",
-          "cd1646305e82c",
-          "cb02ad3856284",
-          "c68487365d369",
-          "c779bfc85bb44",
-          "c849edbd2fbc5",
-          "c9a4aa5e333b5",
-          "c77b4ebb5af15",
-          "c58aff9c8cbef"
-        ],
-        "method": "pass=1, warn=0.5, fail=0; spec checks weigh 2, best-practice checks 1; A>=90, B>=75, C>=60, D>=40, else E; A only if every gpio recommendation is met and the file is Parquet v2, otherwise at best B",
-        "drill": "parquet_rating.checks.a8ce305a4de7c",
-        "a_drill": "parquet_rating.why_not_a.a8ce305a4de7c"
-      },
       "commands": [
         {
           "label": "STAC asset entry",
@@ -6824,13 +8796,14 @@
       ],
       "id": "a8ce305a4de7c",
       "errors": 3,
-      "warnings": 2,
+      "warnings": 3,
       "finding_ids": [
         "00eb74839c86fae7",
         "9c25913d1e0f103e",
         "fbe74a30e6f488b7",
         "d4e210909f4411b9",
         "8d33f072127d47c6",
+        "f7dfcd6e9c98f6f6",
         "fa6ccd4b72efb7d5"
       ],
       "check_ids": [
@@ -6841,7 +8814,22 @@
         "c7fcf7e4bd30f",
         "cf67eb43f32fe"
       ],
-      "status": "fail"
+      "status": "fail",
+      "grade": {
+        "grade": "F",
+        "levels_dropped": 6,
+        "unmet": [
+          "00eb74839c86fae7",
+          "9c25913d1e0f103e",
+          "fbe74a30e6f488b7",
+          "8d33f072127d47c6",
+          "f7dfcd6e9c98f6f6",
+          "d4e210909f4411b9"
+        ],
+        "reason": "6 best practice(s) or recommendation(s) not met",
+        "method": "Start at A; each best practice or recommendation not met (any MUST or SHOULD finding on the asset; for GeoParquet also Parquet v2 missing or unconfirmed) drops one level; floor F. Not a cloud-native format: F. No validator could read it: no grade. A only if every best practice is met.",
+        "drill": "grades.unmet.a8ce305a4de7c"
+      }
     },
     {
       "catalog_id": "bafu-portolan",
@@ -6860,7 +8848,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -6890,7 +8877,17 @@
         "cdef4fa85fc36",
         "ce3c0794b0c47"
       ],
-      "status": "warn"
+      "status": "warn",
+      "grade": {
+        "grade": "F",
+        "levels_dropped": null,
+        "unmet": [
+          "2f4fa687311a0aae"
+        ],
+        "reason": "not a cloud-native format",
+        "method": "Start at A; each best practice or recommendation not met (any MUST or SHOULD finding on the asset; for GeoParquet also Parquet v2 missing or unconfirmed) drops one level; floor F. Not a cloud-native format: F. No validator could read it: no grade. A only if every best practice is met.",
+        "drill": "grades.unmet.a85bd7dd882b6"
+      }
     },
     {
       "catalog_id": "bafu-portolan",
@@ -6909,7 +8906,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -6937,7 +8933,8 @@
       "check_ids": [
         "c735a0688798d"
       ],
-      "status": "pass"
+      "status": "pass",
+      "grade": null
     },
     {
       "catalog_id": "bafu-portolan",
@@ -6956,7 +8953,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -6982,7 +8978,8 @@
       "check_ids": [
         "c570bc94627dc"
       ],
-      "status": "pass"
+      "status": "pass",
+      "grade": null
     },
     {
       "catalog_id": "bafu-portolan",
@@ -7002,66 +8999,6 @@
         "gpio",
         "rashid"
       ],
-      "rating": {
-        "score": 99.0,
-        "grade": "B",
-        "grade_uncapped": "A",
-        "cap": [
-          "1 gpio recommendation(s) not met",
-          "Parquet format v1, not v2"
-        ],
-        "max_grade": "B",
-        "a_conditions": [
-          "1 gpio recommendation(s) not met",
-          "Parquet format v1, not v2"
-        ],
-        "recommendations_met": false,
-        "unmet_recommendation_ids": [
-          "c5d08d479a422"
-        ],
-        "parquet_format_version": 1,
-        "parquet_check_id": "c0416fe47c6e5",
-        "spec_score": 100.0,
-        "best_practice_score": 75.0,
-        "optimization_score": 4.0,
-        "checks_rated": 26,
-        "counts": {
-          "pass": 25,
-          "warn": 1,
-          "fail": 0
-        },
-        "check_ids": [
-          "cab20cc093a15",
-          "c99a94082dabf",
-          "cb3100a0628f4",
-          "c90c2edc2f242",
-          "cc7fb805b9d3a",
-          "c480710e2819e",
-          "cea000815f2f9",
-          "ce0e6d0b46133",
-          "ce705aeef5a92",
-          "c5edb5355d77e",
-          "caf15b514b1c5",
-          "c5b3a02697569",
-          "c08cf5a346caf",
-          "c03511bdde5ef",
-          "c5a0957e80106",
-          "ca667338237ba",
-          "c344b09dbe96e",
-          "cf49073c83632",
-          "c58ebfbf00329",
-          "c58282ceca513",
-          "cabc3a7e4acdf",
-          "c6baccb677e46",
-          "ca2f44fe16613",
-          "ca0d599eacd87",
-          "c7acc124543f4",
-          "c5d08d479a422"
-        ],
-        "method": "pass=1, warn=0.5, fail=0; spec checks weigh 2, best-practice checks 1; A>=90, B>=75, C>=60, D>=40, else E; A only if every gpio recommendation is met and the file is Parquet v2, otherwise at best B",
-        "drill": "parquet_rating.checks.acffb03e04261",
-        "a_drill": "parquet_rating.why_not_a.acffb03e04261"
-      },
       "commands": [
         {
           "label": "STAC asset entry",
@@ -7086,10 +9023,11 @@
       ],
       "id": "acffb03e04261",
       "errors": 0,
-      "warnings": 2,
+      "warnings": 3,
       "finding_ids": [
         "2b19b97fad413338",
         "ce5086ce3bfa1786",
+        "ee09988df80df351",
         "d0eb6895ac46317c"
       ],
       "check_ids": [
@@ -7100,7 +9038,19 @@
         "ce9d5ec1f87f0",
         "c0416fe47c6e5"
       ],
-      "status": "warn"
+      "status": "warn",
+      "grade": {
+        "grade": "D",
+        "levels_dropped": 3,
+        "unmet": [
+          "ce5086ce3bfa1786",
+          "ee09988df80df351",
+          "2b19b97fad413338"
+        ],
+        "reason": "3 best practice(s) or recommendation(s) not met",
+        "method": "Start at A; each best practice or recommendation not met (any MUST or SHOULD finding on the asset; for GeoParquet also Parquet v2 missing or unconfirmed) drops one level; floor F. Not a cloud-native format: F. No validator could read it: no grade. A only if every best practice is met.",
+        "drill": "grades.unmet.acffb03e04261"
+      }
     },
     {
       "catalog_id": "bafu-portolan",
@@ -7119,7 +9069,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -7145,7 +9094,8 @@
       "check_ids": [
         "c5f5f413bd8ec"
       ],
-      "status": "pass"
+      "status": "pass",
+      "grade": null
     },
     {
       "catalog_id": "bafu-portolan",
@@ -7164,7 +9114,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -7194,7 +9143,17 @@
         "cdfd6b224ada2",
         "c942024b27569"
       ],
-      "status": "warn"
+      "status": "warn",
+      "grade": {
+        "grade": "F",
+        "levels_dropped": null,
+        "unmet": [
+          "c49fbd241a59b5cf"
+        ],
+        "reason": "not a cloud-native format",
+        "method": "Start at A; each best practice or recommendation not met (any MUST or SHOULD finding on the asset; for GeoParquet also Parquet v2 missing or unconfirmed) drops one level; floor F. Not a cloud-native format: F. No validator could read it: no grade. A only if every best practice is met.",
+        "drill": "grades.unmet.a73ceca123946"
+      }
     },
     {
       "catalog_id": "bafu-portolan",
@@ -7214,69 +9173,6 @@
         "gpio",
         "rashid"
       ],
-      "rating": {
-        "score": 91.2,
-        "grade": "B",
-        "grade_uncapped": "A",
-        "cap": [
-          "3 gpio recommendation(s) not met",
-          "Parquet format v1, not v2"
-        ],
-        "max_grade": "B",
-        "a_conditions": [
-          "3 gpio recommendation(s) not met",
-          "Parquet format v1, not v2"
-        ],
-        "recommendations_met": false,
-        "unmet_recommendation_ids": [
-          "ca8b50dc535cd",
-          "cdf6697d94602",
-          "c673b0f4454e2"
-        ],
-        "parquet_format_version": 1,
-        "parquet_check_id": "c9f15b55fe18a",
-        "spec_score": 95.8,
-        "best_practice_score": 16.7,
-        "optimization_score": 4.0,
-        "checks_rated": 27,
-        "counts": {
-          "pass": 23,
-          "warn": 1,
-          "fail": 3
-        },
-        "check_ids": [
-          "c8991ef212d38",
-          "cf9e39bc831c4",
-          "c6259c826b1a4",
-          "c449e3ca1911c",
-          "c7933dd282acc",
-          "c59ccad16ba27",
-          "cd1874fd2a3f1",
-          "c98009bff0be1",
-          "cd5c337c18624",
-          "c503a594d1909",
-          "c0cbe71c3ec57",
-          "c76686a3f47e6",
-          "c89fc406e7f41",
-          "cb6a75fb2a1df",
-          "c0386d84a39a7",
-          "c2a231aa77e80",
-          "caa04a221f2f0",
-          "c4786714534f2",
-          "c65d8ffc4b45d",
-          "ca61d02da8ce0",
-          "c01053709b8e7",
-          "ca99580ab2bdb",
-          "c80a304357acd",
-          "c25c0562fe0bc",
-          "ca8b50dc535cd",
-          "cdf6697d94602",
-          "c673b0f4454e2"
-        ],
-        "method": "pass=1, warn=0.5, fail=0; spec checks weigh 2, best-practice checks 1; A>=90, B>=75, C>=60, D>=40, else E; A only if every gpio recommendation is met and the file is Parquet v2, otherwise at best B",
-        "drill": "parquet_rating.checks.a43e77936c52f",
-        "a_drill": "parquet_rating.why_not_a.a43e77936c52f"
-      },
       "commands": [
         {
           "label": "STAC asset entry",
@@ -7301,13 +9197,14 @@
       ],
       "id": "a43e77936c52f",
       "errors": 3,
-      "warnings": 2,
+      "warnings": 3,
       "finding_ids": [
         "c7a061b9e4b586e8",
         "eecdb0d66ffd78bd",
         "e921c2a0c88c58f8",
         "5dad2643dde9f3e7",
         "93d4aa8ddea352e5",
+        "5ed649d5e9743476",
         "89c6203d91ef41e4"
       ],
       "check_ids": [
@@ -7318,7 +9215,22 @@
         "c15acf5a1944d",
         "c9f15b55fe18a"
       ],
-      "status": "fail"
+      "status": "fail",
+      "grade": {
+        "grade": "F",
+        "levels_dropped": 6,
+        "unmet": [
+          "c7a061b9e4b586e8",
+          "eecdb0d66ffd78bd",
+          "e921c2a0c88c58f8",
+          "93d4aa8ddea352e5",
+          "5ed649d5e9743476",
+          "5dad2643dde9f3e7"
+        ],
+        "reason": "6 best practice(s) or recommendation(s) not met",
+        "method": "Start at A; each best practice or recommendation not met (any MUST or SHOULD finding on the asset; for GeoParquet also Parquet v2 missing or unconfirmed) drops one level; floor F. Not a cloud-native format: F. No validator could read it: no grade. A only if every best practice is met.",
+        "drill": "grades.unmet.a43e77936c52f"
+      }
     },
     {
       "catalog_id": "bafu-portolan",
@@ -7337,7 +9249,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -7365,7 +9276,8 @@
       "check_ids": [
         "c4c2ee10fbf17"
       ],
-      "status": "pass"
+      "status": "pass",
+      "grade": null
     },
     {
       "catalog_id": "bafu-portolan",
@@ -7384,7 +9296,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -7410,7 +9321,8 @@
       "check_ids": [
         "c1ebcefefced6"
       ],
-      "status": "pass"
+      "status": "pass",
+      "grade": null
     },
     {
       "catalog_id": "bafu-portolan",
@@ -7430,66 +9342,6 @@
         "gpio",
         "rashid"
       ],
-      "rating": {
-        "score": 98.0,
-        "grade": "B",
-        "grade_uncapped": "A",
-        "cap": [
-          "2 gpio recommendation(s) not met"
-        ],
-        "max_grade": "B",
-        "a_conditions": [
-          "2 gpio recommendation(s) not met"
-        ],
-        "recommendations_met": false,
-        "unmet_recommendation_ids": [
-          "c49b926ea5f58",
-          "c49b926ea5f58"
-        ],
-        "parquet_format_version": 2,
-        "parquet_check_id": "c3852b398550f",
-        "spec_score": 100.0,
-        "best_practice_score": 66.7,
-        "optimization_score": 2.0,
-        "checks_rated": 27,
-        "counts": {
-          "pass": 25,
-          "warn": 2,
-          "fail": 0
-        },
-        "check_ids": [
-          "cd979d93e7849",
-          "c68153478a1a6",
-          "cde2b7291797c",
-          "cef60e3a9e893",
-          "c66c170582f17",
-          "c22cc8bd0a102",
-          "cde66bd3c2211",
-          "cdbd7e848e32c",
-          "cfb0d93d7894f",
-          "c0fcc9f186bf3",
-          "c9e86df511cd1",
-          "ca3c25f704e00",
-          "c2a26e4265814",
-          "cf51216b7eafe",
-          "c8dd51a990ea1",
-          "c65a727d52748",
-          "ccb063925d307",
-          "cd8fcd878fc92",
-          "cf0bcd911365a",
-          "ce0efabb78dd4",
-          "c92f49a342d74",
-          "c03854d7f79ed",
-          "c0b7516d22de6",
-          "cab8895fa51ef",
-          "c152dc2380495",
-          "c49b926ea5f58",
-          "c49b926ea5f58"
-        ],
-        "method": "pass=1, warn=0.5, fail=0; spec checks weigh 2, best-practice checks 1; A>=90, B>=75, C>=60, D>=40, else E; A only if every gpio recommendation is met and the file is Parquet v2, otherwise at best B",
-        "drill": "parquet_rating.checks.a04bba077f704",
-        "a_drill": "parquet_rating.why_not_a.a04bba077f704"
-      },
       "commands": [
         {
           "label": "STAC asset entry",
@@ -7529,7 +9381,19 @@
         "c563f6de49028",
         "c3852b398550f"
       ],
-      "status": "warn"
+      "status": "warn",
+      "grade": {
+        "grade": "D",
+        "levels_dropped": 3,
+        "unmet": [
+          "b98fd7aa337dd0fe",
+          "ad934a5ab3277df5",
+          "5658af7d382743ef"
+        ],
+        "reason": "3 best practice(s) or recommendation(s) not met",
+        "method": "Start at A; each best practice or recommendation not met (any MUST or SHOULD finding on the asset; for GeoParquet also Parquet v2 missing or unconfirmed) drops one level; floor F. Not a cloud-native format: F. No validator could read it: no grade. A only if every best practice is met.",
+        "drill": "grades.unmet.a04bba077f704"
+      }
     },
     {
       "catalog_id": "bafu-portolan",
@@ -7548,7 +9412,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -7574,7 +9437,8 @@
       "check_ids": [
         "cc1906b9534f2"
       ],
-      "status": "pass"
+      "status": "pass",
+      "grade": null
     },
     {
       "catalog_id": "bafu-portolan",
@@ -7594,66 +9458,6 @@
         "gpio",
         "rashid"
       ],
-      "rating": {
-        "score": 99.0,
-        "grade": "B",
-        "grade_uncapped": "A",
-        "cap": [
-          "1 gpio recommendation(s) not met",
-          "Parquet format v1, not v2"
-        ],
-        "max_grade": "B",
-        "a_conditions": [
-          "1 gpio recommendation(s) not met",
-          "Parquet format v1, not v2"
-        ],
-        "recommendations_met": false,
-        "unmet_recommendation_ids": [
-          "c0bfa938f2bf4"
-        ],
-        "parquet_format_version": 1,
-        "parquet_check_id": "ce1aad87fe923",
-        "spec_score": 100.0,
-        "best_practice_score": 75.0,
-        "optimization_score": 4.0,
-        "checks_rated": 26,
-        "counts": {
-          "pass": 25,
-          "warn": 1,
-          "fail": 0
-        },
-        "check_ids": [
-          "c776b570ba74c",
-          "c1ab45776210a",
-          "c6dadaaa2e148",
-          "c98cc3b8a23c8",
-          "ca5311a236865",
-          "ceba3a465b396",
-          "c0a8822ec0078",
-          "c083bac16561e",
-          "c65251e52f51d",
-          "c9695c70d3143",
-          "c3d0128a05f5b",
-          "c6097dfa789ae",
-          "c244758aabb35",
-          "cd63c45309e50",
-          "c1f3f980e350f",
-          "c46f03e607040",
-          "ce60e5ff9fe62",
-          "c6c5ca6bcf32b",
-          "c227af1f748fa",
-          "c5e9e5196a13e",
-          "c4a2ddcf549ec",
-          "ce04785494c40",
-          "c8299b8dc59db",
-          "cc10e4ddf148a",
-          "cfccb7826ef46",
-          "c0bfa938f2bf4"
-        ],
-        "method": "pass=1, warn=0.5, fail=0; spec checks weigh 2, best-practice checks 1; A>=90, B>=75, C>=60, D>=40, else E; A only if every gpio recommendation is met and the file is Parquet v2, otherwise at best B",
-        "drill": "parquet_rating.checks.a335dfad9a4c1",
-        "a_drill": "parquet_rating.why_not_a.a335dfad9a4c1"
-      },
       "commands": [
         {
           "label": "STAC asset entry",
@@ -7678,10 +9482,11 @@
       ],
       "id": "a335dfad9a4c1",
       "errors": 0,
-      "warnings": 2,
+      "warnings": 3,
       "finding_ids": [
         "f1ce9ed7150292bf",
         "49a9a06e85da5412",
+        "d9a501d66013d36b",
         "6326fd6248b09549"
       ],
       "check_ids": [
@@ -7692,7 +9497,19 @@
         "c0ddc1f4f49cd",
         "ce1aad87fe923"
       ],
-      "status": "warn"
+      "status": "warn",
+      "grade": {
+        "grade": "D",
+        "levels_dropped": 3,
+        "unmet": [
+          "49a9a06e85da5412",
+          "d9a501d66013d36b",
+          "f1ce9ed7150292bf"
+        ],
+        "reason": "3 best practice(s) or recommendation(s) not met",
+        "method": "Start at A; each best practice or recommendation not met (any MUST or SHOULD finding on the asset; for GeoParquet also Parquet v2 missing or unconfirmed) drops one level; floor F. Not a cloud-native format: F. No validator could read it: no grade. A only if every best practice is met.",
+        "drill": "grades.unmet.a335dfad9a4c1"
+      }
     },
     {
       "catalog_id": "bafu-portolan",
@@ -7712,7 +9529,6 @@
         "pmtiles",
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -7748,7 +9564,17 @@
         "c811b71d970c9",
         "cf8ccebb8e0f8"
       ],
-      "status": "fail"
+      "status": "fail",
+      "grade": {
+        "grade": "B",
+        "levels_dropped": 1,
+        "unmet": [
+          "391cb73e5b4e16a3"
+        ],
+        "reason": "1 best practice(s) or recommendation(s) not met",
+        "method": "Start at A; each best practice or recommendation not met (any MUST or SHOULD finding on the asset; for GeoParquet also Parquet v2 missing or unconfirmed) drops one level; floor F. Not a cloud-native format: F. No validator could read it: no grade. A only if every best practice is met.",
+        "drill": "grades.unmet.ad0505ca13a42"
+      }
     },
     {
       "catalog_id": "bafu-portolan",
@@ -7768,7 +9594,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -7796,7 +9621,8 @@
       "check_ids": [
         "c792156ea3477"
       ],
-      "status": "pass"
+      "status": "pass",
+      "grade": null
     },
     {
       "catalog_id": "bafu-portolan",
@@ -7815,7 +9641,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -7843,7 +9668,8 @@
       "check_ids": [
         "ce74447524710"
       ],
-      "status": "pass"
+      "status": "pass",
+      "grade": null
     },
     {
       "catalog_id": "bafu-portolan",
@@ -7862,7 +9688,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -7888,7 +9713,8 @@
       "check_ids": [
         "c0c5d67506c5d"
       ],
-      "status": "pass"
+      "status": "pass",
+      "grade": null
     },
     {
       "catalog_id": "bafu-portolan",
@@ -7908,66 +9734,6 @@
         "gpio",
         "rashid"
       ],
-      "rating": {
-        "score": 99.0,
-        "grade": "B",
-        "grade_uncapped": "A",
-        "cap": [
-          "1 gpio recommendation(s) not met",
-          "Parquet format v1, not v2"
-        ],
-        "max_grade": "B",
-        "a_conditions": [
-          "1 gpio recommendation(s) not met",
-          "Parquet format v1, not v2"
-        ],
-        "recommendations_met": false,
-        "unmet_recommendation_ids": [
-          "cc1021b274150"
-        ],
-        "parquet_format_version": 1,
-        "parquet_check_id": "c89bb98766cf9",
-        "spec_score": 100.0,
-        "best_practice_score": 75.0,
-        "optimization_score": 4.0,
-        "checks_rated": 26,
-        "counts": {
-          "pass": 25,
-          "warn": 1,
-          "fail": 0
-        },
-        "check_ids": [
-          "c3fefffbae305",
-          "c89450743aca3",
-          "cb04fccac6ab6",
-          "c2c9f97de7fcf",
-          "c8401d738f963",
-          "c31bf59a1f71a",
-          "c89558b6ccc54",
-          "c3496e4c4ab4d",
-          "c26ffb787ae13",
-          "cea4491a2089e",
-          "c73696a6d0f28",
-          "c745410fb1f83",
-          "cb9a67974f64d",
-          "ce92cc4179b9a",
-          "c4246dbe3c9cb",
-          "cdbe2b4e25985",
-          "c38d0017b1c5f",
-          "cb56cfdd32cad",
-          "ca973e70d5d19",
-          "c72eed015c053",
-          "c36611cd54ba8",
-          "c17d01a9c8fd3",
-          "c5fd3dbfa63af",
-          "cb0583c5b8436",
-          "cd903e39d968c",
-          "cc1021b274150"
-        ],
-        "method": "pass=1, warn=0.5, fail=0; spec checks weigh 2, best-practice checks 1; A>=90, B>=75, C>=60, D>=40, else E; A only if every gpio recommendation is met and the file is Parquet v2, otherwise at best B",
-        "drill": "parquet_rating.checks.a370886f9580b",
-        "a_drill": "parquet_rating.why_not_a.a370886f9580b"
-      },
       "commands": [
         {
           "label": "STAC asset entry",
@@ -7992,10 +9758,11 @@
       ],
       "id": "a370886f9580b",
       "errors": 0,
-      "warnings": 2,
+      "warnings": 3,
       "finding_ids": [
         "6040dd090f5e246a",
         "d32f9d4b2bde90e8",
+        "01df214681cc3bf2",
         "28c73f10f82334e7"
       ],
       "check_ids": [
@@ -8006,7 +9773,19 @@
         "c7b38a37d7031",
         "c89bb98766cf9"
       ],
-      "status": "warn"
+      "status": "warn",
+      "grade": {
+        "grade": "D",
+        "levels_dropped": 3,
+        "unmet": [
+          "d32f9d4b2bde90e8",
+          "01df214681cc3bf2",
+          "6040dd090f5e246a"
+        ],
+        "reason": "3 best practice(s) or recommendation(s) not met",
+        "method": "Start at A; each best practice or recommendation not met (any MUST or SHOULD finding on the asset; for GeoParquet also Parquet v2 missing or unconfirmed) drops one level; floor F. Not a cloud-native format: F. No validator could read it: no grade. A only if every best practice is met.",
+        "drill": "grades.unmet.a370886f9580b"
+      }
     },
     {
       "catalog_id": "bafu-portolan",
@@ -8025,7 +9804,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -8051,7 +9829,8 @@
       "check_ids": [
         "ccc84c8a3035c"
       ],
-      "status": "pass"
+      "status": "pass",
+      "grade": null
     },
     {
       "catalog_id": "bafu-portolan",
@@ -8070,7 +9849,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -8100,7 +9878,17 @@
         "c004c58908461",
         "cb2fb1182f892"
       ],
-      "status": "warn"
+      "status": "warn",
+      "grade": {
+        "grade": "F",
+        "levels_dropped": null,
+        "unmet": [
+          "97167859c18f7369"
+        ],
+        "reason": "not a cloud-native format",
+        "method": "Start at A; each best practice or recommendation not met (any MUST or SHOULD finding on the asset; for GeoParquet also Parquet v2 missing or unconfirmed) drops one level; floor F. Not a cloud-native format: F. No validator could read it: no grade. A only if every best practice is met.",
+        "drill": "grades.unmet.adcd7bfeb24f9"
+      }
     },
     {
       "catalog_id": "bafu-portolan",
@@ -8120,69 +9908,6 @@
         "gpio",
         "rashid"
       ],
-      "rating": {
-        "score": 91.2,
-        "grade": "B",
-        "grade_uncapped": "A",
-        "cap": [
-          "3 gpio recommendation(s) not met",
-          "Parquet format v1, not v2"
-        ],
-        "max_grade": "B",
-        "a_conditions": [
-          "3 gpio recommendation(s) not met",
-          "Parquet format v1, not v2"
-        ],
-        "recommendations_met": false,
-        "unmet_recommendation_ids": [
-          "cfe73e8833b8a",
-          "c2bbd00eb1827",
-          "c95c325048bf5"
-        ],
-        "parquet_format_version": 1,
-        "parquet_check_id": "c5b4ec2214780",
-        "spec_score": 95.8,
-        "best_practice_score": 16.7,
-        "optimization_score": 4.0,
-        "checks_rated": 27,
-        "counts": {
-          "pass": 23,
-          "warn": 1,
-          "fail": 3
-        },
-        "check_ids": [
-          "ce8a7e99f9c9b",
-          "c1bf80bb660be",
-          "cac397c642b1b",
-          "cbc98ae396524",
-          "c55445619adb1",
-          "c339b4ca4bb54",
-          "cef8e8de3d39e",
-          "cb7d80dd941c6",
-          "cb4d4f9d87c95",
-          "cc29b15f5490f",
-          "c724a2d8350ff",
-          "c6cbacd89d13e",
-          "ca791a812c1ee",
-          "c05774bd6c5ef",
-          "c016955e705a4",
-          "c113d537c29fc",
-          "c53b1915ebc01",
-          "cfc97f4e228f9",
-          "ccc274efd0f85",
-          "cf0f8cfe7e830",
-          "c22d693cbd558",
-          "cdbecbf6d2885",
-          "c81d0366c3920",
-          "c792929b25b29",
-          "cfe73e8833b8a",
-          "c2bbd00eb1827",
-          "c95c325048bf5"
-        ],
-        "method": "pass=1, warn=0.5, fail=0; spec checks weigh 2, best-practice checks 1; A>=90, B>=75, C>=60, D>=40, else E; A only if every gpio recommendation is met and the file is Parquet v2, otherwise at best B",
-        "drill": "parquet_rating.checks.aa1af32026099",
-        "a_drill": "parquet_rating.why_not_a.aa1af32026099"
-      },
       "commands": [
         {
           "label": "STAC asset entry",
@@ -8207,13 +9932,14 @@
       ],
       "id": "aa1af32026099",
       "errors": 3,
-      "warnings": 2,
+      "warnings": 3,
       "finding_ids": [
         "74a3b6087ed82d55",
         "785ce4c0f0abc195",
         "0000430a11a4933b",
         "78b493f9c98833a8",
         "c5678cc9ae48bad7",
+        "0e4ef5e62d5d525f",
         "79a69a4a81dbb1e7"
       ],
       "check_ids": [
@@ -8224,7 +9950,22 @@
         "c65d17930abb2",
         "c5b4ec2214780"
       ],
-      "status": "fail"
+      "status": "fail",
+      "grade": {
+        "grade": "F",
+        "levels_dropped": 6,
+        "unmet": [
+          "74a3b6087ed82d55",
+          "785ce4c0f0abc195",
+          "0000430a11a4933b",
+          "c5678cc9ae48bad7",
+          "0e4ef5e62d5d525f",
+          "78b493f9c98833a8"
+        ],
+        "reason": "6 best practice(s) or recommendation(s) not met",
+        "method": "Start at A; each best practice or recommendation not met (any MUST or SHOULD finding on the asset; for GeoParquet also Parquet v2 missing or unconfirmed) drops one level; floor F. Not a cloud-native format: F. No validator could read it: no grade. A only if every best practice is met.",
+        "drill": "grades.unmet.aa1af32026099"
+      }
     },
     {
       "catalog_id": "bafu-portolan",
@@ -8243,7 +9984,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -8271,7 +10011,8 @@
       "check_ids": [
         "c8762c798b022"
       ],
-      "status": "pass"
+      "status": "pass",
+      "grade": null
     },
     {
       "catalog_id": "bafu-portolan",
@@ -8290,7 +10031,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -8316,7 +10056,8 @@
       "check_ids": [
         "c5f6b2e0e61bf"
       ],
-      "status": "pass"
+      "status": "pass",
+      "grade": null
     },
     {
       "catalog_id": "bafu-portolan",
@@ -8336,66 +10077,6 @@
         "gpio",
         "rashid"
       ],
-      "rating": {
-        "score": 99.0,
-        "grade": "B",
-        "grade_uncapped": "A",
-        "cap": [
-          "1 gpio recommendation(s) not met",
-          "Parquet format v1, not v2"
-        ],
-        "max_grade": "B",
-        "a_conditions": [
-          "1 gpio recommendation(s) not met",
-          "Parquet format v1, not v2"
-        ],
-        "recommendations_met": false,
-        "unmet_recommendation_ids": [
-          "c102b813e2f00"
-        ],
-        "parquet_format_version": 1,
-        "parquet_check_id": "c3b8d09b1fd7e",
-        "spec_score": 100.0,
-        "best_practice_score": 75.0,
-        "optimization_score": 4.0,
-        "checks_rated": 26,
-        "counts": {
-          "pass": 25,
-          "warn": 1,
-          "fail": 0
-        },
-        "check_ids": [
-          "c624adf56be9c",
-          "c7943ae66dc27",
-          "cfea2a2944a14",
-          "c2dfc03b88812",
-          "ce1f7843c8de6",
-          "c82a3eeb3ee54",
-          "c61e53770032d",
-          "cb57a328a7916",
-          "cb17aa4960a4d",
-          "ce305e6b6417d",
-          "cd4098f62b7e9",
-          "c09fc319d9420",
-          "c387b1fe85e16",
-          "cea6bbf1d2ecf",
-          "c75d6f2d9d682",
-          "c433821f63353",
-          "c0b6e6596c084",
-          "c6ec51a2f5b19",
-          "cbc3f4738917c",
-          "c57b6509b55d8",
-          "c2c12dbd73235",
-          "ca0e65838c8c5",
-          "c14d61a5d5d0b",
-          "cddaeca328028",
-          "cc5afc70453fa",
-          "c102b813e2f00"
-        ],
-        "method": "pass=1, warn=0.5, fail=0; spec checks weigh 2, best-practice checks 1; A>=90, B>=75, C>=60, D>=40, else E; A only if every gpio recommendation is met and the file is Parquet v2, otherwise at best B",
-        "drill": "parquet_rating.checks.a5671b4bdc605",
-        "a_drill": "parquet_rating.why_not_a.a5671b4bdc605"
-      },
       "commands": [
         {
           "label": "STAC asset entry",
@@ -8420,10 +10101,11 @@
       ],
       "id": "a5671b4bdc605",
       "errors": 0,
-      "warnings": 2,
+      "warnings": 3,
       "finding_ids": [
         "a166ddba3bcadfbd",
         "39874ebfbea97750",
+        "4724d607b1678eed",
         "69dfeb8cbc36faf5"
       ],
       "check_ids": [
@@ -8434,7 +10116,19 @@
         "c15ca5efa6a36",
         "c3b8d09b1fd7e"
       ],
-      "status": "warn"
+      "status": "warn",
+      "grade": {
+        "grade": "D",
+        "levels_dropped": 3,
+        "unmet": [
+          "39874ebfbea97750",
+          "4724d607b1678eed",
+          "a166ddba3bcadfbd"
+        ],
+        "reason": "3 best practice(s) or recommendation(s) not met",
+        "method": "Start at A; each best practice or recommendation not met (any MUST or SHOULD finding on the asset; for GeoParquet also Parquet v2 missing or unconfirmed) drops one level; floor F. Not a cloud-native format: F. No validator could read it: no grade. A only if every best practice is met.",
+        "drill": "grades.unmet.a5671b4bdc605"
+      }
     },
     {
       "catalog_id": "bafu-portolan",
@@ -8453,7 +10147,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -8483,7 +10176,17 @@
         "c95262b581afb",
         "ce4ffb02aa5a5"
       ],
-      "status": "warn"
+      "status": "warn",
+      "grade": {
+        "grade": "F",
+        "levels_dropped": null,
+        "unmet": [
+          "d94e8d0ab7f99c18"
+        ],
+        "reason": "not a cloud-native format",
+        "method": "Start at A; each best practice or recommendation not met (any MUST or SHOULD finding on the asset; for GeoParquet also Parquet v2 missing or unconfirmed) drops one level; floor F. Not a cloud-native format: F. No validator could read it: no grade. A only if every best practice is met.",
+        "drill": "grades.unmet.a247ecb93ab28"
+      }
     },
     {
       "catalog_id": "bafu-portolan",
@@ -8502,7 +10205,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -8530,7 +10232,8 @@
       "check_ids": [
         "cbe5dcb83b451"
       ],
-      "status": "pass"
+      "status": "pass",
+      "grade": null
     },
     {
       "catalog_id": "bafu-portolan",
@@ -8549,7 +10252,6 @@
       "verified_by": [
         "rashid"
       ],
-      "rating": null,
       "commands": [
         {
           "label": "STAC asset entry",
@@ -8575,7 +10277,8 @@
       "check_ids": [
         "c01ba1e2fcca4"
       ],
-      "status": "pass"
+      "status": "pass",
+      "grade": null
     }
   ],
   "findings": [
@@ -9185,6 +10888,22 @@
     },
     {
       "catalog_id": "bafu-portolan",
+      "tool": "parquet-footer",
+      "rule_id": "CNC-PQ-001",
+      "severity": "warning",
+      "message": "Parquet format v1, not v2 (rewrite with format version 2.x and data page v2)",
+      "collection": "ba",
+      "item": null,
+      "asset_href": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ba/ba.parquet",
+      "format": "geoparquet",
+      "tool_version": "native-0.1.0",
+      "spec_requirement_id": null,
+      "reproduce": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ba/ba.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ba/ba.parquet",
+      "check_id": "c45685894f645",
+      "fingerprint": "9fe636aef2055369"
+    },
+    {
+      "catalog_id": "bafu-portolan",
       "tool": "cloud-native-classifier",
       "rule_id": "CNC-FMT-007",
       "severity": "info",
@@ -9751,6 +11470,22 @@
     },
     {
       "catalog_id": "bafu-portolan",
+      "tool": "parquet-footer",
+      "rule_id": "CNC-PQ-001",
+      "severity": "warning",
+      "message": "Parquet format v1, not v2 (rewrite with format version 2.x and data page v2)",
+      "collection": "ei",
+      "item": null,
+      "asset_href": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ei/ei.parquet",
+      "format": "geoparquet",
+      "tool_version": "native-0.1.0",
+      "spec_requirement_id": null,
+      "reproduce": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ei/ei.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ei/ei.parquet",
+      "check_id": "cf67eb43f32fe",
+      "fingerprint": "f7dfcd6e9c98f6f6"
+    },
+    {
+      "catalog_id": "bafu-portolan",
       "tool": "cloud-native-classifier",
       "rule_id": "CNC-FMT-007",
       "severity": "info",
@@ -10098,6 +11833,22 @@
       "reproduce": "curl -sS -D - -o /dev/null -H 'Origin: https://browser.portolan-sdi.org' -H 'Range: bytes=0-1023' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/hydro_stations/hydro_stations.parquet",
       "check_id": "c45253d08b34a",
       "fingerprint": "ce5086ce3bfa1786"
+    },
+    {
+      "catalog_id": "bafu-portolan",
+      "tool": "parquet-footer",
+      "rule_id": "CNC-PQ-001",
+      "severity": "warning",
+      "message": "Parquet format v1, not v2 (rewrite with format version 2.x and data page v2)",
+      "collection": "hydro_stations",
+      "item": null,
+      "asset_href": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/hydro_stations/hydro_stations.parquet",
+      "format": "geoparquet",
+      "tool_version": "native-0.1.0",
+      "spec_requirement_id": null,
+      "reproduce": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/hydro_stations/hydro_stations.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/hydro_stations/hydro_stations.parquet",
+      "check_id": "c0416fe47c6e5",
+      "fingerprint": "ee09988df80df351"
     },
     {
       "catalog_id": "bafu-portolan",
@@ -10648,6 +12399,22 @@
       "reproduce": "curl -sS -D - -o /dev/null -H 'Origin: https://browser.portolan-sdi.org' -H 'Range: bytes=0-1023' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ip/ip.parquet",
       "check_id": "c44b39ebd6d83",
       "fingerprint": "93d4aa8ddea352e5"
+    },
+    {
+      "catalog_id": "bafu-portolan",
+      "tool": "parquet-footer",
+      "rule_id": "CNC-PQ-001",
+      "severity": "warning",
+      "message": "Parquet format v1, not v2 (rewrite with format version 2.x and data page v2)",
+      "collection": "ip",
+      "item": null,
+      "asset_href": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ip/ip.parquet",
+      "format": "geoparquet",
+      "tool_version": "native-0.1.0",
+      "spec_requirement_id": null,
+      "reproduce": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ip/ip.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ip/ip.parquet",
+      "check_id": "c9f15b55fe18a",
+      "fingerprint": "5ed649d5e9743476"
     },
     {
       "catalog_id": "bafu-portolan",
@@ -11541,6 +13308,22 @@
     },
     {
       "catalog_id": "bafu-portolan",
+      "tool": "parquet-footer",
+      "rule_id": "CNC-PQ-001",
+      "severity": "warning",
+      "message": "Parquet format v1, not v2 (rewrite with format version 2.x and data page v2)",
+      "collection": "naqua_regions",
+      "item": null,
+      "asset_href": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/naqua_regions/naqua_regions.parquet",
+      "format": "geoparquet",
+      "tool_version": "native-0.1.0",
+      "spec_requirement_id": null,
+      "reproduce": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/naqua_regions/naqua_regions.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/naqua_regions/naqua_regions.parquet",
+      "check_id": "ce1aad87fe923",
+      "fingerprint": "d9a501d66013d36b"
+    },
+    {
+      "catalog_id": "bafu-portolan",
       "tool": "cloud-native-classifier",
       "rule_id": "CNC-FMT-007",
       "severity": "info",
@@ -11901,6 +13684,22 @@
       "reproduce": "curl -sS -D - -o /dev/null -H 'Origin: https://browser.portolan-sdi.org' -H 'Range: bytes=0-1023' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nawa_trend_stations/nawa_trend_stations.parquet",
       "check_id": "cfb22e19c1173",
       "fingerprint": "d32f9d4b2bde90e8"
+    },
+    {
+      "catalog_id": "bafu-portolan",
+      "tool": "parquet-footer",
+      "rule_id": "CNC-PQ-001",
+      "severity": "warning",
+      "message": "Parquet format v1, not v2 (rewrite with format version 2.x and data page v2)",
+      "collection": "nawa_trend_stations",
+      "item": null,
+      "asset_href": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nawa_trend_stations/nawa_trend_stations.parquet",
+      "format": "geoparquet",
+      "tool_version": "native-0.1.0",
+      "spec_requirement_id": null,
+      "reproduce": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nawa_trend_stations/nawa_trend_stations.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nawa_trend_stations/nawa_trend_stations.parquet",
+      "check_id": "c89bb98766cf9",
+      "fingerprint": "01df214681cc3bf2"
     },
     {
       "catalog_id": "bafu-portolan",
@@ -12454,6 +14253,22 @@
     },
     {
       "catalog_id": "bafu-portolan",
+      "tool": "parquet-footer",
+      "rule_id": "CNC-PQ-001",
+      "severity": "warning",
+      "message": "Parquet format v1, not v2 (rewrite with format version 2.x and data page v2)",
+      "collection": "nk",
+      "item": null,
+      "asset_href": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nk/nk.parquet",
+      "format": "geoparquet",
+      "tool_version": "native-0.1.0",
+      "spec_requirement_id": null,
+      "reproduce": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nk/nk.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nk/nk.parquet",
+      "check_id": "c5b4ec2214780",
+      "fingerprint": "0e4ef5e62d5d525f"
+    },
+    {
+      "catalog_id": "bafu-portolan",
       "tool": "cloud-native-classifier",
       "rule_id": "CNC-FMT-007",
       "severity": "info",
@@ -12950,6 +14765,22 @@
       "reproduce": "curl -sS -D - -o /dev/null -H 'Origin: https://browser.portolan-sdi.org' -H 'Range: bytes=0-1023' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ub/UB.parquet",
       "check_id": "c7a732a977704",
       "fingerprint": "39874ebfbea97750"
+    },
+    {
+      "catalog_id": "bafu-portolan",
+      "tool": "parquet-footer",
+      "rule_id": "CNC-PQ-001",
+      "severity": "warning",
+      "message": "Parquet format v1, not v2 (rewrite with format version 2.x and data page v2)",
+      "collection": "ub",
+      "item": null,
+      "asset_href": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ub/UB.parquet",
+      "format": "geoparquet",
+      "tool_version": "native-0.1.0",
+      "spec_requirement_id": null,
+      "reproduce": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ub/UB.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ub/UB.parquet",
+      "check_id": "c3b8d09b1fd7e",
+      "fingerprint": "4724d607b1678eed"
     },
     {
       "catalog_id": "bafu-portolan",
@@ -14658,7 +16489,7 @@
       "catalog_id": "bafu-portolan",
       "tool": "parquet-footer",
       "name": "Parquet format v2 (footer)",
-      "outcome": "info",
+      "outcome": "warn",
       "command": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ba/ba.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ba/ba.parquet",
       "tool_version": "native-0.1.0",
       "target": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ba/ba.parquet",
@@ -14668,7 +16499,9 @@
       "format": "geoparquet",
       "evidence": "FileMetaData.version=1 (Parquet format v1); footer 2188 bytes",
       "parent": null,
-      "findings": [],
+      "findings": [
+        "9fe636aef2055369"
+      ],
       "id": "c45685894f645"
     },
     {
@@ -15990,7 +17823,7 @@
       "catalog_id": "bafu-portolan",
       "tool": "parquet-footer",
       "name": "Parquet format v2 (footer)",
-      "outcome": "info",
+      "outcome": "warn",
       "command": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ei/ei.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ei/ei.parquet",
       "tool_version": "native-0.1.0",
       "target": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ei/ei.parquet",
@@ -16000,7 +17833,9 @@
       "format": "geoparquet",
       "evidence": "FileMetaData.version=1 (Parquet format v1); footer 831 bytes",
       "parent": null,
-      "findings": [],
+      "findings": [
+        "f7dfcd6e9c98f6f6"
+      ],
       "id": "cf67eb43f32fe"
     },
     {
@@ -17108,7 +18943,7 @@
       "catalog_id": "bafu-portolan",
       "tool": "parquet-footer",
       "name": "Parquet format v2 (footer)",
-      "outcome": "info",
+      "outcome": "warn",
       "command": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/hydro_stations/hydro_stations.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/hydro_stations/hydro_stations.parquet",
       "tool_version": "native-0.1.0",
       "target": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/hydro_stations/hydro_stations.parquet",
@@ -17118,7 +18953,9 @@
       "format": "geoparquet",
       "evidence": "FileMetaData.version=1 (Parquet format v1); footer 2027 bytes",
       "parent": null,
-      "findings": [],
+      "findings": [
+        "ee09988df80df351"
+      ],
       "id": "c0416fe47c6e5"
     },
     {
@@ -18336,7 +20173,7 @@
       "catalog_id": "bafu-portolan",
       "tool": "parquet-footer",
       "name": "Parquet format v2 (footer)",
-      "outcome": "info",
+      "outcome": "warn",
       "command": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ip/ip.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ip/ip.parquet",
       "tool_version": "native-0.1.0",
       "target": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ip/ip.parquet",
@@ -18346,7 +20183,9 @@
       "format": "geoparquet",
       "evidence": "FileMetaData.version=1 (Parquet format v1); footer 1607 bytes",
       "parent": null,
-      "findings": [],
+      "findings": [
+        "5ed649d5e9743476"
+      ],
       "id": "c9f15b55fe18a"
     },
     {
@@ -20468,7 +22307,7 @@
       "catalog_id": "bafu-portolan",
       "tool": "parquet-footer",
       "name": "Parquet format v2 (footer)",
-      "outcome": "info",
+      "outcome": "warn",
       "command": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/naqua_regions/naqua_regions.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/naqua_regions/naqua_regions.parquet",
       "tool_version": "native-0.1.0",
       "target": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/naqua_regions/naqua_regions.parquet",
@@ -20478,7 +22317,9 @@
       "format": "geoparquet",
       "evidence": "FileMetaData.version=1 (Parquet format v1); footer 1306 bytes",
       "parent": null,
-      "findings": [],
+      "findings": [
+        "d9a501d66013d36b"
+      ],
       "id": "ce1aad87fe923"
     },
     {
@@ -22032,7 +23873,7 @@
       "catalog_id": "bafu-portolan",
       "tool": "parquet-footer",
       "name": "Parquet format v2 (footer)",
-      "outcome": "info",
+      "outcome": "warn",
       "command": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nawa_trend_stations/nawa_trend_stations.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nawa_trend_stations/nawa_trend_stations.parquet",
       "tool_version": "native-0.1.0",
       "target": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nawa_trend_stations/nawa_trend_stations.parquet",
@@ -22042,7 +23883,9 @@
       "format": "geoparquet",
       "evidence": "FileMetaData.version=1 (Parquet format v1); footer 1513 bytes",
       "parent": null,
-      "findings": [],
+      "findings": [
+        "01df214681cc3bf2"
+      ],
       "id": "c89bb98766cf9"
     },
     {
@@ -23260,7 +25103,7 @@
       "catalog_id": "bafu-portolan",
       "tool": "parquet-footer",
       "name": "Parquet format v2 (footer)",
-      "outcome": "info",
+      "outcome": "warn",
       "command": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nk/nk.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nk/nk.parquet",
       "tool_version": "native-0.1.0",
       "target": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/nk/nk.parquet",
@@ -23270,7 +25113,9 @@
       "format": "geoparquet",
       "evidence": "FileMetaData.version=1 (Parquet format v1); footer 1220 bytes",
       "parent": null,
-      "findings": [],
+      "findings": [
+        "0e4ef5e62d5d525f"
+      ],
       "id": "c5b4ec2214780"
     },
     {
@@ -24569,7 +26414,7 @@
       "catalog_id": "bafu-portolan",
       "tool": "parquet-footer",
       "name": "Parquet format v2 (footer)",
-      "outcome": "info",
+      "outcome": "warn",
       "command": "# Last 8 bytes: footer length (u32 little-endian) + 'PAR1':\ncurl -sS -r -8 https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ub/UB.parquet | xxd\n# Or let pyarrow read the footer (range requests only):\nuvx --with pyarrow --with fsspec --with aiohttp python -c 'import sys, fsspec, pyarrow.parquet as pq; m = pq.ParquetFile(fsspec.open(sys.argv[1]).open()).metadata; print(\"format_version\", m.format_version, \"| created_by\", m.created_by)' https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ub/UB.parquet",
       "tool_version": "native-0.1.0",
       "target": "https://ron-portolan.s3.eu-central-1.amazonaws.com/portolan/ub/UB.parquet",
@@ -24579,7 +26424,9 @@
       "format": "geoparquet",
       "evidence": "FileMetaData.version=1 (Parquet format v1); footer 1792 bytes",
       "parent": null,
-      "findings": [],
+      "findings": [
+        "4724d607b1678eed"
+      ],
       "id": "c3b8d09b1fd7e"
     },
     {
@@ -24792,11 +26639,11 @@
   "history": [
     {
       "date": "2026-11-26",
-      "started": "2026-11-26T09:35:53Z",
+      "started": "2026-11-26T14:35:43Z",
       "pct_fully_conformant": 0.0,
       "pct_must_conformant": 66.7,
       "must_failures": 35,
-      "should_warnings": 181,
+      "should_warnings": 189,
       "scored_assets": 15,
       "spec_version": "0.3.0"
     }

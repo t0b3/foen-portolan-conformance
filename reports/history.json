@@ -1,11 +1,11 @@
 [
   {
     "date": "2026-11-26",
-    "started": "2026-11-26T09:35:53Z",
+    "started": "2026-11-26T14:35:43Z",
     "pct_fully_conformant": 0.0,
     "pct_must_conformant": 66.7,
     "must_failures": 35,
-    "should_warnings": 181,
+    "should_warnings": 189,
     "scored_assets": 15,
     "spec_version": "0.3.0"
   }
