@@ -8,5 +8,15 @@
     "should_warnings": 133,
     "scored_assets": 15,
     "spec_version": "0.3.0"
+  },
+  {
+    "date": "2026-11-27",
+    "started": "2026-11-27T13:09:55Z",
+    "pct_fully_conformant": 0.0,
+    "pct_must_conformant": 33.3,
+    "must_failures": 12,
+    "should_warnings": 133,
+    "scored_assets": 15,
+    "spec_version": "0.3.0"
   }
 ]
